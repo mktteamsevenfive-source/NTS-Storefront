@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link, useNavigate} from 'react-router';
 import {type MappedProductOptions} from '@shopify/hydrogen';
 import type {
@@ -17,16 +18,16 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
-  return (
-    <div className="product-form">
-      {productOptions.map((option) => {
-        // If there is only a single value in the option values, don't display the option
-        if (option.optionValues.length === 1) return null;
+  const [qty, setQty] = useState(1);
 
+  return (
+    <div className="sf-product-form">
+      {productOptions.map((option) => {
+        if (option.optionValues.length === 1) return null;
         return (
-          <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
-            <div className="product-options-grid">
+          <div className="sf-product-options" key={option.name}>
+            <p className="sf-product-options__label">{option.name}</p>
+            <div className="sf-product-options__grid">
               {option.optionValues.map((value) => {
                 const {
                   name,
@@ -40,47 +41,24 @@ export function ProductForm({
                 } = value;
 
                 if (isDifferentProduct) {
-                  // SEO
-                  // When the variant is a combined listing child product
-                  // that leads to a different url, we need to render it
-                  // as an anchor tag
                   return (
                     <Link
-                      className="product-options-item"
+                      className={`sf-product-option${selected ? ' sf-product-option--selected' : ''}${!available ? ' sf-product-option--unavailable' : ''}`}
                       key={option.name + name}
                       prefetch="intent"
                       preventScrollReset
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
                     </Link>
                   );
                 } else {
-                  // SEO
-                  // When the variant is an update to the search param,
-                  // render it as a button with javascript navigating to
-                  // the variant so that SEO bots do not index these as
-                  // duplicated links
                   return (
                     <button
                       type="button"
-                      className={`product-options-item${
-                        exists && !selected ? ' link' : ''
-                      }`}
+                      className={`sf-product-option${selected ? ' sf-product-option--selected' : ''}${!available ? ' sf-product-option--unavailable' : ''}`}
                       key={option.name + name}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                       disabled={!exists}
                       onClick={() => {
                         if (!selected) {
@@ -97,29 +75,59 @@ export function ProductForm({
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
-      <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
-        onClick={() => {
-          open('cart');
-        }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                },
-              ]
-            : []
-        }
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
+
+      <div className="sf-product-actions">
+        <div className="sf-product-qty">
+          <button
+            type="button"
+            className="sf-product-qty__btn"
+            onClick={() => setQty((q) => Math.max(1, q - 1))}
+            aria-label="Decrease quantity"
+          >
+            −
+          </button>
+          <span className="sf-product-qty__val">{qty}</span>
+          <button
+            type="button"
+            className="sf-product-qty__btn"
+            onClick={() => setQty((q) => q + 1)}
+            aria-label="Increase quantity"
+          >
+            +
+          </button>
+        </div>
+        <div className="sf-atc-wrap">
+          <AddToCartButton
+            disabled={!selectedVariant || !selectedVariant.availableForSale}
+            onClick={() => open('cart')}
+            lines={
+              selectedVariant
+                ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
+                : []
+            }
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 01-8 0" />
+            </svg>
+            {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+          </AddToCartButton>
+        </div>
+      </div>
     </div>
   );
 }
@@ -139,10 +147,8 @@ function ProductOptionSwatch({
   return (
     <div
       aria-label={name}
-      className="product-option-label-swatch"
-      style={{
-        backgroundColor: color || 'transparent',
-      }}
+      className="sf-product-option__swatch"
+      style={{backgroundColor: color || 'transparent'}}
     >
       {!!image && <img src={image} alt={name} />}
     </div>

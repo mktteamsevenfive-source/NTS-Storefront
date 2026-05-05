@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
@@ -79,47 +80,220 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
 
-  // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  // Sets the search param to the selected variant without navigation
-  // only when no search params are set in the url
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
-  // Get the product options array
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, vendor} = product;
+  const productId = product.goodId?.value ?? product.id.split('/').pop();
+
+  const SPEC_LABELS: Record<string, string> = {
+    width_mm: 'Width (mm)',
+    depth_mm: 'Depth (mm)',
+    height_mm: 'Height (mm)',
+    length_mm: 'Length (mm)',
+    weight_kg: 'Weight (kg)',
+    voltage: 'Voltage',
+    hz: 'Hz',
+    wattage: 'Wattage',
+    ampere: 'Ampere',
+    refrigerant: 'Refrigerant',
+    spareparts_warranty: 'Spareparts Warranty',
+    service_warranty: 'Service Warranty',
+    compressor_warranty: 'Compressor Warranty',
+    pump_warranty: 'Pump Warranty',
+    product_of: 'Product of',
+    made_in: 'Made in',
+    certificates: 'Certificates',
+    construction: 'Construction',
+    material: 'Material',
+    energy_type: 'Energy Type',
+    installation: 'Installation',
+    temperature: 'Temperature',
+    gross_weight_kg: 'Gross Weight (kg)',
+    net_weight_kg: 'Net Weight (kg)',
+    packing_width: 'Packing Width',
+    packing_length_mm: 'Packing Length (mm)',
+    packing_height_mm: 'Packing Height (mm)',
+    packing_weight_kg: 'Packing Weight (kg)',
+    volume_mc: 'Volume (mc)',
+    rack_size_mm: 'Rack Size (mm)',
+    usable_chamber_height_mm: 'Useable Chamber Height (mm)',
+    max_dishes_height_mm: 'Maximum Dishes Height (mm)',
+    max_trays_height_mm: 'Maximum Trays Height (mm)',
+  };
+
+  type MetafieldRow = {namespace: string; key: string; value: string};
+  const specRows: {label: string; value: string}[] = (product.metafields ?? [])
+    .filter((mf: MetafieldRow | null): mf is MetafieldRow => !!mf?.value)
+    .map((mf: MetafieldRow) => ({label: SPEC_LABELS[mf.key] ?? mf.key, value: mf.value}));
+
+  const [descOpen, setDescOpen] = useState(true);
+  const [specOpen, setSpecOpen] = useState(true);
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+    <div className="sf-product-page">
+      <div className="sf-product-container">
+        {/* Gallery */}
+        <div className="sf-product-gallery">
+          <div className="sf-product-gallery__sticky">
+            <ProductImage image={selectedVariant?.image} />
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="sf-product-info">
+          {vendor && <div className="sf-product-vendor">{vendor}</div>}
+          <h1 className="sf-product-title">{title}</h1>
+          <div className="sf-product-meta">
+            <span className="sf-product-meta__item">Product ID : {productId}</span>
+            {selectedVariant?.sku && (
+              <span className="sf-product-meta__item">{selectedVariant.sku}</span>
+            )}
+          </div>
+
+          <div className="sf-product-price-wrap">
+            <ProductPrice
+              price={selectedVariant?.price}
+              compareAtPrice={selectedVariant?.compareAtPrice}
+            />
+          </div>
+
+          <div className="sf-product-stock">
+            <span
+              className={`sf-product-stock__dot${
+                (selectedVariant?.quantityAvailable ?? 0) > 0 || selectedVariant?.availableForSale
+                  ? ' sf-product-stock__dot--in'
+                  : ' sf-product-stock__dot--out'
+              }`}
+            />
+            {'Stock: '}
+            <strong>
+              {selectedVariant?.quantityAvailable != null
+                ? selectedVariant.quantityAvailable
+                : selectedVariant?.availableForSale
+                ? 'In Stock'
+                : 'Out of Stock'}
+            </strong>
+          </div>
+
+          <ProductForm
+            productOptions={productOptions}
+            selectedVariant={selectedVariant}
+          />
+
+          {descriptionHtml && (
+            <div className="sf-product-accordion">
+              <button
+                type="button"
+                className="sf-product-accordion__head"
+                onClick={() => setDescOpen((o) => !o)}
+                aria-expanded={descOpen}
+              >
+                <span>Description</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={descOpen ? 'sf-product-accordion__icon--open' : ''}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {descOpen && (
+                <div
+                  className="sf-product-accordion__body sf-product-description"
+                  dangerouslySetInnerHTML={{__html: descriptionHtml}}
+                />
+              )}
+            </div>
+          )}
+
+          {specRows.length > 0 && (
+            <div className="sf-product-accordion">
+              <button
+                type="button"
+                className="sf-product-accordion__head"
+                onClick={() => setSpecOpen((o) => !o)}
+                aria-expanded={specOpen}
+              >
+                <span>Specification</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={specOpen ? 'sf-product-accordion__icon--open' : ''}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              {specOpen && (
+                <div className="sf-product-accordion__body">
+                  <table className="sf-product-spec__table">
+                    <tbody>
+                      {specRows.map((row) => (
+                        <tr key={row.label}>
+                          <td className="sf-product-spec__label">{row.label}</td>
+                          <td className="sf-product-spec__value">{row.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {product.metafield?.value && (
+            <div className="sf-product-specsheet">
+              <table className="sf-product-specsheet__table">
+                <thead>
+                  <tr>
+                    <th>File type</th>
+                    <th>File name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PDF</td>
+                    <td>Spec Sheet</td>
+                    <td>
+                      <a
+                        href={product.metafield.value}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sf-product-specsheet__link"
+                      >
+                        Download
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
+
       <Analytics.ProductView
         data={{
           products: [
@@ -142,6 +316,7 @@ export default function Product() {
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariant on ProductVariant {
     availableForSale
+    quantityAvailable
     compareAtPrice {
       amount
       currencyCode
@@ -167,6 +342,7 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
       name
       value
     }
+    quantityAvailable
     sku
     title
     unitPrice {
@@ -208,6 +384,51 @@ const PRODUCT_FRAGMENT = `#graphql
     }
     adjacentVariants (selectedOptions: $selectedOptions) {
       ...ProductVariant
+    }
+    metafield(namespace: "custom", key: "link_pdf") {
+      value
+    }
+    goodId: metafield(namespace: "custom", key: "good_id") {
+      value
+    }
+    metafields(identifiers: [
+      {namespace: "specs", key: "width_mm"},
+      {namespace: "specs", key: "depth_mm"},
+      {namespace: "specs", key: "height_mm"},
+      {namespace: "specs", key: "length_mm"},
+      {namespace: "specs", key: "weight_kg"},
+      {namespace: "specs", key: "voltage"},
+      {namespace: "specs", key: "hz"},
+      {namespace: "specs", key: "wattage"},
+      {namespace: "specs", key: "ampere"},
+      {namespace: "specs", key: "refrigerant"},
+      {namespace: "specs", key: "spareparts_warranty"},
+      {namespace: "specs", key: "service_warranty"},
+      {namespace: "specs", key: "compressor_warranty"},
+      {namespace: "specs", key: "pump_warranty"},
+      {namespace: "specs", key: "product_of"},
+      {namespace: "specs", key: "made_in"},
+      {namespace: "specs", key: "certificates"},
+      {namespace: "specs", key: "construction"},
+      {namespace: "specs", key: "material"},
+      {namespace: "specs", key: "energy_type"},
+      {namespace: "specs", key: "installation"},
+      {namespace: "specs", key: "temperature"},
+      {namespace: "specs", key: "gross_weight_kg"},
+      {namespace: "specs", key: "net_weight_kg"},
+      {namespace: "specs", key: "packing_width"},
+      {namespace: "specs", key: "packing_length_mm"},
+      {namespace: "specs", key: "packing_height_mm"},
+      {namespace: "specs", key: "packing_weight_kg"},
+      {namespace: "specs", key: "volume_mc"},
+      {namespace: "specs", key: "rack_size_mm"},
+      {namespace: "specs", key: "usable_chamber_height_mm"},
+      {namespace: "specs", key: "max_dishes_height_mm"},
+      {namespace: "specs", key: "max_trays_height_mm"},
+    ]) {
+      namespace
+      key
+      value
     }
     seo {
       description

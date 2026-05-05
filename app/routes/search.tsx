@@ -42,22 +42,6 @@ export default function SearchPage() {
 
   return (
     <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
-        )}
-      </SearchForm>
       {error && <p style={{color: 'red'}}>{error}</p>}
       {!term || !result?.total ? (
         <SearchResults.Empty />
@@ -213,6 +197,19 @@ export const SEARCH_QUERY = `#graphql
 /**
  * Regular search fetcher
  */
+const ALLOWED_VENDORS = [
+  'NTS',
+  'PRIMO',
+  'ABSOLUTE',
+  'Cutlery Pro',
+  'Top Rinse',
+  'Iwatani',
+  'Justa',
+  'Kitchin',
+  'VEESAN',
+];
+const VENDOR_FILTER = `(${ALLOWED_VENDORS.map((v) => `vendor:"${v}"`).join(' OR ')})`;
+
 async function regularSearch({
   request,
   context,
@@ -224,6 +221,7 @@ async function regularSearch({
   const url = new URL(request.url);
   const variables = getPaginationVariables(request, {pageBy: 8});
   const term = String(url.searchParams.get('q') || '');
+  const filteredTerm = term ? `${term} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
 
   // Search articles, pages, and products for the `q` term
   const {
@@ -231,7 +229,7 @@ async function regularSearch({
     ...items
   }: {errors?: Array<{message: string}>} & RegularSearchQuery =
     await storefront.query(SEARCH_QUERY, {
-      variables: {...variables, term},
+      variables: {...variables, term: filteredTerm},
     });
 
   if (!items) {
@@ -388,6 +386,7 @@ async function predictiveSearch({
   const {storefront} = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
+  const filteredTerm = term ? `${term} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
   const limit = Number(url.searchParams.get('limit') || 10);
   const type = 'predictive';
 
@@ -403,7 +402,7 @@ async function predictiveSearch({
         // customize search options as needed
         limit,
         limitScope: 'EACH',
-        term,
+        term: filteredTerm,
       },
     });
 
