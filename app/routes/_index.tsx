@@ -8,6 +8,25 @@ import type {
 } from 'storefrontapi.generated';
 import {MockShopNotice} from '~/components/MockShopNotice';
 
+const ALLOWED_VENDORS = [
+  'NTS',
+  'Primo',
+  'Thermal Master',
+  'SOFTCOOKER',
+  'K-MAX',
+  'ABSOLUTE',
+  'Cutlery Pro',
+  'Top Rinse',
+  'Iwatani',
+  'Justa',
+  'Kitchin',
+  'VEESAN',
+];
+
+const RECOMMENDED_VENDOR_FILTER = ALLOWED_VENDORS.map(
+  (vendor) => `vendor:"${vendor}"`,
+).join(' OR ');
+
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Sevenfive | Premium Commercial Kitchen Equipment'}];
 };
@@ -46,7 +65,9 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
  */
 function loadDeferredData({context}: Route.LoaderArgs) {
   const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: {filterQuery: RECOMMENDED_VENDOR_FILTER},
+    })
     .catch((error: Error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
@@ -299,9 +320,13 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       height
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query RecommendedProducts (
+    $country: CountryCode,
+    $language: LanguageCode,
+    $filterQuery: String!
+  )
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 4, sortKey: UPDATED_AT, reverse: true, query: $filterQuery) {
       nodes {
         ...RecommendedProduct
       }

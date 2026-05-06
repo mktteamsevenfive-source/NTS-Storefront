@@ -1,4 +1,4 @@
-import {Link} from 'react-router';
+import {Link, useSearchParams} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
 
@@ -39,9 +39,9 @@ function SearchResultsArticles({
   }
 
   return (
-    <div className="search-result">
-      <h2>Articles</h2>
-      <div>
+    <div className="sf-search-section">
+      <h2 className="sf-search-section__title">Articles</h2>
+      <div className="sf-search-articles">
         {articles?.nodes?.map((article) => {
           const articleUrl = urlWithTrackingParams({
             baseUrl: `/blogs/${article.handle}`,
@@ -50,15 +50,17 @@ function SearchResultsArticles({
           });
 
           return (
-            <div className="search-results-item" key={article.id}>
-              <Link prefetch="intent" to={articleUrl}>
-                {article.title}
-              </Link>
-            </div>
+            <Link
+              prefetch="intent"
+              to={articleUrl}
+              key={article.id}
+              className="sf-search-article-link"
+            >
+              {article.title}
+            </Link>
           );
         })}
       </div>
-      <br />
     </div>
   );
 }
@@ -69,9 +71,9 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
   }
 
   return (
-    <div className="search-result">
-      <h2>Pages</h2>
-      <div>
+    <div className="sf-search-section">
+      <h2 className="sf-search-section__title">Pages</h2>
+      <div className="sf-search-articles">
         {pages?.nodes?.map((page) => {
           const pageUrl = urlWithTrackingParams({
             baseUrl: `/pages/${page.handle}`,
@@ -80,15 +82,17 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
           });
 
           return (
-            <div className="search-results-item" key={page.id}>
-              <Link prefetch="intent" to={pageUrl}>
-                {page.title}
-              </Link>
-            </div>
+            <Link
+              prefetch="intent"
+              to={pageUrl}
+              key={page.id}
+              className="sf-search-article-link"
+            >
+              {page.title}
+            </Link>
           );
         })}
       </div>
-      <br />
     </div>
   );
 }
@@ -96,16 +100,19 @@ function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
 function SearchResultsProducts({
   term,
   products,
-}: PartialSearchResult<'products'>) {
+  total = 0,
+}: PartialSearchResult<'products'> & {total?: number}) {
   if (!products?.nodes.length) {
     return null;
   }
 
+  const [searchParams] = useSearchParams();
+  const currentPage = Math.max(1, Number(searchParams.get('page') ?? '1'));
+
   return (
-    <div className="search-result">
-      <h2>Products</h2>
+    <div className="sf-search-section">
       <Pagination connection={products}>
-        {({nodes, isLoading, NextLink, PreviousLink}) => {
+        {({nodes, hasPreviousPage, hasNextPage, nextPageUrl, previousPageUrl}) => {
           const ItemsMarkup = nodes.map((product) => {
             const productUrl = urlWithTrackingParams({
               baseUrl: `/products/${product.handle}`,
@@ -117,45 +124,109 @@ function SearchResultsProducts({
             const image = product?.selectedOrFirstAvailableVariant?.image;
 
             return (
-              <div className="search-results-item" key={product.id}>
-                <Link prefetch="intent" to={productUrl}>
-                  {image && (
-                    <Image data={image} alt={product.title} width={50} />
+              <Link
+                prefetch="intent"
+                to={productUrl}
+                key={product.id}
+                className="sf-search-product-card"
+              >
+                <div className="sf-search-product-card__img-wrap">
+                  {image ? (
+                    <Image
+                      data={image}
+                      alt={product.title}
+                      width={240}
+                      height={240}
+                      className="sf-search-product-card__img"
+                    />
+                  ) : (
+                    <div className="sf-search-product-card__no-img">
+                      No image
+                    </div>
                   )}
-                  <div>
-                    <p>{product.title}</p>
-                    <small>{price && <Money data={price} />}</small>
-                  </div>
-                </Link>
-              </div>
+                </div>
+                <div className="sf-search-product-card__body">
+                  {product.vendor && (
+                    <span className="sf-search-product-card__vendor">
+                      {product.vendor}
+                    </span>
+                  )}
+                  <p className="sf-search-product-card__title">
+                    {product.title}
+                  </p>
+                  {price && (
+                    <span className="sf-search-product-card__price">
+                      <Money data={price} />
+                    </span>
+                  )}
+                </div>
+              </Link>
             );
           });
 
+          function withPage(url: string, page: number): string {
+            if (/[?&]page=/.test(url)) {
+              return url.replace(/([?&])page=\d+/, `$1page=${page}`);
+            }
+            return `${url}${url.includes('?') ? '&' : '?'}page=${page}`;
+          }
+
+          const prevUrl = hasPreviousPage ? withPage(previousPageUrl, currentPage - 1) : null;
+          const nextUrl = hasNextPage ? withPage(nextPageUrl, currentPage + 1) : null;
+
+          const showPaginator = hasPreviousPage || hasNextPage;
+
           return (
             <div>
-              <div>
-                <PreviousLink>
-                  {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
-                </PreviousLink>
-              </div>
-              <div>
-                {ItemsMarkup}
-                <br />
-              </div>
-              <div>
-                <NextLink>
-                  {isLoading ? 'Loading...' : <span>Load more ↓</span>}
-                </NextLink>
-              </div>
+              <div className="sf-search-product-grid">{ItemsMarkup}</div>
+              {showPaginator && (
+                <nav className="sf-paginator">
+                  {prevUrl ? (
+                    <Link to={prevUrl} className="sf-paginator__btn sf-paginator__btn--arrow">‹</Link>
+                  ) : (
+                    <span className="sf-paginator__btn sf-paginator__btn--arrow sf-paginator__btn--disabled">‹</span>
+                  )}
+
+                  {hasPreviousPage && prevUrl && (
+                    <Link to={prevUrl} className="sf-paginator__btn">{currentPage - 1}</Link>
+                  )}
+
+                  <span className="sf-paginator__btn sf-paginator__btn--active">{currentPage}</span>
+
+                  {hasNextPage && nextUrl && (
+                    <Link to={nextUrl} className="sf-paginator__btn">{currentPage + 1}</Link>
+                  )}
+
+                  {nextUrl ? (
+                    <Link to={nextUrl} className="sf-paginator__btn sf-paginator__btn--arrow">›</Link>
+                  ) : (
+                    <span className="sf-paginator__btn sf-paginator__btn--arrow sf-paginator__btn--disabled">›</span>
+                  )}
+                </nav>
+              )}
             </div>
           );
         }}
       </Pagination>
-      <br />
     </div>
   );
 }
 
 function SearchResultsEmpty() {
-  return <p>No results, try a different search.</p>;
+  return (
+    <div className="sf-search-empty">
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <p>No products found. Try a different search term.</p>
+    </div>
+  );
 }
