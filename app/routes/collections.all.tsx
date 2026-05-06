@@ -78,6 +78,14 @@ const COLLECTION_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
+    vendor
+    selectedOrFirstAvailableVariant(
+      selectedOptions: []
+      ignoreUnknownOptions: true
+      caseInsensitiveMatch: true
+    ) {
+      sku
+    }
     featuredImage {
       id
       altText
@@ -106,7 +114,7 @@ const CATALOG_QUERY = `#graphql
     $startCursor: String
     $endCursor: String
   ) @inContext(country: $country, language: $language) {
-    products(first: $first, last: $last, before: $startCursor, after: $endCursor) {
+    products(first: $first, last: $last, before: $startCursor, after: $endCursor, query: "vendor:NTS OR vendor:PRIMO OR vendor:ABSOLUTE OR vendor:\"Cutlery Pro\" OR vendor:\"Top Rinse\" OR vendor:Iwatani OR vendor:Justa OR vendor:Kitchin OR vendor:VEESAN") {
       nodes {
         ...CollectionItem
       }

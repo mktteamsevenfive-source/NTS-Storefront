@@ -19,6 +19,11 @@ export function ProductItem({
 }) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
+  const vendor = (product as any).vendor as string | undefined;
+  const variantSku = (product as any).selectedOrFirstAvailableVariant?.sku as
+    | string
+    | undefined;
+
   return (
     <Link
       className="product-item"
@@ -35,10 +40,14 @@ export function ProductItem({
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
+      <div className="product-item__meta">
+        {vendor ? <p className="product-item__vendor">{vendor}</p> : null}
+        {variantSku ? <p className="product-item__sku">{variantSku}</p> : null}
+        <h4 className="product-item__name">{product.title}</h4>
+        <small className="product-item__price">
+          <Money data={product.priceRange.minVariantPrice} />
+        </small>
+      </div>
     </Link>
   );
 }

@@ -14,6 +14,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import type {LangCode} from '~/lib/locale';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -21,6 +22,7 @@ interface PageLayoutProps {
   header: HeaderQuery;
   isLoggedIn: Promise<boolean>;
   publicStoreDomain: string;
+  lang?: LangCode;
   children?: React.ReactNode;
 }
 
@@ -31,6 +33,7 @@ export function PageLayout({
   header,
   isLoggedIn,
   publicStoreDomain,
+  lang = 'EN',
 }: PageLayoutProps) {
   return (
     <Aside.Provider>
@@ -43,6 +46,7 @@ export function PageLayout({
           cart={cart}
           isLoggedIn={isLoggedIn}
           publicStoreDomain={publicStoreDomain}
+          lang={lang}
         />
       )}
       <main>{children}</main>
@@ -158,6 +162,12 @@ function MobileMenuAside({
   header: PageLayoutProps['header'];
   publicStoreDomain: PageLayoutProps['publicStoreDomain'];
 }) {
+  const availableHandles = new Set(
+    (header.collections?.nodes ?? [])
+      .filter((c) => c.products.nodes.length > 0)
+      .map((c) => c.handle),
+  );
+
   return (
     header.menu &&
     header.shop.primaryDomain?.url && (
@@ -167,6 +177,7 @@ function MobileMenuAside({
           viewport="mobile"
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
+          availableHandles={availableHandles}
         />
       </Aside>
     )

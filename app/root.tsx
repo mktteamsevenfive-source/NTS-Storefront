@@ -17,6 +17,8 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {getLangFromRequest} from '~/lib/i18n';
+import type {LangCode} from '~/lib/locale';
 
 export type RootLoader = typeof loader;
 
@@ -98,20 +100,21 @@ export async function loader(args: Route.LoaderArgs) {
  * Load data necessary for rendering content above the fold. This is the critical data
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
   const {storefront} = context;
+  const lang: LangCode = getLangFromRequest(request);
 
   const [header] = await Promise.all([
     storefront.query(HEADER_QUERY, {
-      cache: storefront.CacheLong(),
+      // Cache per-language so Thai and English are stored separately
+      cache: storefront.CacheShort(),
       variables: {
-        headerMenuHandle: 'main-menu', // Adjust to your header menu handle
+        headerMenuHandle: 'main-menu',
       },
     }),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {header};
+  return {header, lang};
 }
 
 /**
@@ -144,9 +147,11 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
+  const data = useRouteLoaderData<RootLoader>('root');
+  const htmlLang = data?.lang === 'TH' ? 'th' : 'en';
 
   return (
-    <html lang="en">
+    <html lang={htmlLang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />

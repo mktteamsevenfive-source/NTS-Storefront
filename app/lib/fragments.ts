@@ -224,6 +224,28 @@ export const HEADER_QUERY = `#graphql
     menu(handle: $headerMenuHandle) {
       ...Menu
     }
+    collections(first: 250) {
+      nodes {
+        id
+        title
+        handle
+        products(first: 1, filters: [
+          {productVendor: "NTS"}
+          {productVendor: "PRIMO"}
+          {productVendor: "ABSOLUTE"}
+          {productVendor: "Cutlery Pro"}
+          {productVendor: "Top Rinse"}
+          {productVendor: "Iwatani"}
+          {productVendor: "Justa"}
+          {productVendor: "Kitchin"}
+          {productVendor: "VEESAN"}
+        ]) {
+          nodes {
+            id
+          }
+        }
+      }
+    }
   }
   ${MENU_FRAGMENT}
 ` as const;

@@ -122,6 +122,7 @@ function SearchResultsProducts({
 
             const price = product?.selectedOrFirstAvailableVariant?.price;
             const image = product?.selectedOrFirstAvailableVariant?.image;
+            const variantSku = product?.selectedOrFirstAvailableVariant?.sku;
 
             return (
               <Link
@@ -149,6 +150,11 @@ function SearchResultsProducts({
                   {product.vendor && (
                     <span className="sf-search-product-card__vendor">
                       {product.vendor}
+                    </span>
+                  )}
+                  {variantSku && (
+                    <span className="sf-search-product-card__sku">
+                      {variantSku}
                     </span>
                   )}
                   <p className="sf-search-product-card__title">

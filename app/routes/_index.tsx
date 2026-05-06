@@ -51,10 +51,14 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
     // Add other queries here, so that they are loaded in parallel
   ]);
 
+  const filteredCollections = (collections?.nodes ?? []).filter(
+    (collection: any) => collection.products?.nodes?.length > 0,
+  );
+
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
-    featuredCollection: collections.nodes[0] ?? null,
-    categories: collections.nodes,
+    featuredCollection: filteredCollections[0] ?? null,
+    categories: filteredCollections,
   };
 }
 
@@ -261,6 +265,14 @@ function RecommendedProducts({
                         )}
                       </div>
                       <div className="sf-prod-card__info">
+                        {(product as any).vendor ? (
+                          <p className="sf-prod-card__vendor">{(product as any).vendor}</p>
+                        ) : null}
+                        {(product as any).selectedOrFirstAvailableVariant?.sku ? (
+                          <p className="sf-prod-card__sku">
+                            {(product as any).selectedOrFirstAvailableVariant.sku}
+                          </p>
+                        ) : null}
                         <h3 className="sf-prod-card__title">{product.title}</h3>
                         <Money
                           className="sf-prod-card__price"
@@ -290,10 +302,15 @@ const FEATURED_COLLECTION_QUERY = `#graphql
       height
     }
     handle
+    products(first: 1) {
+      nodes {
+        id
+      }
+    }
   }
   query FeaturedCollection($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    collections(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    collections(first: 20, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...FeaturedCollection
       }
@@ -306,6 +323,14 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     id
     title
     handle
+    vendor
+    selectedOrFirstAvailableVariant(
+      selectedOptions: []
+      ignoreUnknownOptions: true
+      caseInsensitiveMatch: true
+    ) {
+      sku
+    }
     priceRange {
       minVariantPrice {
         amount
