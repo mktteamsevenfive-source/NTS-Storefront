@@ -33,7 +33,7 @@ export function Footer({
               <div className="sf-footer__col">
                 <h4 className="sf-footer__col-title">Service</h4>
                 <nav className="sf-footer__links">
-                  <Link to="/pages/warranty-policy" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/warranty-policy-nts" prefetch="intent" className="sf-footer__link">
                     Warranty policy
                   </Link>
                   <Link to="/policies/shipping-policy" prefetch="intent" className="sf-footer__link">
