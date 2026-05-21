@@ -1,7 +1,6 @@
 import {Suspense} from 'react';
 import {Await, NavLink, Link} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
-import ntsLogo from '~/assets/logo/NTS-logo.jpg';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -20,67 +19,48 @@ export function Footer({
         {(footer) => (
           <footer className="sf-footer">
             <div className="sf-footer__top">
-              {/* Brand Column */}
-              <div className="sf-footer__brand">
-                <Link to="/" className="sf-footer__logo">
-                  <img src={ntsLogo} alt={header.shop.name} className="sf-footer__logo-img" />
-                </Link>
-                <p className="sf-footer__tagline">
-                  Professional-grade commercial kitchen equipment for
-                  Thailand's finest foodservice operators.
-                </p>
-                <div className="sf-footer__social">
-                  <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="sf-footer__social-link"
-                    aria-label="Facebook"
-                  >
-                    FB
-                  </a>
-                  <a
-                    href="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="sf-footer__social-link"
-                    aria-label="Instagram"
-                  >
-                    IG
-                  </a>
-                  <a
-                    href="https://line.me"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="sf-footer__social-link"
-                    aria-label="Line"
-                  >
-                    LINE
-                  </a>
-                </div>
-              </div>
-
-              {/* Quick Links */}
+              {/* Help & FAQ */}
               <div className="sf-footer__col">
-                <h4 className="sf-footer__col-title">Quick Links</h4>
-                {footer?.menu && header.shop.primaryDomain?.url && (
-                  <FooterMenu
-                    menu={footer.menu}
-                    primaryDomainUrl={header.shop.primaryDomain.url}
-                    publicStoreDomain={publicStoreDomain}
-                  />
-                )}
-              </div>
-
-              {/* Categories */}
-              <div className="sf-footer__col">
-                <h4 className="sf-footer__col-title">Categories</h4>
+                <h4 className="sf-footer__col-title">Help & FAQ</h4>
                 <nav className="sf-footer__links">
-                  <Link to="/collections/cooking-equipment" prefetch="intent" className="sf-footer__link">Cooking Equipment</Link>
-                  <Link to="/collections/refrigeration" prefetch="intent" className="sf-footer__link">Refrigeration</Link>
-                  <Link to="/collections/beverage" prefetch="intent" className="sf-footer__link">Beverage Equipment</Link>
-                  <Link to="/collections/warewashing" prefetch="intent" className="sf-footer__link">Warewashing</Link>
-                  <Link to="/collections/spare-parts" prefetch="intent" className="sf-footer__link">Spare Parts</Link>
+                  <Link to="/pages/how-to-pay-nts" prefetch="intent" className="sf-footer__link">
+                    How to pay
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Service */}
+              <div className="sf-footer__col">
+                <h4 className="sf-footer__col-title">Service</h4>
+                <nav className="sf-footer__links">
+                  <Link to="/pages/warranty-policy" prefetch="intent" className="sf-footer__link">
+                    Warranty policy
+                  </Link>
+                  <Link to="/policies/shipping-policy" prefetch="intent" className="sf-footer__link">
+                    Delivery and shipping policy
+                  </Link>
+                  <Link to="/pages/after-sales-service" prefetch="intent" className="sf-footer__link">
+                    After sales service
+                  </Link>
+                  <Link to="/pages/installation-policy" prefetch="intent" className="sf-footer__link">
+                    Installation policy
+                  </Link>
+                </nav>
+              </div>
+
+              {/* About Us */}
+              <div className="sf-footer__col">
+                <h4 className="sf-footer__col-title">About Us</h4>
+                <nav className="sf-footer__links">
+                  <Link to="/pages/who-we-are" prefetch="intent" className="sf-footer__link">
+                    Who we are
+                  </Link>
+                  <Link to="/pages/service-center" prefetch="intent" className="sf-footer__link">
+                    Service center
+                  </Link>
+                  <Link to="/pages/contact-us" prefetch="intent" className="sf-footer__link">
+                    Contact us
+                  </Link>
                 </nav>
               </div>
 
@@ -88,15 +68,44 @@ export function Footer({
               <div className="sf-footer__col">
                 <h4 className="sf-footer__col-title">Contact Us</h4>
                 <address className="sf-footer__address">
-                  <p>Bangkok, Thailand</p>
-                  <a href="tel:+6620000000" className="sf-footer__link">+66 2 000 0000</a>
-                  <a href="mailto:info@sevenfive.co.th" className="sf-footer__link">
-                    info@sevenfive.co.th
+                  <a href="mailto:sales@ntsmart.co.th" className="sf-footer__link">
+                    sales@ntsmart.co.th
                   </a>
-                  <p className="sf-footer__hours">
-                    Mon – Fri: 8:00 – 17:30<br />
-                    Sat: 8:00 – 12:00
-                  </p>
+                  <a href="tel:+6624237575" className="sf-footer__link">
+                    02-423-7575 Ext 105
+                  </a>
+                  <a href="tel:+66661685275" className="sf-footer__link">
+                    066-168-5275
+                  </a>
+                  <div className="sf-footer__social">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sf-footer__social-link"
+                      aria-label="Instagram"
+                    >
+                      IG
+                    </a>
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sf-footer__social-link"
+                      aria-label="Facebook"
+                    >
+                      FB
+                    </a>
+                    <a
+                      href="https://line.me"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sf-footer__social-link"
+                      aria-label="Line"
+                    >
+                      LINE
+                    </a>
+                  </div>
                 </address>
               </div>
             </div>
@@ -117,93 +126,5 @@ export function Footer({
     </Suspense>
   );
 }
-
-function FooterMenu({
-  menu,
-  primaryDomainUrl,
-  publicStoreDomain,
-}: {
-  menu: FooterQuery['menu'];
-  primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
-  publicStoreDomain: string;
-}) {
-  return (
-    <nav className="sf-footer__links" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a
-            href={url}
-            key={item.id}
-            rel="noopener noreferrer"
-            target="_blank"
-            className="sf-footer__link"
-          >
-            {item.title}
-          </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            className="sf-footer__link"
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
-    </nav>
-  );
-}
-
-const FALLBACK_FOOTER_MENU = {
-  id: 'gid://shopify/Menu/199655620664',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/461633060920',
-      resourceId: 'gid://shopify/ShopPolicy/23358046264',
-      tags: [],
-      title: 'Privacy Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/privacy-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633093688',
-      resourceId: 'gid://shopify/ShopPolicy/23358013496',
-      tags: [],
-      title: 'Refund Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/refund-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633126456',
-      resourceId: 'gid://shopify/ShopPolicy/23358111800',
-      tags: [],
-      title: 'Shipping Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/shipping-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633159224',
-      resourceId: 'gid://shopify/ShopPolicy/23358079032',
-      tags: [],
-      title: 'Terms of Service',
-      type: 'SHOP_POLICY',
-      url: '/policies/terms-of-service',
-      items: [],
-    },
-  ],
-};
 
 

@@ -14,6 +14,10 @@ const ALLOWED_VENDORS = [
   'VEESAN',
 ] as const;
 
+const VENDOR_DISPLAY_NAMES: Record<string, string> = {
+  VEESAN: 'Veeetsan',
+};
+
 const VENDOR_FIRST_PRODUCT_QUERY = `#graphql
   query VendorCollection($query: String!) {
     collections(first: 1, query: $query) {
@@ -35,19 +39,29 @@ export const meta: Route.MetaFunction = () => {
 export async function loader({context}: Route.LoaderArgs) {
   const vendorData = await Promise.all(
     ALLOWED_VENDORS.map(async (vendor) => {
+      const collectionTitle = getVendorDisplayName(vendor);
       try {
         const data = await context.storefront.query(
           VENDOR_FIRST_PRODUCT_QUERY,
-          {variables: {query: `title:"${vendor}"`}},
+          {variables: {query: `title:"${collectionTitle}"`}},
         );
-        const img = data?.collections?.nodes?.[0]?.image;
+        let img = data?.collections?.nodes?.[0]?.image;
+
+        if (!img && collectionTitle !== vendor) {
+          const fallbackData = await context.storefront.query(
+            VENDOR_FIRST_PRODUCT_QUERY,
+            {variables: {query: `title:"${vendor}"`}},
+          );
+          img = fallbackData?.collections?.nodes?.[0]?.image;
+        }
+
         return {
           vendor,
           image: img?.url ?? null,
-          imageAlt: img?.altText ?? vendor,
+          imageAlt: img?.altText ?? collectionTitle,
         };
       } catch {
-        return {vendor, image: null, imageAlt: vendor};
+        return {vendor, image: null, imageAlt: collectionTitle};
       }
     }),
   );
@@ -56,24 +70,28 @@ export async function loader({context}: Route.LoaderArgs) {
 
 type VendorItem = {vendor: string; image: string | null; imageAlt: string};
 
+function getVendorDisplayName(vendor: string) {
+  return VENDOR_DISPLAY_NAMES[vendor] ?? vendor;
+}
+
 export default function BrandsPage() {
   const {vendorData} = useLoaderData<typeof loader>();
   const [activeLetter, setActiveLetter] = useState<string>('ALL');
 
   const sorted = [...vendorData].sort((a, b) =>
-    a.vendor.localeCompare(b.vendor),
+    getVendorDisplayName(a.vendor).localeCompare(getVendorDisplayName(b.vendor)),
   );
 
-  const activeLettersSet = new Set(sorted.map((b) => b.vendor[0].toUpperCase()));
+  const activeLettersSet = new Set(sorted.map((b) => getVendorDisplayName(b.vendor)[0].toUpperCase()));
 
   const filtered =
     activeLetter === 'ALL'
       ? sorted
-      : sorted.filter((b) => b.vendor[0].toUpperCase() === activeLetter);
+      : sorted.filter((b) => getVendorDisplayName(b.vendor)[0].toUpperCase() === activeLetter);
 
   // Group by first letter
   const groups = filtered.reduce<Record<string, VendorItem[]>>((acc, brand) => {
-    const letter = brand.vendor[0].toUpperCase();
+    const letter = getVendorDisplayName(brand.vendor)[0].toUpperCase();
     if (!acc[letter]) acc[letter] = [];
     acc[letter].push(brand);
     return acc;
@@ -133,7 +151,7 @@ export default function BrandsPage() {
                       className="sf-brands-card__img"
                     />
                   ) : (
-                    <span className="sf-brands-card__name">{vendor}</span>
+                    <span className="sf-brands-card__name">{getVendorDisplayName(vendor)}</span>
                   )}
                 </Link>
               ))}
