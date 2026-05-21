@@ -93,6 +93,7 @@ const FOOTER_PAGE_HANDLES = new Set([
   'service-center',
   'contact-us',
   'การชำระเงิน',
+  'ช่องทางการชำระเงิน-nts',
   'การรับประกัน',
   'บริการหลังการขาย',
   'นโยบายการติดตั้ง',
