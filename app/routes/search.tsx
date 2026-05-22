@@ -14,19 +14,13 @@ import type {
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
 
-type FilterValue = {
-  id: string;
-  label: string;
-  count: number;
-  input: string;
-};
-
-type FilterGroup = {
-  id: string;
-  label: string;
-  type: string;
-  values: FilterValue[];
-};
+import {
+  type FilterValue,
+  type FilterGroup,
+} from '~/types';
+import {SEARCH_SORT_OPTIONS, PAGE_SIZE_OPTIONS} from '~/utils/sort';
+import {VENDOR_FILTER} from '~/utils/vendors';
+import {SEARCH_QUERY, PREDICTIVE_SEARCH_QUERY} from '~/graphql/queries/search';
 
 type ExtendedRegularSearch = RegularSearchReturn & {
   productFilters: FilterGroup[];
@@ -48,17 +42,6 @@ export async function loader({request, context}: Route.LoaderArgs) {
   p.catch(console.error);
   return await p;
 }
-
-const SORT_OPTIONS = [
-  {value: 'relevance',   label: 'Relevance'},
-  {value: 'name-asc',   label: 'Product name A-Z'},
-  {value: 'name-desc',  label: 'Product name Z-A'},
-  {value: 'price-desc', label: 'Highest price'},
-  {value: 'price-asc',  label: 'Lowest price'},
-  {value: 'newest',     label: 'New arrivals'},
-];
-
-const PAGE_SIZE_OPTIONS = [12, 36, 64, 128];
 
 function SortShowToolbar() {
   const [searchParams] = useSearchParams();
@@ -85,7 +68,7 @@ function SortShowToolbar() {
           value={currentSort}
           onChange={(e) => changeParam('sort', e.target.value)}
         >
-          {SORT_OPTIONS.map((o) => (
+          {SEARCH_SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
@@ -111,10 +94,10 @@ function SortShowToolbar() {
  * Renders the /search route
  */
 export default function SearchPage() {
-  const data = useLoaderData<typeof loader>() as ExtendedRegularSearch & {type: string};
+  const data = useLoaderData<typeof loader>() as (ExtendedRegularSearch | PredictiveSearchReturn) & {type: string};
   if (data.type === 'predictive') return null;
 
-  const {term, result, error, productFilters = []} = data;
+  const {term, result, error, productFilters = []} = data as ExtendedRegularSearch;
   const total = result?.total ?? 0;
 
   const [searchParams] = useSearchParams();
@@ -336,171 +319,7 @@ export default function SearchPage() {
   );
 }
 
-/**
- * Regular search query and fragments
- * (adjust as needed)
- */
-const SEARCH_PRODUCT_FRAGMENT = `#graphql
-  fragment SearchProduct on Product {
-    __typename
-    handle
-    id
-    publishedAt
-    title
-    trackingParameters
-    vendor
-    selectedOrFirstAvailableVariant(
-      selectedOptions: []
-      ignoreUnknownOptions: true
-      caseInsensitiveMatch: true
-    ) {
-      id
-      sku
-      image {
-        url
-        altText
-        width
-        height
-      }
-      price {
-        amount
-        currencyCode
-      }
-      compareAtPrice {
-        amount
-        currencyCode
-      }
-      selectedOptions {
-        name
-        value
-      }
-      product {
-        handle
-        title
-      }
-    }
-  }
-` as const;
 
-const SEARCH_PAGE_FRAGMENT = `#graphql
-  fragment SearchPage on Page {
-     __typename
-     handle
-    id
-    title
-    trackingParameters
-  }
-` as const;
-
-const SEARCH_ARTICLE_FRAGMENT = `#graphql
-  fragment SearchArticle on Article {
-    __typename
-    handle
-    id
-    title
-    trackingParameters
-  }
-` as const;
-
-const PAGE_INFO_FRAGMENT = `#graphql
-  fragment PageInfoFragment on PageInfo {
-    hasNextPage
-    hasPreviousPage
-    startCursor
-    endCursor
-  }
-` as const;
-
-// NOTE: https://shopify.dev/docs/api/storefront/latest/queries/search
-export const SEARCH_QUERY = `#graphql
-  query RegularSearch(
-    $country: CountryCode
-    $endCursor: String
-    $first: Int
-    $language: LanguageCode
-    $last: Int
-    $term: String!
-    $startCursor: String
-    $filters: [ProductFilter!]
-    $sortKey: SearchSortKeys
-    $reverse: Boolean
-  ) @inContext(country: $country, language: $language) {
-    articles: search(
-      query: $term,
-      types: [ARTICLE],
-      first: 10,
-    ) {
-      nodes {
-        ...on Article {
-          ...SearchArticle
-        }
-      }
-    }
-    pages: search(
-      query: $term,
-      types: [PAGE],
-      first: 10,
-    ) {
-      nodes {
-        ...on Page {
-          ...SearchPage
-        }
-      }
-    }
-    products: search(
-      after: $endCursor,
-      before: $startCursor,
-      first: $first,
-      last: $last,
-      query: $term,
-      sortKey: $sortKey,
-      reverse: $reverse,
-      types: [PRODUCT],
-      unavailableProducts: HIDE,
-      productFilters: $filters,
-    ) {
-      nodes {
-        ...on Product {
-          ...SearchProduct
-        }
-      }
-      pageInfo {
-        ...PageInfoFragment
-      }
-      productFilters {
-        id
-        label
-        type
-        values {
-          id
-          label
-          count
-          input
-        }
-      }
-    }
-  }
-  ${SEARCH_PRODUCT_FRAGMENT}
-  ${SEARCH_PAGE_FRAGMENT}
-  ${SEARCH_ARTICLE_FRAGMENT}
-  ${PAGE_INFO_FRAGMENT}
-` as const;
-
-/**
- * Regular search fetcher
- */
-const ALLOWED_VENDORS = [
-  'NTS',
-  'PRIMO',
-  'ABSOLUTE',
-  'Cutlery Pro',
-  'Top Rinse',
-  'Iwatani',
-  'Justa',
-  'Kitchin',
-  'VEESAN',
-];
-const VENDOR_FILTER = `(${ALLOWED_VENDORS.map((v) => `vendor:"${v}"`).join(' OR ')})`;
 
 async function regularSearch({
   request,
@@ -508,7 +327,7 @@ async function regularSearch({
 }: Pick<
   Route.LoaderArgs,
   'request' | 'context'
->): Promise<RegularSearchReturn> {
+>): Promise<ExtendedRegularSearch> {
   const {storefront} = context;
   const url = new URL(request.url);
   const sortParam = url.searchParams.get('sort') ?? 'relevance';
@@ -547,7 +366,7 @@ async function regularSearch({
     ...items
   }: {errors?: Array<{message: string}>} & RegularSearchQuery =
     await storefront.query(SEARCH_QUERY, {
-      variables: {...variables, term: filteredTerm, filters: parsedFilters, sortKey, reverse},
+      variables: {...variables, term: filteredTerm, filters: parsedFilters as any, sortKey: sortKey as any, reverse},
     });
 
   if (!items) {
@@ -570,130 +389,7 @@ async function regularSearch({
   return {type: 'regular' as const, term, error, result: {total, items}, productFilters};
 }
 
-/**
- * Predictive search query and fragments
- * (adjust as needed)
- */
-const PREDICTIVE_SEARCH_ARTICLE_FRAGMENT = `#graphql
-  fragment PredictiveArticle on Article {
-    __typename
-    id
-    title
-    handle
-    blog {
-      handle
-    }
-    image {
-      url
-      altText
-      width
-      height
-    }
-    trackingParameters
-  }
-` as const;
 
-const PREDICTIVE_SEARCH_COLLECTION_FRAGMENT = `#graphql
-  fragment PredictiveCollection on Collection {
-    __typename
-    id
-    title
-    handle
-    image {
-      url
-      altText
-      width
-      height
-    }
-    trackingParameters
-  }
-` as const;
-
-const PREDICTIVE_SEARCH_PAGE_FRAGMENT = `#graphql
-  fragment PredictivePage on Page {
-    __typename
-    id
-    title
-    handle
-    trackingParameters
-  }
-` as const;
-
-const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
-  fragment PredictiveProduct on Product {
-    __typename
-    id
-    title
-    handle
-    trackingParameters
-    selectedOrFirstAvailableVariant(
-      selectedOptions: []
-      ignoreUnknownOptions: true
-      caseInsensitiveMatch: true
-    ) {
-      id
-      image {
-        url
-        altText
-        width
-        height
-      }
-      price {
-        amount
-        currencyCode
-      }
-    }
-  }
-` as const;
-
-const PREDICTIVE_SEARCH_QUERY_FRAGMENT = `#graphql
-  fragment PredictiveQuery on SearchQuerySuggestion {
-    __typename
-    text
-    styledText
-    trackingParameters
-  }
-` as const;
-
-// NOTE: https://shopify.dev/docs/api/storefront/latest/queries/predictiveSearch
-const PREDICTIVE_SEARCH_QUERY = `#graphql
-  query PredictiveSearch(
-    $country: CountryCode
-    $language: LanguageCode
-    $limit: Int!
-    $limitScope: PredictiveSearchLimitScope!
-    $term: String!
-    $types: [PredictiveSearchType!]
-  ) @inContext(country: $country, language: $language) {
-    predictiveSearch(
-      limit: $limit,
-      limitScope: $limitScope,
-      query: $term,
-      types: $types,
-    ) {
-      articles {
-        ...PredictiveArticle
-      }
-      collections {
-        ...PredictiveCollection
-      }
-      pages {
-        ...PredictivePage
-      }
-      products {
-        ...PredictiveProduct
-      }
-      queries {
-        ...PredictiveQuery
-      }
-    }
-  }
-  ${PREDICTIVE_SEARCH_ARTICLE_FRAGMENT}
-  ${PREDICTIVE_SEARCH_COLLECTION_FRAGMENT}
-  ${PREDICTIVE_SEARCH_PAGE_FRAGMENT}
-  ${PREDICTIVE_SEARCH_PRODUCT_FRAGMENT}
-  ${PREDICTIVE_SEARCH_QUERY_FRAGMENT}
-` as const;
 
 /**
  * Predictive search fetcher

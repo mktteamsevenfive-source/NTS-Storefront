@@ -1,4 +1,4 @@
-import {Link, useLoaderData} from 'react-router';
+import {Link, redirect, useLoaderData} from 'react-router';
 import type {Route} from './+types/policies.$handle';
 import {type Shop} from '@shopify/hydrogen/storefront-api-types';
 

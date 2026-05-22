@@ -1,0 +1,191 @@
+---
+description: Comprehensive best practices and rules for developing an enterprise-grade Shopify Hydrogen storefront with React Router v7, GraphQL Codegen, Tailwind CSS v4, and high-performance frontend engineering.
+globs: ["app/**/*", "vite.config.ts", "package.json"]
+alwaysApply: true
+---
+
+# Shopify Hydrogen Enterprise Architecture & Frontend Standards
+
+เอกสารแนวทางปฏิบัติและกฎเกณฑ์ (MD Skill) สำหรับนักพัฒนาและ AI ในการเขียนโค้ด พัฒนา และออกแบบสถาปัตยกรรมของโปรเจกต์ **NTS-Storefront** ให้เป็น Storefront ระดับ Enterprise ที่รองรับแคตตาล็อกสินค้าขนาดใหญ่ (50,000+ SKUs) เน้นความเร็ว (Performance), SEO, ความเป็นระเบียบของระบบคอมโพเนนต์ และการออกแบบ UI/UX ระดับพรีเมียม (ธีม: อุปกรณ์ครัวเชิงพาณิชย์ระดับโปร - Commercial Kitchen Equipment)
+
+---
+
+## 1. PROJECT ARCHITECTURE & DIRECTORIES
+
+การจัดวางระบบโฟลเดอร์ต้องแยกส่วนระหว่าง **UI Component**, **Business Logic**, และ **API Layer** อย่างชัดเจน เพื่อรองรับทีมงานขนาดใหญ่และโค้ดที่ขยายตัวได้ง่าย:
+
+```
+app/
+  components/     # คอมโพเนนต์ UI พื้นฐานแบบ Reusable/Atomic (เช่น Button, Input, Modal, Badge)
+  sections/       # คอมโพเนนต์ประกอบร่างระดับ Block/Section ที่ใช้ซ้ำในหลายๆ หน้า (เช่น Hero, ProductGrid, Carousel)
+  layouts/        # ส่วนจัดวางโครงสร้างหน้าเว็บหลัก (เช่น PageLayout, AccountLayout)
+  routes/         # ไฟล์ควบคุมการทำงานของ Routing และ Data Loading ของแต่ละหน้าเว็บ
+  lib/            # ไฟล์เชื่อมต่อระบบภายนอก, API clients, และ Config สำหรับ Hydrogen/Shopify
+  graphql/        # ไฟล์ GraphQL queries และ mutations แยกตามโมดูลหลัก (เช่น queries/customer.ts, queries/cart.ts)
+  hooks/          # Custom hooks ส่วนกลางที่ใช้จัดการ State หรือ Logic พิเศษ (เช่น usePredictiveSearch, useFilters)
+  providers/      # React Providers ส่วนกลาง (เช่น CartProvider, AnalyticsProvider)
+  styles/         # ไฟล์สไตล์ชีทหลักและ Tailwind CSS configuration
+  types/          # ไฟล์ประกาศ Types และ Interfaces สากลของโปรเจกต์
+  utils/          # ฟังก์ชันอรรถประโยชน์แบบ Pure/Helper functions (เช่น การจัดฟอร์แมตราคา, การแปลงวันที่)
+```
+
+---
+
+## 2. CLEAN CODE & ENTERPRISE PRINCIPLES
+
+*   **Single Responsibility Principle (SRP):** หนึ่งไฟล์/หนึ่งคอมโพเนนต์ต้องทำหน้าที่อย่างเดียวเท่านั้น เช่น แยก GraphQL query ออกจากโค้ดของ Loader/Route, หรือแยก UI แสดงผลออกจากฟังก์ชันการคำนวณราคา
+*   **Strong TypeScript Typing:** หลีกเลี่ยงการใช้ `any` หรือ `unknown` โดยเด็ดขาด ให้ใช้ไทป์ที่ได้จากระบบ GraphQL Codegen (`storefrontapi.generated.d.ts`) หรือระบุไทป์โครงสร้างให้ครบถ้วน
+*   **DRY (Don't Repeat Yourself):** ฟังก์ชันที่มีการใช้ซ้ำมากกว่า 2 ครั้ง ให้ย้ายไปจัดกลุ่มใน `utils/` หรือสร้างเป็น `hooks/` ทันที
+*   **Absolute Imports:** อ้างอิงพาธภายในด้วยไทล์ด (`~/`) เสมอ เพื่อความสะอาดและย้ายไฟล์ได้สะดวก เช่น:
+    ```typescript
+    import { ProductCard } from '~/components/ProductCard';
+    import { useCart } from '~/hooks/useCart';
+    ```
+
+---
+
+## 3. CORE COMPONENT SYSTEM (REUSABLE & ACCESSIBLE)
+
+คอมโพเนนต์หลักที่สร้างขึ้นต้องรองรับ **Mobile-first Responsive**, การเข้าถึงตามมาตรฐาน **WAI-ARIA (Accessibility)** และการควบคุมสถานะโหลด (Loading States):
+
+1.  **ProductCard & ProductGrid:**
+    *   ต้องแสดงผลสินค้าขนาดใหญ่ได้อย่างรวดเร็ว
+    *   รองรับ Lazy Loading รูปภาพแบบ Progressive
+    *   มีพื้นที่แสดงสถานะสินค้าหมด (Out of Stock) และป้ายกำกับพิเศษ (เช่น "Best Seller", "Sale")
+2.  **VariantSelector:**
+    *   ออกแบบให้อ่านง่าย เข้าใจง่ายสำหรับผู้ซื้อระดับ B2B
+    *   แสดงตัวเลือกที่พร้อมจำหน่าย (Available) และหมดคลัง (Unavailable) อย่างชัดเจน
+    *   ปรับปรุง URL query parameters ทันทีเมื่อผู้ใช้เปลี่ยนตัวเลือกสินค้า เพื่อให้อ้างอิงแบบ Direct link ได้
+3.  **AddToCartButton:**
+    *   มีสถานะบ่งบอกอย่างชัดเจนขณะกำลังเพิ่มสินค้า (Adding...) ป้องกันการกดเบิ้ล (Debounce)
+    *   เชื่อมต่อข้อมูล Analytics tracking ไปยังระบบหลังบ้าน
+4.  **CartDrawer & SearchDrawer:**
+    *   ทำงานแบบ Sliding panel จากขวา/ซ้าย
+    *   รองรับ Keyboard navigation (Focus trap และการกดปุ่ม `ESC` เพื่อปิดหน้าต่าง)
+5.  **MegaMenu & Navigation:**
+    *   ต้องแสดงสถาปัตยกรรมหมวดหมู่สินค้าเชิงลึกได้อย่างสวยงามบนหน้าจอเดสก์ท็อป
+    *   มีหน้าต่างแบบ Mobile menu/drawer แยกต่างหากที่กดใช้งานง่ายสำหรับนิ้วมือ
+
+---
+
+## 4. GRAPHQL & STOREFRONT API OPTIMIZATION
+
+การดึงข้อมูลผ่าน Storefront API ต้องทำอย่างมีประสิทธิภาพเพื่อลด Payload ขนาดใหญ่:
+
+*   **ดึงข้อมูลเฉพาะฟิลด์ที่จำเป็นเท่านั้น:** หลีกเลี่ยงการ Query ฟิลด์ที่ไม่ได้ใช้งาน
+*   **ใช้ Reusable Fragments:** แยกชิ้นส่วนโมดูล GraphQL (เช่น Product, Variant, Cart, Customer) เป็น Fragment ในโฟลเดอร์ `app/lib/fragments.ts` หรือ `app/graphql/`
+*   **Cursor-based Pagination:** การดึงข้อมูลรายการสินค้าแบบหน้าถัดไป ต้องอาศัย `endCursor` และฟังก์ชัน `hasNextPage` เพื่อป้องกันการโหลดซ้ำซ้อนหรือหน้าเว็บช้าลง
+*   **ตัวอย่างโครงสร้างที่ดีสำหรับการดึงข้อมูล (Type-Safe Query):**
+    ```typescript
+    import { PRODUCT_CARD_FRAGMENT } from '~/lib/fragments';
+
+    export const PRODUCT_QUERY = `#graphql
+      ${PRODUCT_CARD_FRAGMENT}
+      query Product($handle: String!, $selectedOptions: [SelectedOptionInput!]!) {
+        product(handle: $handle) {
+          ...ProductCard
+          descriptionHtml
+          selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions) {
+            id
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    `;
+    ```
+
+---
+
+## 5. PERFORMANCE OPTIMIZATION (TARGET: LIGHTHOUSE 90+)
+
+ร้านค้าแคตตาล็อกขนาดใหญ่จำเป็นต้องมี Core Web Vitals ที่ดีเลิศเพื่อความรวดเร็วและอันดับ SEO:
+
+*   **Critical Rendering (Above the Fold):** ดึงเฉพาะข้อมูลสำคัญที่จำเป็นในการเรนเดอร์หน้าจอเริ่มต้นด้วย `await` จากนั้นใช้ฟังก์ชัน `defer` เพื่อดึงข้อมูลที่เหลือเบื้องหลัง
+*   **Skeleton Loading States:** ใช้คอมโพเนนต์ภาพจำลอง (Skeleton) ที่มีขนาดคงที่ (Fixed Aspect Ratio) ระหว่างรอดึงข้อมูลย่อย เพื่อลดค่า Cumulative Layout Shift (CLS)
+*   **Image Optimization:** ใช้คอมโพเนนต์ `<Image>` จากแพ็กเกจ `@shopify/hydrogen` เสมอ เพื่อกำหนดขนาด (Sizes) และความละเอียดที่เหมาะสมตามแต่ละอุปกรณ์แบบไดนามิก และเปิดฟังก์ชัน lazy loading ยกเว้นรูปแบนเนอร์หลัก
+*   **Cache Strategies:**
+    *   ใช้ `storefront.CacheShort()` สำหรับข้อมูลสินค้าทั่วไป
+    *   ใช้ `storefront.CacheLong()` สำหรับส่วนเมนูตั้งค่าและเลย์เอาต์หลัก
+    *   ใช้ `storefront.CacheNone()` ในส่วนเส้นทางข้อมูล Cart, Checkout, และ Customer Account
+
+---
+
+## 6. SEO SYSTEM (SEARCH ENGINE OPTIMIZATION)
+
+ต้องติดตั้งข้อมูล Metadata และ Structured Data (JSON-LD) เสมอเพื่อให้เครื่องมือค้นหาเข้าใจลักษณะข้อมูล:
+
+*   **Dynamic Meta Tags:** ตั้งค่า Title และ Meta Description ให้เปลี่ยนไปตามหมวดหมู่หรือรายละเอียดหน้าเว็บ
+*   **JSON-LD Schemas:** แนบสกีมาประเภท Product และ Breadcrumb ในหน้าแสดงผลสินค้า เพื่อแสดงคะแนนรีวิว, ราคา และสถานะสินค้าในระบบค้นหา
+*   **ตัวอย่างการตั้งค่า Metadata และ JSON-LD (React Router v7):**
+    ```typescript
+    import type { Route } from './+types/product';
+
+    export function meta({ data }: Route.MetaArgs) {
+      if (!data?.product) {
+        return [
+          { title: 'Product Not Found | NTS' },
+          { name: 'description', content: 'Product not found' }
+        ];
+      }
+      return [
+        { title: `${data.product.title} | NTS Storefront` },
+        { name: 'description', content: data.product.descriptionHtml.substring(0, 155) },
+        { property: 'og:title', content: data.product.title },
+        { property: 'og:description', content: data.product.descriptionHtml.substring(0, 155) },
+        { property: 'og:image', content: data.product.selectedOrFirstAvailableVariant?.image?.url }
+      ];
+    }
+    ```
+
+---
+
+## 7. ENTERPRISE FILTER SYSTEM ( large-scale catalogs 50,000+ SKUs )
+
+ระบบตัวกรองหน้าค้นหาและแคตตาล็อกสินค้าขนาดใหญ่ต้องทำงานได้อย่างลื่นไหล รวดเร็ว และไม่มีการโหลดหน้าใหม่:
+
+*   **URL-Synced Filters:** บันทึกตัวกรองทั้งหมด (แบรนด์, ขนาด, ช่วงราคา, สถานะคลัง, คุณลักษณะสินค้า) ไว้บน URL Query Parameters เสมอ เพื่อให้ลูกค้าสามารถคัดลอกลิงก์ผลลัพธ์ที่ตรงใจไปแบ่งปันได้ทันที
+*   **Dynamic Generation:** รายการตัวกรองต้องเปลี่ยนไปตามบริบทของผลลัพธ์หรือคอลเลกชันสินค้าที่กำลังเปิดอยู่
+*   **Instant UX with Mobile Drawer:** บนหน้าจอมือถือ ต้องมีแผงตัวกรองแบบสไลด์ขึ้น/ข้าง (Filter Drawer) เพื่อไม่ให้บดบังการเลือกซื้อ และรองรับการทำ Instant dynamic search ผลลัพธ์อัปเดตแบบเรียลไทม์
+
+---
+
+## 8. PREDICTIVE SEARCH & SUGGESTION SYSTEM
+
+*   **Typo Tolerance & SKU Search:** ระบบค้นหาต้องทำงานได้แม้ลูกค้าสะกดคำผิดพลาดเล็กน้อย หรือพิมพ์ค้นหาผ่านรหัสสินค้า (SKU) ตรงๆ สำหรับลูกค้ากลุ่มช่างหรือจัดซื้อ
+*   **Search Suggestions:** แสดงผลการค้นหาแบบตอบสนองทันใจ (Predictive Search) พร้อมภาพตัวอย่างสินค้าและแบรนด์ประกอบ
+*   **Recent & Popular Searches:** แสดงรายการคำค้นหาล่าสุดและคำค้นหายอดนิยมเมื่อผู้ใช้นำเคอร์เซอร์ไปชี้ในช่องค้นหา เพื่อเพิ่มโอกาสการขยายตะกร้าสินค้า
+
+---
+
+## 9. DESIGN SYSTEM (COMMERCIAL KITCHEN EQUIPMENT THEME)
+
+สไตล์งานเน้นความน่าเชื่อถือ มินิมอล ระดับพรีเมียมของอุตสาหกรรมเครื่องครัวเชิงพาณิชย์:
+
+*   **Color Palette (Harmonious Sleek Palette):**
+    *   *Primary (Steel/Slate Gray):* สีของโลหะสแตนเลส สื่อถึงความคงทนและเป็นมืออาชีพ (`slate-900`, `slate-700`)
+    *   *Accent (Industrial Orange/Red):* สีโทนส้มหรือแดงอุตสาหกรรมในจุดที่ดึงดูดสายตาอย่างปุ่ม CTA หรือราคาลดพิเศษ (`orange-600`, `red-600`)
+    *   *Background:* ใช้สีขาวสะอาดสลับเฉดสีเทาบางเบา (`slate-50`, `neutral-100`)
+*   **Typography:**
+    *   ใช้แบบอักษรที่มีน้ำหนักมั่นคง เรียบร้อย (เช่น *Inter* หรือ *Outfit* จาก Google Fonts)
+    *   ให้ความสำคัญกับขนาดอักษรและระดับความหนา (Weight Scale) ที่สร้างความโดดเด่นให้กับรหัส SKU และรายละเอียดเชิงเทคนิค
+*   **UI Elements:**
+    *   ขอบและมุมของปุ่ม (Border radius) ควรมีความคม มินิมอล (แบบกลมน้อย `rounded-sm` หรือ `rounded-md`) เพื่อเสริมความรู้สึกมั่นคงแข็งแรงของเครื่องครัวอุตสาหกรรม
+
+---
+
+## 10. CODE QUALITY & DEPLOYMENT ENVIRONMENTS
+
+*   **TypeScript Strict Mode:** บังคับใช้งานและปฏิบัติตามกฎของ TS อย่างเข้มงวด
+*   **Absolute imports:** ตรวจทานไม่ให้มีการใช้สัญกรณ์เรียกไฟล์ถอยหลังยาวๆ (`../../../../`) ให้ใช้ `~/`
+*   **Environment Variables:** ตรวจสอบค่าตัวแปรสากลก่อนรันแอปพลิเคชันทุกครั้ง:
+    *   `SHOPIFY_STORE_DOMAIN`
+    *   `SHOPIFY_STOREFRONT_API_TOKEN`
+    *   `PUBLIC_STORE_DOMAIN`
+*   **Deployment Cycle:**
+    *   *Development:* ใช้ Oxygen CLI ในการจำลองสภาพแวดล้อม Mini-Oxygen ในเครื่อง
+    *   *Staging:* พรีวิวฟีเจอร์สำหรับทดสอบความเข้ากันได้
+    *   *Production:* ดีพลอยขึ้นระบบ Shopify Oxygen เพื่อให้ได้ Edge network ที่เร็วที่สุดในโลก

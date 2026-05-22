@@ -1,9 +1,9 @@
 import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import type {
-  ProductItemFragment,
-  CollectionItemFragment,
+  ColProductItemFragment,
   RecommendedProductFragment,
+  SearchProductFragment,
 } from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
 
@@ -12,17 +12,15 @@ export function ProductItem({
   loading,
 }: {
   product:
-    | CollectionItemFragment
-    | ProductItemFragment
-    | RecommendedProductFragment;
+    | ColProductItemFragment
+    | RecommendedProductFragment
+    | SearchProductFragment;
   loading?: 'eager' | 'lazy';
 }) {
   const variantUrl = useVariantUrl(product.handle);
-  const image = product.featuredImage;
+  const image = 'featuredImage' in product ? product.featuredImage : (product as any).selectedOrFirstAvailableVariant?.image;
   const vendor = (product as any).vendor as string | undefined;
-  const variantSku = (product as any).selectedOrFirstAvailableVariant?.sku as
-    | string
-    | undefined;
+  const variantSku = (product as any).selectedOrFirstAvailableVariant?.sku as string | undefined;
 
   return (
     <Link
@@ -45,7 +43,11 @@ export function ProductItem({
         {variantSku ? <p className="product-item__sku">{variantSku}</p> : null}
         <h4 className="product-item__name">{product.title}</h4>
         <small className="product-item__price">
-          <Money data={product.priceRange.minVariantPrice} />
+          {'priceRange' in product && product.priceRange ? (
+            <Money data={product.priceRange.minVariantPrice} />
+          ) : (product as any).selectedOrFirstAvailableVariant?.price ? (
+            <Money data={(product as any).selectedOrFirstAvailableVariant.price} />
+          ) : null}
         </small>
       </div>
     </Link>

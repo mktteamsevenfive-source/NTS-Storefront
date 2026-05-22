@@ -4,40 +4,18 @@ import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics, Image, Money, Pagination} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {getT} from '~/lib/locale';
+import type {ProductCollectionSortKeys} from '@shopify/hydrogen/storefront-api-types';
 import type {RootLoader} from '~/root';
+import {type FilterValue, type FilterGroup} from '~/types';
+import {COLLECTION_SORT_MAP, PAGE_SIZE_OPTIONS} from '~/utils/sort';
+import {ALLOWED_VENDORS} from '~/utils/vendors';
+import {COLLECTION_QUERY} from '~/graphql/queries/collection';
+import {useFilters} from '~/hooks/useFilters';
+import {useSearchParamState} from '~/hooks/useSearchParamState';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [{title: `NTS | ${data?.collection.title ?? ''}`}];
 };
-
-type FilterValue = {id: string; label: string; count: number; input: string};
-type FilterGroup = {id: string; label: string; type: string; values: FilterValue[]};
-
-const SORT_OPTIONS = [
-  {value: 'manual',      label: 'Featured'},
-  {value: 'best-selling',label: 'Best selling'},
-  {value: 'name-asc',    label: 'Product name A–Z'},
-  {value: 'name-desc',   label: 'Product name Z–A'},
-  {value: 'price-asc',   label: 'Lowest price'},
-  {value: 'price-desc',  label: 'Highest price'},
-  {value: 'newest',      label: 'New arrivals'},
-];
-
-const SORT_MAP: Record<string, {sortKey: string; reverse: boolean}> = {
-  manual:        {sortKey: 'MANUAL',           reverse: false},
-  'best-selling':{sortKey: 'BEST_SELLING',     reverse: false},
-  'name-asc':    {sortKey: 'TITLE',            reverse: false},
-  'name-desc':   {sortKey: 'TITLE',            reverse: true},
-  'price-asc':   {sortKey: 'PRICE',            reverse: false},
-  'price-desc':  {sortKey: 'PRICE',            reverse: true},
-  newest:        {sortKey: 'CREATED',          reverse: true},
-};
-
-const PAGE_SIZE_OPTIONS = [12, 36, 64, 128];
-
-const ALLOWED_VENDORS = [
-  'NTS', 'PRIMO', 'ABSOLUTE', 'Cutlery Pro', 'Top Rinse', 'Iwatani', 'Justa', 'Kitchin', 'VEESAN',
-];
 
 export async function loader(args: Route.LoaderArgs) {
   return loadCriticalData(args);
@@ -53,7 +31,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const sortParam = url.searchParams.get('sort') ?? 'manual';
   const pageSizeParam = Number(url.searchParams.get('show') ?? '12');
   const pageBy = PAGE_SIZE_OPTIONS.includes(pageSizeParam) ? pageSizeParam : 12;
-  const {sortKey, reverse} = SORT_MAP[sortParam] ?? SORT_MAP['manual'];
+  const {sortKey, reverse} = COLLECTION_SORT_MAP[sortParam] ?? COLLECTION_SORT_MAP['manual'];
   const paginationVariables = getPaginationVariables(request, {pageBy});
 
   const rawFilters = url.searchParams.getAll('filters');
@@ -76,7 +54,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
       variables: {
         handle,
         ...paginationVariables,
-        sortKey,
+        sortKey: sortKey as ProductCollectionSortKeys,
         reverse,
         filters: allFilters,
       },
@@ -156,7 +134,6 @@ export default function Collection() {
   const rootData = useRouteLoaderData<RootLoader>('root');
   const t = getT(rootData?.lang ?? 'EN');
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
 
@@ -165,45 +142,28 @@ export default function Collection() {
   const priceGroup = productFilters.find((g) => g.type === 'PRICE_RANGE') ?? null;
   const nonPriceFilters = productFilters.filter((g) => g.type !== 'PRICE_RANGE');
 
-  const activeFilters = searchParams.getAll('filters');
-  const minPrice = searchParams.get('minPrice') ?? '';
-  const maxPrice = searchParams.get('maxPrice') ?? '';
-  const hasActiveFilters = activeFilters.length > 0 || minPrice || maxPrice;
-  const currentPage = Math.max(1, Number(searchParams.get('page') ?? '1'));
+  const {
+    activeFilters,
+    minPrice,
+    maxPrice,
+    hasActiveFilters,
+    toggleFilter,
+    applyPrice: applyPriceHook,
+    clearFilters,
+  } = useFilters();
 
-  function toggleFilter(input: string) {
-    const current = searchParams.getAll('filters');
-    const next = current.includes(input)
-      ? current.filter((f) => f !== input)
-      : [...current, input];
-    const p = new URLSearchParams(searchParams);
-    p.delete('filters');
-    next.forEach((f) => p.append('filters', f));
-    p.delete('cursor');
-    p.delete('page');
-    navigate(`?${p.toString()}`);
-  }
+  const currentPage = Math.max(1, Number(searchParams.get('page') ?? '1'));
 
   function applyPrice(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const min = (form.elements.namedItem('minPrice') as HTMLInputElement).value;
     const max = (form.elements.namedItem('maxPrice') as HTMLInputElement).value;
-    const p = new URLSearchParams(searchParams);
-    if (min) p.set('minPrice', min); else p.delete('minPrice');
-    if (max) p.set('maxPrice', max); else p.delete('maxPrice');
-    p.delete('cursor');
-    p.delete('page');
-    navigate(`?${p.toString()}`);
+    applyPriceHook(min, max);
   }
 
   function clearAllFilters() {
-    const p = new URLSearchParams();
-    const sort = searchParams.get('sort');
-    const show = searchParams.get('show');
-    if (sort) p.set('sort', sort);
-    if (show) p.set('show', show);
-    navigate(`?${p.toString()}`);
+    clearFilters();
   }
 
   const toggleGroup = (id: string) =>
@@ -397,87 +357,4 @@ export default function Collection() {
   );
 }
 
-const PRODUCT_ITEM_FRAGMENT = `#graphql
-  fragment ColMoneyItem on MoneyV2 {
-    amount
-    currencyCode
-  }
-  fragment ColProductItem on Product {
-    id
-    handle
-    title
-    vendor
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
-    }
-    selectedOrFirstAvailableVariant(
-      selectedOptions: []
-      ignoreUnknownOptions: true
-      caseInsensitiveMatch: true
-    ) {
-      sku
-    }
-    priceRange {
-      minVariantPrice {
-        ...ColMoneyItem
-      }
-    }
-  }
-` as const;
 
-const COLLECTION_QUERY = `#graphql
-  ${PRODUCT_ITEM_FRAGMENT}
-  query Collection(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-    $sortKey: ProductCollectionSortKeys
-    $reverse: Boolean
-    $filters: [ProductFilter!]
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      title
-      description
-      products(
-        first: $first
-        last: $last
-        before: $startCursor
-        after: $endCursor
-        sortKey: $sortKey
-        reverse: $reverse
-        filters: $filters
-      ) {
-        nodes {
-          ...ColProductItem
-        }
-        filters {
-          id
-          label
-          type
-          values {
-            id
-            label
-            count
-            input
-          }
-        }
-        pageInfo {
-          hasPreviousPage
-          hasNextPage
-          endCursor
-          startCursor
-        }
-      }
-    }
-  }
-` as const;
