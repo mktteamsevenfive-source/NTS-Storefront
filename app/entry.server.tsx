@@ -19,6 +19,23 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    frameSrc: [
+      "'self'",
+      'https://www.google.com',
+      'https://www.google.com/maps',
+      'https://maps.google.com',
+    ],
+    connectSrc: [
+      "'self'",
+      'https://maps.googleapis.com',
+      'https://www.google.com',
+      'https://maps.gstatic.com',
+    ],
+    imgSrc: [
+      "'self'",
+      'https://maps.gstatic.com',
+      'https://www.google.com',
+    ],
   });
 
   const body = await renderToReadableStream(
