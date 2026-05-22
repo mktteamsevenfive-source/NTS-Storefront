@@ -36,13 +36,13 @@ export function Footer({
                   <Link to="/pages/warranty-policy-nts" prefetch="intent" className="sf-footer__link">
                     Warranty policy
                   </Link>
-                  <Link to="/policies/shipping-policy" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/delivery-and-shipping-policy-nts" prefetch="intent" className="sf-footer__link">
                     Delivery and shipping policy
                   </Link>
-                  <Link to="/pages/after-sales-service" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/after-sales-service-nts" prefetch="intent" className="sf-footer__link">
                     After sales service
                   </Link>
-                  <Link to="/pages/installation-policy" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/installation-policy-nts" prefetch="intent" className="sf-footer__link">
                     Installation policy
                   </Link>
                 </nav>
@@ -52,13 +52,13 @@ export function Footer({
               <div className="sf-footer__col">
                 <h4 className="sf-footer__col-title">About Us</h4>
                 <nav className="sf-footer__links">
-                  <Link to="/pages/who-we-are" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/who-we-are-nts" prefetch="intent" className="sf-footer__link">
                     Who we are
                   </Link>
-                  <Link to="/pages/service-center" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/service-center-nts" prefetch="intent" className="sf-footer__link">
                     Service center
                   </Link>
-                  <Link to="/pages/contact-us" prefetch="intent" className="sf-footer__link">
+                  <Link to="/pages/contact-us-nts" prefetch="intent" className="sf-footer__link">
                     Contact us
                   </Link>
                 </nav>

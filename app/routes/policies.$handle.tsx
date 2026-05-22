@@ -35,6 +35,9 @@ export async function loader({params, context}: Route.LoaderArgs) {
   const policy = data.shop?.[policyName];
 
   if (!policy) {
+    if (params.handle === 'shipping-policy') {
+      throw redirect('/pages/delivery-and-shipping-policy-nts');
+    }
     throw new Response('Could not find the policy', {status: 404});
   }
 

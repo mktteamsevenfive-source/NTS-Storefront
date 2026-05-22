@@ -5,10 +5,16 @@ const TO_THAI_PATH_MAP: Record<string, string> = {
   '/pages/how-to-pay-nts': '/pages/การชำระเงิน',
   '/pages/warranty-policy-nts': '/pages/การรับประกัน',
   '/pages/after-sales-service': '/pages/บริการหลังการขาย',
+  '/pages/after-sales-service-nts': '/pages/บริการหลังการขาย',
   '/pages/installation-policy': '/pages/นโยบายการติดตั้ง',
+  '/pages/installation-policy-nts': '/pages/นโยบายการติดตั้ง',
+  '/pages/delivery-and-shipping-policy-nts': '/pages/นโยบายการจัดส่งและการขนส่ง',
   '/pages/who-we-are': '/pages/เกี่ยวกับเรา',
+  '/pages/who-we-are-nts': '/pages/เกี่ยวกับเรา',
   '/pages/service-center': '/pages/ศูนย์บริการ',
+  '/pages/service-center-nts': '/pages/ศูนย์บริการ',
   '/pages/contact-us': '/pages/ติดต่อเรา',
+  '/pages/contact-us-nts': '/pages/ติดต่อเรา',
 };
 
 const TO_ENGLISH_PATH_MAP = Object.fromEntries(
