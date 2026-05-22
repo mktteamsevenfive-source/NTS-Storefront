@@ -59,6 +59,12 @@ export function HeaderSearch({t}: {t: T}) {
   return (
     <div ref={wrapperRef} className="sf-search">
       <form className="sf-header__search-form" onSubmit={handleSubmit} role="search">
+        <button type="submit" className="sf-header__search-btn" aria-label="Submit search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
         <input
           ref={inputRef}
           type="search"
@@ -70,12 +76,6 @@ export function HeaderSearch({t}: {t: T}) {
           onFocus={() => setIsOpen(true)}
           onChange={fetchResults}
         />
-        <button type="submit" className="sf-header__search-btn" aria-label="Submit search">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-        </button>
         {isOpen && (
           <button type="button" className="sf-header__search-close" onClick={closeDropdown} aria-label="Close search">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -192,6 +192,7 @@ export function HeaderSearch({t}: {t: T}) {
                       });
                       const price = product?.selectedOrFirstAvailableVariant?.price;
                       const image = product?.selectedOrFirstAvailableVariant?.image;
+                      const sku = product?.selectedOrFirstAvailableVariant?.sku;
                       return (
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
                           <div className="sf-search__prod-img-wrap">
@@ -202,6 +203,7 @@ export function HeaderSearch({t}: {t: T}) {
                             )}
                           </div>
                           {price && <p className="sf-search__prod-price"><Money data={price} /></p>}
+                          {sku && <p className="sf-search__prod-sku">SKU: {sku}</p>}
                           <p className="sf-search__prod-title">{product.title}</p>
                         </Link>
                       );

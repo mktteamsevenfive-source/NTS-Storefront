@@ -201,6 +201,7 @@ const PREDICTIVE_SEARCH_PRODUCT_FRAGMENT = `#graphql
       caseInsensitiveMatch: true
     ) {
       id
+      sku
       image {
         url
         altText

@@ -377,7 +377,10 @@ async function regularSearch({
   const {sortKey, reverse} = SORT_MAP[sortParam] ?? SORT_MAP['relevance'];
   const variables = getPaginationVariables(request, {pageBy});
   const term = String(url.searchParams.get('q') || '');
-  const filteredTerm = term ? `${term} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
+  // Build a query that matches the term in all fields OR as a specific SKU
+  // so that e.g. "PIM1-EWB-16" finds the product by SKU reliably
+  const termQuery = term ? `(${term} OR sku:${term})` : '';
+  const filteredTerm = termQuery ? `${termQuery} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
 
   // Parse active filters from URL params
   const rawFilters = url.searchParams.getAll('filters');
@@ -436,7 +439,9 @@ async function predictiveSearch({
   const {storefront} = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
-  const filteredTerm = term ? `${term} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
+  // Search by free text AND explicitly by SKU so SKU codes resolve in predictive results
+  const termQuery = term ? `(${term} OR sku:${term})` : '';
+  const filteredTerm = termQuery ? `${termQuery} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
   const limit = Number(url.searchParams.get('limit') || 10);
   const type = 'predictive';
 

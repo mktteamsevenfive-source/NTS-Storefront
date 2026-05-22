@@ -154,7 +154,7 @@ function SearchResultsProducts({
                   )}
                   {variantSku && (
                     <span className="sf-search-product-card__sku">
-                      {variantSku}
+                      SKU: {variantSku}
                     </span>
                   )}
                   <p className="sf-search-product-card__title">
