@@ -9,7 +9,7 @@ import {BrandTrust} from '~/sections/BrandTrust';
 import {RecommendedProducts} from '~/sections/RecommendedProducts';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Sevenfive | Premium Commercial Kitchen Equipment'}];
+  return [{title: 'NTS Mart | Premium Commercial Kitchen Equipment'}];
 };
 
 export async function loader(args: Route.LoaderArgs) {

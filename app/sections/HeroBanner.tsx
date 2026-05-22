@@ -15,7 +15,7 @@ export function HeroBanner({
           data={image}
           sizes="100vw"
           className="sf-hero__bg"
-          alt={image.altText || 'Sevenfive'}
+          alt={image.altText || 'NTS Mart'}
         />
       ) : (
         <div className="sf-hero__bg sf-hero__bg--fallback" />

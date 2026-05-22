@@ -12,7 +12,7 @@ export function BrandTrust() {
     <section className="sf-trust">
       <div className="sf-trust__inner">
         <div className="sf-trust__text">
-          <span className="sf-eyebrow sf-eyebrow--dark">Why Choose Sevenfive</span>
+          <span className="sf-eyebrow sf-eyebrow--dark">Why Choose NTS Mart</span>
           <h2 className="sf-trust__title">
             Thailand's Most Trusted<br />
             Commercial Kitchen Partner

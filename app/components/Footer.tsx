@@ -113,7 +113,7 @@ export function Footer({
             {/* Bottom bar */}
             <div className="sf-footer__bottom">
               <p className="sf-footer__copy">
-                &copy; {new Date().getFullYear()} Sevenfive Co., Ltd. All rights reserved.
+                &copy; {new Date().getFullYear()} NTS Mart Co., Ltd. All rights reserved.
               </p>
               <nav className="sf-footer__legal">
                 <NavLink to="/policies/privacy-policy" className="sf-footer__legal-link">Privacy Policy</NavLink>

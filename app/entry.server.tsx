@@ -33,6 +33,7 @@ export default async function handleRequest(
     ],
     imgSrc: [
       "'self'",
+      'https://cdn.shopify.com',
       'https://maps.gstatic.com',
       'https://www.google.com',
     ],
