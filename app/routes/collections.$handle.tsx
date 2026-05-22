@@ -136,6 +136,7 @@ export default function Collection() {
   const [searchParams] = useSearchParams();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filterSearch, setFilterSearch] = useState<Record<string, string>>({});
 
   const products = collection.products;
   const productFilters: FilterGroup[] = (products as any).filters ?? [];
@@ -211,6 +212,12 @@ export default function Collection() {
 
             {nonPriceFilters.map((group) => {
               const isOpen = openGroups[group.id] !== false;
+              const isLarge = group.values.length > 8;
+              const query = (filterSearch[group.id] ?? '').toLowerCase();
+              const filteredValues = group.values.filter((val) =>
+                val.label.toLowerCase().includes(query),
+              );
+
               return (
                 <div key={group.id} className="sf-filter-group">
                   <button className="sf-filter-group__head" onClick={() => toggleGroup(group.id)}>
@@ -224,19 +231,44 @@ export default function Collection() {
                     </svg>
                   </button>
                   {isOpen && (
-                    <div className="sf-filter-group__body">
-                      {group.values.map((val) => (
-                        <label key={val.id} className="sf-filter-option">
+                    <div className="flex flex-col">
+                      {isLarge && (
+                        <div className="px-4 pt-2">
                           <input
-                            type="checkbox"
-                            checked={activeFilters.includes(val.input)}
-                            onChange={() => toggleFilter(val.input)}
-                            className="sf-filter-option__checkbox"
+                            type="text"
+                            placeholder="Search..."
+                            value={filterSearch[group.id] ?? ''}
+                            onChange={(e) =>
+                              setFilterSearch((prev) => ({
+                                ...prev,
+                                [group.id]: e.target.value,
+                              }))
+                            }
+                            className="sf-filter-search-input"
                           />
-                          <span className="sf-filter-option__label">{val.label}</span>
-                          <span className="sf-filter-option__count">{val.count}</span>
-                        </label>
-                      ))}
+                        </div>
+                      )}
+                      <div
+                        className={`sf-filter-group__body${
+                          isLarge ? ' sf-filter-group__body--scrollable' : ''
+                        }`}
+                      >
+                        {filteredValues.map((val) => (
+                          <label key={val.id} className="sf-filter-option">
+                            <input
+                              type="checkbox"
+                              checked={activeFilters.includes(val.input)}
+                              onChange={() => toggleFilter(val.input)}
+                              className="sf-filter-option__checkbox"
+                            />
+                            <span className="sf-filter-option__label">{val.label}</span>
+                            <span className="sf-filter-option__count">{val.count}</span>
+                          </label>
+                        ))}
+                        {filteredValues.length === 0 && (
+                          <span className="text-xs text-gray-400 py-2">No results</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

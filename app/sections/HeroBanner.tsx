@@ -22,23 +22,14 @@ export function HeroBanner({
       )}
       <div className="sf-hero__overlay" />
       <div className="sf-hero__content">
-        <p className="sf-eyebrow">Premium Commercial Kitchen Equipment</p>
-        <h1 className="sf-hero__title">
-          Engineered for<br />
-          Professional Excellence
+        <h1 className="sf-hero__title" style={{ fontSize: '3rem', maxWidth: '800px', margin: '0 auto', marginBottom: '1rem' }}>
+          Your Trusted Commercial Kitchen<br />
+          Solution Partner
         </h1>
-        <p className="sf-hero__sub">
-          Serving Thailand's finest restaurants, hotels,<br />
-          and foodservice operators since 2003
+        <p className="sf-hero__sub" style={{ fontSize: '1.1rem', maxWidth: '700px', margin: '0 auto', fontWeight: 400 }}>
+          For over 15 years, food service professionals have trusted our<br />
+          Commercial kitchen design and equipment expertise.
         </p>
-        <div className="sf-hero__ctas">
-          <Link to="/collections/all" className="sf-btn sf-btn--gold">
-            Explore Products
-          </Link>
-          <Link to="/pages/about" className="sf-btn sf-btn--ghost">
-            Our Story
-          </Link>
-        </div>
       </div>
     </section>
   );

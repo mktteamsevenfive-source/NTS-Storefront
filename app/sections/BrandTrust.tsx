@@ -1,40 +1,52 @@
-import {Link} from 'react-router';
-
-const BRAND_STATS = [
-  {value: '20+', label: 'Years of Excellence'},
-  {value: '50+', label: 'Premium Brands'},
-  {value: '1,000+', label: 'Professional Clients'},
-  {value: '24/7', label: 'After-Sales Support'},
-];
-
 export function BrandTrust() {
+  const features = [
+    {
+      iconUrl: 'https://api.iconify.design/lucide/badge-percent.svg?color=%231a1a1a',
+      title: 'Best Price Guarantee',
+      subtitle: 'Best value assured with exclusive special offers'
+    },
+    {
+      iconUrl: 'https://api.iconify.design/lucide/package.svg?color=%231a1a1a',
+      title: 'Large Stock',
+      subtitle: 'Over 35,000 items ready to meet all your needs'
+    },
+    {
+      iconUrl: 'https://api.iconify.design/lucide/truck.svg?color=%231a1a1a',
+      title: 'Free Shipping',
+      subtitle: 'On orders over ฿5,000 to Bangkok, Phuket & Samui'
+    },
+    {
+      iconUrl: 'https://api.iconify.design/lucide/headset.svg?color=%231a1a1a',
+      title: 'After-Sales Service',
+      subtitle: 'Expert support & consultation 24 hours, 365 days'
+    },
+    {
+      iconUrl: 'https://api.iconify.design/lucide/wrench.svg?color=%231a1a1a',
+      title: 'Repair & Maintenance',
+      subtitle: 'Inspection and repairs by certified technicians'
+    }
+  ];
+
   return (
-    <section className="sf-trust">
-      <div className="sf-trust__inner">
-        <div className="sf-trust__text">
-          <span className="sf-eyebrow sf-eyebrow--dark">Why Choose NTS Mart</span>
-          <h2 className="sf-trust__title">
-            Thailand's Most Trusted<br />
-            Commercial Kitchen Partner
-          </h2>
-          <p className="sf-trust__desc">
-            We partner with the world's leading manufacturers to bring
-            professional-grade equipment to Thailand's most demanding
-            foodservice operations. From boutique restaurants to five-star
-            hotels — we deliver quality that performs.
-          </p>
-          <Link to="/pages/about" className="sf-btn sf-btn--outline-dark">
-            Learn More
-          </Link>
-        </div>
-        <div className="sf-trust__stats">
-          {BRAND_STATS.map((s) => (
-            <div key={s.label} className="sf-stat">
-              <span className="sf-stat__val">{s.value}</span>
-              <span className="sf-stat__lbl">{s.label}</span>
+    <section className="max-w-[1440px] mx-auto px-8 py-10 border-t border-b border-gray-100 my-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        {features.map((item, index) => (
+          <div key={index} className="flex items-center gap-4 md:border-r md:border-gray-200 md:pr-4 last:border-r-0">
+            <div className="flex-shrink-0">
+              <img
+                src={item.iconUrl}
+                alt={item.title}
+                width="40"
+                height="40"
+                className="w-10 h-10 object-contain"
+              />
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col text-left">
+              <span className="text-sm font-bold text-[#1a1a1a] leading-tight mb-1">{item.title}</span>
+              <span className="text-[11px] text-gray-500 leading-normal">{item.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

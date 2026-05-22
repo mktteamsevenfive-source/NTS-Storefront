@@ -36,6 +36,7 @@ export default async function handleRequest(
       'https://cdn.shopify.com',
       'https://maps.gstatic.com',
       'https://www.google.com',
+      'https://api.iconify.design',
     ],
   });
 

@@ -12,6 +12,10 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       caseInsensitiveMatch: true
     ) {
       sku
+      compareAtPrice {
+        amount
+        currencyCode
+      }
     }
     priceRange {
       minVariantPrice {
@@ -33,9 +37,37 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     $filterQuery: String!
   )
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true, query: $filterQuery) {
+    products(first: 6, sortKey: UPDATED_AT, reverse: true, query: $filterQuery) {
       nodes {
         ...RecommendedProduct
+      }
+    }
+  }
+` as const;
+
+export const LATEST_BLOGS_QUERY = `#graphql
+  query LatestBlogs($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    blogs(first: 1) {
+      nodes {
+        articles(first: 3, sortKey: PUBLISHED_AT, reverse: true) {
+          nodes {
+            id
+            title
+            handle
+            publishedAt
+            excerpt
+            image {
+              url
+              altText
+              width
+              height
+            }
+            blog {
+              handle
+            }
+          }
+        }
       }
     }
   }
@@ -51,4 +83,30 @@ export const FEATURED_COLLECTION_QUERY = `#graphql
     }
   }
   ${FEATURED_COLLECTION_FRAGMENT}
+` as const;
+
+export const BRAND_COLLECTIONS_QUERY = `#graphql
+  fragment BrandFragment on Collection {
+    id
+    title
+    handle
+    image {
+      url
+      altText
+      width
+      height
+    }
+  }
+  query BrandCollections($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    cutleryPro: collection(handle: "cutlery-pro") { ...BrandFragment }
+    topRinse: collection(handle: "top-rinse") { ...BrandFragment }
+    primo: collection(handle: "primo") { ...BrandFragment }
+    nts: collection(handle: "nts") { ...BrandFragment }
+    iwatani: collection(handle: "iwatani") { ...BrandFragment }
+    absolute: collection(handle: "absolute") { ...BrandFragment }
+    justa: collection(handle: "justa") { ...BrandFragment }
+    kitchin: collection(handle: "kitchin") { ...BrandFragment }
+    veetsan: collection(handle: "veeetsan") { ...BrandFragment }
+  }
 ` as const;

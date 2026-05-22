@@ -11,11 +11,11 @@ const ALLOWED_VENDORS = [
   'Iwatani',
   'Justa',
   'Kitchin',
-  'VEESAN',
+  'VEETSAN',
 ] as const;
 
 const VENDOR_DISPLAY_NAMES: Record<string, string> = {
-  VEESAN: 'Veeetsan',
+  VEETSAN: 'Veeetsan',
 };
 
 const VENDOR_FIRST_PRODUCT_QUERY = `#graphql

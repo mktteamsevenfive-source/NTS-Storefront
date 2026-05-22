@@ -2,11 +2,12 @@ import {useLoaderData} from 'react-router';
 import type {Route} from './+types/_index';
 import {MockShopNotice} from '~/components/MockShopNotice';
 import {RECOMMENDED_VENDOR_FILTER} from '~/utils/vendors';
-import {FEATURED_COLLECTION_QUERY, RECOMMENDED_PRODUCTS_QUERY} from '~/graphql/queries/homepage';
+import {FEATURED_COLLECTION_QUERY, RECOMMENDED_PRODUCTS_QUERY, LATEST_BLOGS_QUERY, BRAND_COLLECTIONS_QUERY} from '~/graphql/queries/homepage';
 import {HeroBanner} from '~/sections/HeroBanner';
 import {CategoryGrid} from '~/sections/CategoryGrid';
-import {BrandTrust} from '~/sections/BrandTrust';
 import {RecommendedProducts} from '~/sections/RecommendedProducts';
+import {LatestBlogs} from '~/sections/LatestBlogs';
+import {BrandLogos} from '~/sections/BrandLogos';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'NTS Mart | Premium Commercial Kitchen Equipment'}];
@@ -45,7 +46,21 @@ function loadDeferredData({context}: Route.LoaderArgs) {
       return null;
     });
 
-  return {recommendedProducts};
+  const latestBlogs = context.storefront
+    .query(LATEST_BLOGS_QUERY)
+    .catch((error: Error) => {
+      console.error(error);
+      return null;
+    });
+
+  const brandCollections = context.storefront
+    .query(BRAND_COLLECTIONS_QUERY)
+    .catch((error: Error) => {
+      console.error(error);
+      return null;
+    });
+
+  return {recommendedProducts, latestBlogs, brandCollections};
 }
 
 export default function Homepage() {
@@ -56,7 +71,8 @@ export default function Homepage() {
       <HeroBanner collection={data.featuredCollection} />
       <CategoryGrid collections={data.categories} />
       <RecommendedProducts products={data.recommendedProducts} />
-      <BrandTrust />
+      <LatestBlogs blogs={data.latestBlogs} />
+      <BrandLogos brandCollections={data.brandCollections} />
     </div>
   );
 }

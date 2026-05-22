@@ -104,6 +104,7 @@ export default function SearchPage() {
   const navigate = useNavigate();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filterSearch, setFilterSearch] = useState<Record<string, string>>({});
 
   const activeFilters = searchParams.getAll('filters');
   const minPrice = searchParams.get('minPrice') ?? '';
@@ -201,6 +202,12 @@ export default function SearchPage() {
               {/* Checkbox filter groups */}
               {nonPriceFilters.map((group) => {
                 const isOpen = openGroups[group.id] !== false; // default open
+                const isLarge = group.values.length > 8;
+                const query = (filterSearch[group.id] ?? '').toLowerCase();
+                const filteredValues = group.values.filter((val) =>
+                  val.label.toLowerCase().includes(query),
+                );
+
                 return (
                   <div key={group.id} className="sf-filter-group">
                     <button
@@ -217,22 +224,47 @@ export default function SearchPage() {
                       </svg>
                     </button>
                     {isOpen && (
-                      <div className="sf-filter-group__body">
-                        {group.values.map((val) => {
-                          const isChecked = activeFilters.includes(val.input);
-                          return (
-                            <label key={val.id} className="sf-filter-option">
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={() => toggleFilter(val.input)}
-                                className="sf-filter-option__checkbox"
-                              />
-                              <span className="sf-filter-option__label">{val.label}</span>
-                              <span className="sf-filter-option__count">{val.count}</span>
-                            </label>
-                          );
-                        })}
+                      <div className="flex flex-col">
+                        {isLarge && (
+                          <div className="px-4 pt-2">
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              value={filterSearch[group.id] ?? ''}
+                              onChange={(e) =>
+                                setFilterSearch((prev) => ({
+                                  ...prev,
+                                  [group.id]: e.target.value,
+                                }))
+                              }
+                              className="sf-filter-search-input"
+                            />
+                          </div>
+                        )}
+                        <div
+                          className={`sf-filter-group__body${
+                            isLarge ? ' sf-filter-group__body--scrollable' : ''
+                          }`}
+                        >
+                          {filteredValues.map((val) => {
+                            const isChecked = activeFilters.includes(val.input);
+                            return (
+                              <label key={val.id} className="sf-filter-option">
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleFilter(val.input)}
+                                  className="sf-filter-option__checkbox"
+                                />
+                                <span className="sf-filter-option__label">{val.label}</span>
+                                <span className="sf-filter-option__count">{val.count}</span>
+                              </label>
+                            );
+                          })}
+                          {filteredValues.length === 0 && (
+                            <span className="text-xs text-gray-400 py-2">No results</span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
