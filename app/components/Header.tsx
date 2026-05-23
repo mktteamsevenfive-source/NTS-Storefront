@@ -52,8 +52,6 @@ export function Header({
           <HeaderSearch t={t} />
           
           <div className="sf-header__ctas">
-            <HeaderCartToggle cart={cart} />
-            <HeaderAccountToggle isLoggedIn={isLoggedIn} />
             <LanguageSwitcher lang={lang} />
           </div>
 
@@ -95,8 +93,8 @@ function CartBadge({count, onClick}: {count: number; onClick: () => void}) {
       <div className="sf-header__cart-icon-wrap">
         {/* Shopping cart outline icon in NTS Green */}
         <svg
-          width="28"
-          height="28"
+          width="22"
+          height="22"
           viewBox="0 0 24 24"
           fill="none"
           stroke="#00b050"
@@ -135,8 +133,8 @@ function AccountLink({to}: {to: string}) {
     <NavLink to={to} className="sf-header__account-btn" prefetch="intent">
       {/* Account outline icon in NTS Green */}
       <svg
-        width="28"
-        height="28"
+        width="22"
+        height="22"
         viewBox="0 0 24 24"
         fill="none"
         stroke="#00b050"

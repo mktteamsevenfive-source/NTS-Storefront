@@ -34,10 +34,19 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query RecommendedProducts (
     $country: CountryCode,
     $language: LanguageCode,
-    $filterQuery: String!
+    $filterQuery: String!,
+    $collectionHandle: String!
   )
     @inContext(country: $country, language: $language) {
-    products(first: 6, sortKey: UPDATED_AT, reverse: true, query: $filterQuery) {
+    collection(handle: $collectionHandle) {
+      handle
+      products(first: 18) {
+        nodes {
+          ...RecommendedProduct
+        }
+      }
+    }
+    products(first: 18, sortKey: UPDATED_AT, reverse: true, query: $filterQuery) {
       nodes {
         ...RecommendedProduct
       }

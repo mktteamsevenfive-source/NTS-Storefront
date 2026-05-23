@@ -79,7 +79,10 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
 function loadDeferredData({context}: Route.LoaderArgs) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY, {
-      variables: {filterQuery: RECOMMENDED_VENDOR_FILTER},
+      variables: {
+        filterQuery: RECOMMENDED_VENDOR_FILTER,
+        collectionHandle: 'nts-product',
+      },
     })
     .catch((error: Error) => {
       console.error(error);

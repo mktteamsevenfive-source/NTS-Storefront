@@ -56,6 +56,16 @@ export function HeaderSearch({t}: {t: T}) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  // Fetch default prefix-1 recommendations when search is focused but query is empty
+  useEffect(() => {
+    if (isOpen && !term.current) {
+      fetcher.submit(
+        {q: '', limit: 5, predictive: true},
+        {method: 'GET', action: '/search'},
+      );
+    }
+  }, [isOpen]);
+
   return (
     <div ref={wrapperRef} className="sf-search">
       <form className="sf-header__search-form" onSubmit={handleSubmit} role="search">
@@ -112,36 +122,48 @@ export function HeaderSearch({t}: {t: T}) {
               </div>
               <div className="sf-search__right">
                 <div className="sf-search__right-head">
-                  <p className="sf-search__col-title">POPULAR</p>
-                  <Link to="/collections" className="sf-search__view-all" onClick={closeDropdown}>
-                    VIEW ALL COLLECTIONS &rsaquo;
+                  <p className="sf-search__col-title">RECOMMENDED PRODUCTS</p>
+                  <Link to="/search" className="sf-search__view-all" onClick={closeDropdown}>
+                    VIEW ALL PRODUCTS &rsaquo;
                   </Link>
                 </div>
-                {items.collections.length > 0 ? (
-                  <div className="sf-search__collections-grid">
-                    {items.collections.slice(0, 5).map((col) => {
-                      const url = `/collections/${col.handle}`;
+                {items.products.length > 0 ? (
+                  <div className="sf-search__products-grid sf-search__collections-grid">
+                    {items.products.slice(0, 5).map((product) => {
+                      const productUrl = urlWithTrackingParams({
+                        baseUrl: `/products/${product.handle}`,
+                        trackingParams: product.trackingParameters,
+                        term: '',
+                      });
+                      const price = product?.selectedOrFirstAvailableVariant?.price;
+                      const image = product?.selectedOrFirstAvailableVariant?.image;
+                      const sku = product?.selectedOrFirstAvailableVariant?.sku;
                       return (
-                        <Link key={col.id} to={url} className="sf-search__col-card" onClick={closeDropdown}>
-                          <div className="sf-search__col-img-wrap">
-                            {col.image ? (
-                              <Image alt={col.image.altText ?? col.title} src={col.image.url} width={220} height={280} className="sf-search__col-img" />
+                        <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
+                          <div className="sf-search__prod-img-wrap">
+                            {image ? (
+                              <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
                             ) : (
-                              <div className="sf-search__col-img-placeholder" />
+                              <div className="sf-search__prod-img-placeholder" />
                             )}
                           </div>
-                          <span className="sf-search__col-name">{col.title}</span>
+                          {price && <p className="sf-search__prod-price"><Money data={price} /></p>}
+                          {sku && <p className="sf-search__prod-sku">SKU: {sku}</p>}
+                          <p className="sf-search__prod-title">{product.title}</p>
                         </Link>
                       );
                     })}
                   </div>
                 ) : (
-                  <div className="sf-search__collections-grid">
-                    {['Cooking Equipment','Refrigeration','Beverage','Warewashing','Storage'].map((name) => (
-                      <Link key={name} to={`/collections/${name.toLowerCase().replace(/ /g, '-')}`} className="sf-search__col-card" onClick={closeDropdown}>
-                        <div className="sf-search__col-img-wrap sf-search__col-img-placeholder" />
-                        <span className="sf-search__col-name">{name}</span>
-                      </Link>
+                  /* Skeleton loading state while recommendations are fetched */
+                  <div className="sf-search__products-grid sf-search__collections-grid">
+                    {[1, 2, 3, 4, 5].map((idx) => (
+                      <div key={idx} className="sf-search__prod-card opacity-50">
+                        <div className="sf-search__prod-img-wrap sf-search__prod-img-placeholder animate-pulse" />
+                        <div style={{ height: '14px', width: '60px', background: 'var(--sf-gray-200)', borderRadius: '2px', marginBottom: '4px' }} className="animate-pulse" />
+                        <div style={{ height: '12px', width: '80px', background: 'var(--sf-gray-200)', borderRadius: '2px', marginBottom: '4px' }} className="animate-pulse" />
+                        <div style={{ height: '14px', width: '120px', background: 'var(--sf-gray-200)', borderRadius: '2px' }} className="animate-pulse" />
+                      </div>
                     ))}
                   </div>
                 )}

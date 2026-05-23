@@ -45,9 +45,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     parsedFilters.push({price: {min: minPrice ? Number(minPrice) : 0, max: maxPrice ? Number(maxPrice) : undefined}});
   }
 
-  // Always restrict to allowed vendors (OR within vendor type, AND with user filters)
-  const vendorFilters = ALLOWED_VENDORS.map((v) => ({productVendor: v}));
-  const allFilters = [...vendorFilters, ...parsedFilters];
+  const allFilters = [...parsedFilters];
 
   const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {

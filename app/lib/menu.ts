@@ -96,7 +96,6 @@ function buildMenuTree(csv: string): CsvMenuNode[] {
 }
 
 const MENU_CSV = String.raw`menu_handle,item_title,item_type,item_url,level,parent_title
-main-menu,Home,HTTP,/,1,
 main-menu,Product,HTTP,/,1,
 main-menu,Cooking Equipment,COLLECTION,/collections/cooking-equipment,2,Product
 main-menu,Automatic Cooking Machines,COLLECTION,/collections/automatic-cooking-machines,3,Cooking Equipment

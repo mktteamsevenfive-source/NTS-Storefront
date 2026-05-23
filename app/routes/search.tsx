@@ -19,7 +19,7 @@ import {
   type FilterGroup,
 } from '~/types';
 import {SEARCH_SORT_OPTIONS, PAGE_SIZE_OPTIONS} from '~/utils/sort';
-import {VENDOR_FILTER} from '~/utils/vendors';
+import {VENDOR_FILTER, ALLOWED_VENDORS} from '~/utils/vendors';
 import {SEARCH_QUERY, PREDICTIVE_SEARCH_QUERY} from '~/graphql/queries/search';
 
 type ExtendedRegularSearch = RegularSearchReturn & {
@@ -377,9 +377,9 @@ async function regularSearch({
   const {sortKey, reverse} = SORT_MAP[sortParam] ?? SORT_MAP['relevance'];
   const variables = getPaginationVariables(request, {pageBy});
   const term = String(url.searchParams.get('q') || '');
-  // Build a query that matches the term in all fields OR as a specific SKU
-  // so that e.g. "PIM1-EWB-16" finds the product by SKU reliably
-  const termQuery = term ? `(${term} OR sku:${term})` : '';
+  // Build a query that matches the term in all fields (Shopify Storefront API does not support sku: field prefix, so we search cleanTerm or prefix cleanTerm*)
+  const cleanTerm = term.trim();
+  const termQuery = cleanTerm ? `(${cleanTerm} OR ${cleanTerm}*)` : '';
   const filteredTerm = termQuery ? `${termQuery} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
 
   // Parse active filters from URL params
@@ -406,6 +406,45 @@ async function regularSearch({
 
   if (!items) {
     throw new Error('No search data returned from Shopify API');
+  }
+
+  // Perform client-side SKU-prioritized sorting for search results
+  if (items.products?.nodes) {
+    const cleanTermLower = cleanTerm.toLowerCase();
+    if (cleanTermLower) {
+      const rankProduct = (product: any): number => {
+        const title = (product.title || '').toLowerCase();
+        const description = (product.description || '').toLowerCase();
+        
+        const skus: string[] = [];
+        if (product.selectedOrFirstAvailableVariant?.sku) {
+          skus.push(product.selectedOrFirstAvailableVariant.sku.toLowerCase());
+        }
+        const variants = product.variants?.nodes || [];
+        variants.forEach((v: any) => {
+          if (v.sku) {
+            const s = v.sku.toLowerCase();
+            if (!skus.includes(s)) skus.push(s);
+          }
+        });
+
+        // Tier 1: Exact SKU match
+        if (skus.some(sku => sku === cleanTermLower)) return 1;
+        // Tier 2: SKU starts with search term
+        if (skus.some(sku => sku.startsWith(cleanTermLower))) return 2;
+        // Tier 3: SKU contains search term
+        if (skus.some(sku => sku.includes(cleanTermLower))) return 3;
+        // Tier 4: Title starts with search term
+        if (title.startsWith(cleanTermLower)) return 4;
+        // Tier 5: Title contains search term
+        if (title.includes(cleanTermLower)) return 5;
+        // Tier 6: Description contains search term
+        if (description.includes(cleanTermLower)) return 6;
+        return 7;
+      };
+
+      items.products.nodes = [...items.products.nodes].sort((a, b) => rankProduct(a) - rankProduct(b));
+    }
   }
 
   const total = Object.values(items).reduce(
@@ -439,42 +478,165 @@ async function predictiveSearch({
   const {storefront} = context;
   const url = new URL(request.url);
   const term = String(url.searchParams.get('q') || '').trim();
-  // Search by free text AND explicitly by SKU so SKU codes resolve in predictive results
-  const termQuery = term ? `(${term} OR sku:${term})` : '';
-  const filteredTerm = termQuery ? `${termQuery} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
   const limit = Number(url.searchParams.get('limit') || 10);
   const type = 'predictive';
 
-  if (!term) return {type, term, result: getEmptyPredictiveSearchResult()};
-
-  // Predictively search articles, collections, pages, products, and queries (suggestions)
-  const {
-    predictiveSearch: items,
-    errors,
-  }: PredictiveSearchQuery & {errors?: Array<{message: string}>} =
-    await storefront.query(PREDICTIVE_SEARCH_QUERY, {
+  if (!term) {
+    // Fetch a pool of products to shuffle and return as empty-state recommendations
+    const regResult = await storefront.query(SEARCH_QUERY, {
       variables: {
-        // customize search options as needed
-        limit,
-        limitScope: 'EACH',
-        term: filteredTerm,
+        term: VENDOR_FILTER,
+        first: 100,
       },
+    }).catch((err) => {
+      console.error('Loader error fetching prefix-1 recommended products:', err);
+      return null;
     });
 
-  if (errors) {
-    throw new Error(
-      `Shopify API errors: ${errors.map(({message}: {message: string}) => message).join(', ')}`,
+    const regProducts = regResult?.products?.nodes || [];
+
+    // Filter for products that have a prefix-1 SKU and have an image
+    const prefix1Products = regProducts.filter((product: any) => {
+      const sku = product.selectedOrFirstAvailableVariant?.sku || '';
+      const hasImage = !!product.selectedOrFirstAvailableVariant?.image?.url;
+      const isPrefix1 = /^[A-Z]{3,4}1-/i.test(sku);
+      return isPrefix1 && hasImage;
+    });
+
+    // Shuffle the filtered products
+    const shuffledProducts = [...prefix1Products].sort(() => 0.5 - Math.random());
+
+    // Slice to 5 recommended products
+    const recommendedProducts = shuffledProducts.slice(0, 5);
+
+    const finalItems = {
+      articles: [],
+      collections: [],
+      pages: [],
+      queries: [],
+      products: recommendedProducts,
+    };
+
+    return {type, term, result: {items: finalItems, total: recommendedProducts.length}};
+  }
+
+  // Perform a parallel fetch:
+  // 1. Predictive search query (to get articles, collections, pages, queries, and default products)
+  // 2. Regular search query with a wider net (first: 50) specifically to capture SKU prefix matches that might be ranked poorly by Shopify's fuzzy default ranking.
+  const cleanTerm = term.trim();
+  const termQuery = cleanTerm ? `(${cleanTerm} OR ${cleanTerm}*)` : '';
+  const filteredTerm = termQuery ? `${termQuery} AND ${VENDOR_FILTER}` : VENDOR_FILTER;
+
+  const [predResult, regResult] = await Promise.all([
+    storefront.query(PREDICTIVE_SEARCH_QUERY, {
+      variables: {
+        limit,
+        limitScope: 'EACH',
+        term,
+      },
+    }).catch((err) => {
+      console.error('Predictive search API error:', err);
+      return null;
+    }),
+    storefront.query(SEARCH_QUERY, {
+      variables: {
+        term: filteredTerm,
+        first: 50,
+      },
+    }).catch((err) => {
+      console.error('Regular search inside predictive API error:', err);
+      return null;
+    }),
+  ]);
+
+  const predItems = predResult?.predictiveSearch;
+  const regProducts = regResult?.products?.nodes || [];
+
+  // Merge and de-duplicate products from both queries by product ID
+  const combinedProductsMap = new Map<string, any>();
+  
+  // First add products from regular search
+  regProducts.forEach((product: any) => {
+    if (product?.id) {
+      combinedProductsMap.set(product.id, product);
+    }
+  });
+
+  // Then add products from predictive search (which handles predictive-specific trackingParameters)
+  const predProducts = predItems?.products || [];
+  predProducts.forEach((product: any) => {
+    if (product?.id) {
+      const existing = combinedProductsMap.get(product.id);
+      if (existing) {
+        combinedProductsMap.set(product.id, { ...existing, ...product });
+      } else {
+        combinedProductsMap.set(product.id, product);
+      }
+    }
+  });
+
+  let mergedProducts = Array.from(combinedProductsMap.values());
+
+  // Filter out any products that are not from allowed NTS vendors
+  mergedProducts = mergedProducts.filter((product: any) => {
+    if (!product.vendor) return true;
+    return ALLOWED_VENDORS.some(
+      (v) => v.toLowerCase() === product.vendor.toLowerCase()
     );
+  });
+
+  // Apply tier-based client-side sorting for perfect SKU priority ranking
+  const cleanTermLower = cleanTerm.toLowerCase();
+  if (cleanTermLower) {
+    const rankProduct = (product: any): number => {
+      const title = (product.title || '').toLowerCase();
+      const description = (product.description || '').toLowerCase();
+      
+      const skus: string[] = [];
+      if (product.selectedOrFirstAvailableVariant?.sku) {
+        skus.push(product.selectedOrFirstAvailableVariant.sku.toLowerCase());
+      }
+      const variants = product.variants?.nodes || [];
+      variants.forEach((v: any) => {
+        if (v.sku) {
+          const s = v.sku.toLowerCase();
+          if (!skus.includes(s)) skus.push(s);
+        }
+      });
+
+      // Tier 1: Exact SKU match
+      if (skus.some(sku => sku === cleanTermLower)) return 1;
+      // Tier 2: SKU starts with clean term
+      if (skus.some(sku => sku.startsWith(cleanTermLower))) return 2;
+      // Tier 3: SKU contains clean term
+      if (skus.some(sku => sku.includes(cleanTermLower))) return 3;
+      // Tier 4: Title starts with clean term
+      if (title.startsWith(cleanTermLower)) return 4;
+      // Tier 5: Title contains clean term
+      if (title.includes(cleanTermLower)) return 5;
+      // Tier 6: Description contains clean term
+      if (description.includes(cleanTermLower)) return 6;
+      return 7;
+    };
+
+    mergedProducts.sort((a, b) => rankProduct(a) - rankProduct(b));
   }
 
-  if (!items) {
-    throw new Error('No predictive search data returned from Shopify API');
-  }
+  // Slice back to the requested dropdown limit
+  const finalProducts = mergedProducts.slice(0, limit);
 
-  const total = Object.values(items).reduce(
-    (acc: number, item: Array<unknown>) => acc + item.length,
+  const finalItems = {
+    articles: predItems?.articles || [],
+    collections: predItems?.collections || [],
+    pages: predItems?.pages || [],
+    queries: predItems?.queries || [],
+    products: finalProducts,
+  };
+
+  const total = Object.values(finalItems).reduce(
+    (acc: number, item: Array<unknown>) => acc + (item?.length || 0),
     0,
   );
 
-  return {type, term, result: {items, total}};
+  return {type, term, result: {items: finalItems, total}};
 }

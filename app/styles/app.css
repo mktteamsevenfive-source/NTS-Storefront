@@ -262,10 +262,37 @@ button.reset:hover:not(:has(> *)) {
 .sf-header__top-inner {
   align-items: center;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   margin: 0 auto;
   max-width: 1440px;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem 1.5rem;
+  position: relative; /* Base relative container for absolute centering */
+}
+
+@media (min-width: 45em) {
+  .sf-header__top-inner {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+  }
+
+  .sf-header__logo {
+    flex-shrink: 0;
+  }
+
+  .sf-search {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 720px; /* Set to exactly 720px width */
+    z-index: 10;
+  }
+
+  .sf-header__ctas {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
 
 .sf-header__logo {
@@ -276,7 +303,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .sf-header__logo-img {
-  height: 48px;
+  height: 60px; /* Increased from 48px to make it clearly visible and balanced */
   width: auto;
   display: block;
   object-fit: contain;
@@ -287,18 +314,19 @@ button.reset:hover:not(:has(> *)) {
 .sf-header__search-form {
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid var(--sf-gray-200);
+  background: var(--sf-gray-100);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 9999px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: border-color 150ms, box-shadow 150ms;
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
   width: 100%;
+  height: 40px; /* Set to exactly 40px height */
 }
 
 .sf-header__search-form:focus-within {
-  border-color: var(--sf-gold);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-color: #00b050; /* Brand green focus state */
+  box-shadow: 0 0 0 3px rgba(0, 176, 80, 0.15); /* Soft premium focus glow */
 }
 
 .sf-header__search-input {
@@ -307,10 +335,11 @@ button.reset:hover:not(:has(> *)) {
   color: var(--sf-black);
   flex: 1;
   font-family: var(--sf-font);
-  font-size: 0.9rem;
+  font-size: 0.9rem; /* Standard comfortable font size */
   outline: none;
-  padding: 0.65rem 1rem 0.65rem 0.25rem;
+  padding: 0 1rem 0 0.25rem;
   width: 100%;
+  height: 100%;
 }
 
 .sf-header__search-input::placeholder {
@@ -325,8 +354,9 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem 0.5rem 0.65rem 1.25rem;
+  padding: 0 0.5rem 0 1.25rem; /* Comfortably aligned button padding */
   transition: color 150ms;
+  height: 100%;
 }
 
 .sf-header__search-btn:hover {
@@ -340,6 +370,12 @@ button.reset:hover:not(:has(> *)) {
   flex-shrink: 0;
 }
 
+.sf-lang-switcher__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .sf-lang-switcher__select {
   appearance: none;
   background: transparent;
@@ -349,18 +385,27 @@ button.reset:hover:not(:has(> *)) {
   font-family: var(--sf-font);
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 0.3rem 1.2rem 0.3rem 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0 center;
-  background-size: 8px;
+  padding: 0.3rem 1.4rem 0.3rem 0; /* Space for the custom arrow */
   transition: color 150ms;
 }
 
-.sf-lang-switcher__select:hover,
+.sf-lang-switcher__arrow {
+  position: absolute;
+  right: 0;
+  pointer-events: none; /* Let select clicks pass through */
+  color: var(--sf-black);
+  transition: color 150ms, transform 150ms ease;
+}
+
+.sf-lang-switcher__wrapper:hover .sf-lang-switcher__select,
 .sf-lang-switcher__select:focus {
   color: var(--sf-gold);
   outline: none;
+}
+
+.sf-lang-switcher__wrapper:hover .sf-lang-switcher__arrow {
+  color: var(--sf-gold);
+  transform: translateY(1px); /* Delicate hover micro-animation */
 }
 
 
@@ -373,9 +418,10 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem 0.75rem;
+  padding: 0 1.25rem 0 0.5rem;
   transition: color 150ms;
   flex-shrink: 0;
+  height: 100%;
 }
 
 .sf-header__search-close:hover {
@@ -385,7 +431,7 @@ button.reset:hover:not(:has(> *)) {
 /* ─── Predictive Search Dropdown ───────────────────────────────────────────── */
 .sf-search {
   flex: 1;
-  max-width: 550px;
+  max-width: 720px; /* Updated to match 720px desktop width */
   position: relative;
 }
 
@@ -407,12 +453,16 @@ button.reset:hover:not(:has(> *)) {
   width: 100vw;
 }
 
-/* align dropdown to full header width */
+/* align dropdown to full header width and center it */
 @media (min-width: 45em) {
   .sf-search__dropdown {
-    left: calc(-280px - 1.5rem);   /* logo width + gap */
+    left: 50%;
+    transform: translateX(-50%);
     width: 100vw;
+    max-width: 1440px;
     right: auto;
+    border-left: 1px solid var(--sf-gray-200);
+    border-right: 1px solid var(--sf-gray-200);
   }
 }
 
@@ -613,16 +663,19 @@ button.reset:hover:not(:has(> *)) {
 }
 .sf-header__nav-bar {
   background: var(--sf-white);
+  border-top: 1px solid var(--sf-gray-200); /* Elegant separator line */
 }
 
 .sf-header__nav--desktop {
   display: none;
   align-items: center;
-  gap: 0;
+  justify-content: center; /* Perfectly center navigation links */
+  gap: 1.25rem; /* Clean professional spacing */
   margin: 0 auto;
   max-width: 1440px;
   padding: 0 2rem;
   position: relative;
+  height: 48px; /* Fixed height for pixel-perfect balance */
   @media (min-width: 45em) {
     display: flex;
   }
@@ -630,6 +683,9 @@ button.reset:hover:not(:has(> *)) {
 
 .sf-header__nav-item {
   position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .sf-header__nav--mobile {
@@ -641,13 +697,37 @@ button.reset:hover:not(:has(> *)) {
 
 .sf-header__nav-link {
   color: var(--sf-black);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 0.7rem 1rem;
+  font-size: 0.88rem; /* Extremely legible premium font size */
+  font-weight: 500; /* Sophisticated medium weight */
+  letter-spacing: 0.02em;
+  padding: 0 0.5rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  transition: color 150ms ease;
+  transition: color 250ms ease;
   white-space: nowrap;
+  position: relative;
+}
+
+.sf-header__nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--sf-gold);
+  border-radius: 3px 3px 0 0;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sf-header__nav-link:hover::after,
+.sf-header__nav-link--active::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .sf-header__nav-link:hover,
@@ -695,7 +775,7 @@ button.reset:hover:not(:has(> *)) {
   pointer-events: none;
   position: fixed;
   right: 0;
-  top: 112px;
+  top: 132px; /* Aligned with standard desktop header height (84px + 48px) */
   transform: translateY(6px);
   transition: opacity 180ms ease, transform 180ms ease;
   z-index: 55;
@@ -904,12 +984,13 @@ button.reset:hover:not(:has(> *)) {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 150ms ease;
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease;
 }
 
 .sf-header__cart-btn:hover,
 .sf-header__account-btn:hover {
-  opacity: 0.8;
+  transform: scale(1.08); /* Bouncy micro-interaction on hover */
+  opacity: 0.95;
 }
 
 .sf-header__cart-icon-wrap {
