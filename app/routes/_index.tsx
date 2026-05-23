@@ -25,14 +25,54 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
     context.storefront.query(FEATURED_COLLECTION_QUERY),
   ]);
 
-  const filteredCollections = (collections?.nodes ?? []).filter(
+  const mainCategoryHandles = [
+    'cooking-equipment',
+    'food-preparation',
+    'refrigerator-equipment',
+    'refrigeration-equipment',
+    'refrigeration',
+    'commercial-ovens',
+    'bakery-equipment',
+    'warming-equipment',
+    'beverage-equipment',
+    'stainless-steel-fabrication',
+    'warewashing-sanitisation',
+    'warewashing-sanitation',
+    'storage-transport',
+    'storage-transportation',
+    'smallwares',
+    'bakery-utensils',
+    'tableware-buffetware',
+    'tabletop-buffetware',
+    'janitorial-supplies',
+    'bar-supplies',
+    'hotel-supplies',
+  ];
+
+  const availableCollections = (collections?.nodes ?? []).filter(
     (collection: any) => collection.products?.nodes?.length > 0,
   );
 
+  const mainCategories = availableCollections.filter((collection: any) =>
+    mainCategoryHandles.includes(collection.handle),
+  );
+
+  const otherCollections = availableCollections.filter(
+    (collection: any) => !mainCategoryHandles.includes(collection.handle),
+  );
+
+  mainCategories.sort((a: any, b: any) => {
+    const indexA = mainCategoryHandles.indexOf(a.handle);
+    const indexB = mainCategoryHandles.indexOf(b.handle);
+    return indexA - indexB;
+  });
+
+  const sortedCollections = [...mainCategories, ...otherCollections];
+
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
-    featuredCollection: filteredCollections[0] ?? null,
-    categories: filteredCollections,
+    featuredCollection: sortedCollections[0] ?? null,
+    categories: sortedCollections,
   };
 }
 

@@ -76,7 +76,7 @@ export const LATEST_BLOGS_QUERY = `#graphql
 export const FEATURED_COLLECTION_QUERY = `#graphql
   query FeaturedCollection($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    collections(first: 20, sortKey: UPDATED_AT, reverse: true) {
+    collections(first: 100, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...FeaturedCollection
       }
