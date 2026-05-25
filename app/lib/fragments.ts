@@ -225,6 +225,10 @@ export const HEADER_QUERY = `#graphql
       ...Menu
     }
     collections(first: 250) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         id
         title
@@ -248,6 +252,41 @@ export const HEADER_QUERY = `#graphql
     }
   }
   ${MENU_FRAGMENT}
+` as const;
+
+export const COLLECTIONS_QUERY = `#graphql
+  query HeaderCollections(
+    $country: CountryCode
+    $language: LanguageCode
+    $cursor: String
+  ) @inContext(language: $language, country: $country) {
+    collections(first: 250, after: $cursor) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        id
+        title
+        handle
+        products(first: 1, filters: [
+          {productVendor: "NTS"}
+          {productVendor: "PRIMO"}
+          {productVendor: "ABSOLUTE"}
+          {productVendor: "Cutlery Pro"}
+          {productVendor: "Top Rinse"}
+          {productVendor: "Iwatani"}
+          {productVendor: "Justa"}
+          {productVendor: "Kitchin"}
+          {productVendor: "VEESAN"}
+        ]) {
+          nodes {
+            id
+          }
+        }
+      }
+    }
+  }
 ` as const;
 
 export const FOOTER_QUERY = `#graphql

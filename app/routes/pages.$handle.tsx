@@ -59,6 +59,22 @@ async function loadCriticalData({context, request, params}: Route.LoaderArgs) {
     throw redirect('/brands');
   }
 
+  // Mock the Catalogue page to ensure it always works without requiring Shopify admin setup
+  if (params.handle === 'catalog' || params.handle === 'catalogue') {
+    return {
+      page: {
+        handle: params.handle,
+        id: 'mock-catalog-page',
+        title: 'Catalogue',
+        body: '',
+        seo: {
+          title: 'NTS Catalogue',
+          description: 'NTS Product Catalogue',
+        },
+      },
+    };
+  }
+
   const pageQuery = async (handle: string) =>
     context.storefront.query(PAGE_QUERY, {
       variables: {handle},
@@ -122,13 +138,29 @@ function shouldHidePageTitle(page: {handle: string; title: string}) {
 
 export default function Page() {
   const {page} = useLoaderData<typeof loader>();
+  const isCatalog = page.handle === 'catalog' || page.handle === 'catalogue';
 
   return (
     <div className="page">
       <header>
-        {!shouldHidePageTitle(page) && <h1>{page.title}</h1>}
+        {!shouldHidePageTitle(page) && !isCatalog && <h1>{page.title}</h1>}
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      {isCatalog ? (
+        <main className="sf-catalog-main">
+          <div className="sf-catalog-embed">
+            <iframe
+              src="https://online.fliphtml5.com/dsalh/okjv/"
+              title="NTS-catalogue New 2021"
+              seamless
+              scrolling="no"
+              frameBorder="0"
+              allowFullScreen
+            />
+          </div>
+        </main>
+      ) : (
+        <main dangerouslySetInnerHTML={{__html: page.body}} />
+      )}
     </div>
   );
 }

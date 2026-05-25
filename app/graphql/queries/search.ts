@@ -113,7 +113,7 @@ export const SEARCH_QUERY = `#graphql
       sortKey: $sortKey,
       reverse: $reverse,
       types: [PRODUCT],
-      unavailableProducts: HIDE,
+      unavailableProducts: SHOW,
       productFilters: $filters,
     ) {
       nodes {

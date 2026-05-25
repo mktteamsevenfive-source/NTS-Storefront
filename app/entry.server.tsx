@@ -24,12 +24,14 @@ export default async function handleRequest(
       'https://www.google.com',
       'https://www.google.com/maps',
       'https://maps.google.com',
+      'https://online.fliphtml5.com',
     ],
     connectSrc: [
       "'self'",
       'https://maps.googleapis.com',
       'https://www.google.com',
       'https://maps.gstatic.com',
+      'https://online.fliphtml5.com',
     ],
     imgSrc: [
       "'self'",

@@ -57,16 +57,23 @@ export function HeaderMenu({
     return m ? m[1] : '';
   }
 
-  function filterChildren(nodes: CsvMenuNode[]): CsvMenuNode[] {
+  function filterChildren(nodes: CsvMenuNode[], parentTitle?: string): CsvMenuNode[] {
     if (!availableHandles) return nodes;
     return nodes
       .map((node) => ({
         ...node,
-        children: filterChildren(node.children),
+        children: filterChildren(node.children, node.title),
       }))
       .filter((node) => {
+        // Never hide top-level menu items (level 1)
+        if (node.level === 1) return true;
+
         const handle = getHandle(node.url);
         if (!handle) return true;
+
+        // Always show sub menus under "Hotel Supplies"
+        if (parentTitle === 'Hotel Supplies') return true;
+
         return availableHandles.has(handle) || node.children.length > 0;
       });
   }

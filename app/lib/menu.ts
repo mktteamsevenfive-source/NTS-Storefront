@@ -613,7 +613,7 @@ main-menu,Bed & Bath Linens,COLLECTION,/collections/bed-bath-linens,2,Hotel Supp
 main-menu,Lobby Supplies,COLLECTION,/collections/lobby-supplies,2,Hotel Supplies
 main-menu,Bathroom Accessories,COLLECTION,/collections/bathroom-accessories,2,Hotel Supplies
 main-menu,Telephone,COLLECTION,/collections/telephone,2,Hotel Supplies
-main-menu,Services,FRONTPAGE,/,1,
+main-menu,Services,COLLECTION,/collections/services,1,
 main-menu,Brand,PAGE,/pages/brand,1,
 main-menu,Catalogue,PAGE,/pages/catalog,1,
 main-menu,Blog,BLOG,/blogs/news,1,`;

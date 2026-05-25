@@ -79,55 +79,57 @@ export function ProductForm({
         );
       })}
 
-      <div className="sf-product-actions">
-        <div className="sf-product-qty">
-          <button
-            type="button"
-            className="sf-product-qty__btn"
-            onClick={() => setQty((q) => Math.max(1, q - 1))}
-            aria-label="Decrease quantity"
-          >
-            −
-          </button>
-          <span className="sf-product-qty__val">{qty}</span>
-          <button
-            type="button"
-            className="sf-product-qty__btn"
-            onClick={() => setQty((q) => q + 1)}
-            aria-label="Increase quantity"
-          >
-            +
-          </button>
-        </div>
-        <div className="sf-atc-wrap">
-          <AddToCartButton
-            disabled={!selectedVariant || !selectedVariant.availableForSale}
-            onClick={() => open('cart')}
-            lines={
-              selectedVariant
-                ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
-                : []
-            }
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+      {selectedVariant?.availableForSale && (
+        <div className="sf-product-actions">
+          <div className="sf-product-qty">
+            <button
+              type="button"
+              className="sf-product-qty__btn"
+              onClick={() => setQty((q) => Math.max(1, q - 1))}
+              aria-label="Decrease quantity"
             >
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 01-8 0" />
-            </svg>
-            {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-          </AddToCartButton>
+              −
+            </button>
+            <span className="sf-product-qty__val">{qty}</span>
+            <button
+              type="button"
+              className="sf-product-qty__btn"
+              onClick={() => setQty((q) => q + 1)}
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
+          <div className="sf-atc-wrap">
+            <AddToCartButton
+              disabled={!selectedVariant || !selectedVariant.availableForSale}
+              onClick={() => open('cart')}
+              lines={
+                selectedVariant
+                  ? [{merchandiseId: selectedVariant.id, quantity: qty, selectedVariant}]
+                  : []
+              }
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 01-8 0" />
+              </svg>
+              {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+            </AddToCartButton>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

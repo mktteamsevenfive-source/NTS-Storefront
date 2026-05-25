@@ -12,7 +12,7 @@ import {
 } from 'react-router';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
-import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {FOOTER_QUERY, HEADER_QUERY, COLLECTIONS_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
@@ -113,6 +113,33 @@ async function loadCriticalData({context, request}: Route.LoaderArgs) {
       },
     }),
   ]);
+
+  // Paginate remaining collections if they exist (over the 250 limit)
+  if (header?.collections?.pageInfo?.hasNextPage) {
+    let hasNextPage = header.collections.pageInfo.hasNextPage;
+    let cursor = header.collections.pageInfo.endCursor;
+    let allNodes = [...(header.collections.nodes ?? [])];
+
+    while (hasNextPage && allNodes.length < 1000) {
+      try {
+        const nextPageData = await storefront.query(COLLECTIONS_QUERY, {
+          cache: storefront.CacheShort(),
+          variables: {
+            cursor,
+          },
+        });
+        if (nextPageData?.collections?.nodes) {
+          allNodes = allNodes.concat(nextPageData.collections.nodes);
+        }
+        hasNextPage = nextPageData?.collections?.pageInfo?.hasNextPage ?? false;
+        cursor = nextPageData?.collections?.pageInfo?.endCursor ?? null;
+      } catch (err) {
+        console.error('Error paginating header collections:', err);
+        break;
+      }
+    }
+    header.collections.nodes = allNodes;
+  }
 
   return {header, lang};
 }
