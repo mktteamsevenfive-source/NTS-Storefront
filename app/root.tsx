@@ -11,7 +11,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
-import favicon from '~/assets/favicon.svg';
+import ntsLogo from '~/assets/logo/NTS-logo.jpg';
 import {FOOTER_QUERY, HEADER_QUERY, COLLECTIONS_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
@@ -19,6 +19,13 @@ import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './layouts/PageLayout';
 import {getLangFromRequest} from '~/lib/i18n';
 import type {LangCode} from '~/lib/locale';
+
+export const meta: Route.MetaFunction = () => {
+  return [
+    {title: 'NTS Mart'},
+    {name: 'description', content: 'Premium Commercial Kitchen Equipment'}
+  ];
+};
 
 export type RootLoader = typeof loader;
 
@@ -64,7 +71,7 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/jpeg', href: ntsLogo},
   ];
 }
 
