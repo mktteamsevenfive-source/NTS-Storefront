@@ -33,8 +33,10 @@ img {
   border-radius: 4px;
 }
 
+html,
 body {
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /*
@@ -2591,6 +2593,7 @@ button.reset:hover:not(:has(> *)) {
 .sf-sort-toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 1.5rem;
   margin-bottom: 1rem;
   padding-bottom: 0.75rem;
@@ -2662,6 +2665,7 @@ button.reset:hover:not(:has(> *)) {
 @media (max-width: 768px) {
   .sf-search-layout {
     flex-direction: column;
+    overflow: hidden; /* Prevent horizontal overflow from children */
   }
   .sf-filter-col {
     flex: none;
