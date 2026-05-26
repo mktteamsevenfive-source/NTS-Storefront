@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useLoaderData, useSearchParams, useNavigate} from 'react-router';
+import {useLoaderData, useSearchParams, useNavigate, useSubmit} from 'react-router';
 import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
@@ -102,6 +102,7 @@ export default function SearchPage() {
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const submit = useSubmit();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterSearch, setFilterSearch] = useState<Record<string, string>>({});
@@ -154,20 +155,50 @@ export default function SearchPage() {
   return (
     <div className="sf-search-page">
       {/* Header bar */}
-      <div className="sf-search-page__header">
-        {term ? (
-          <>
-            <span className="sf-search-page__label">Search results for</span>
-            <span className="sf-search-page__term">&ldquo;{term}&rdquo;</span>
-            {total > 0 && (
-              <span className="sf-search-page__count">
-                {total} product{total !== 1 ? 's' : ''}
-              </span>
-            )}
-          </>
-        ) : (
-          <span className="sf-search-page__label">Enter a search term above</span>
-        )}
+      <div className="sf-search-page__header flex-col items-center justify-center gap-6 pb-8 text-center pt-4">
+        <SearchForm className="w-full max-w-2xl mx-auto relative group">
+          {({inputRef}) => (
+            <div className="flex items-center w-full bg-white border border-gray-300 rounded-full overflow-hidden focus-within:border-[#00b050] focus-within:ring-2 focus-within:ring-[#00b050]/20 transition-all shadow-sm hover:shadow-md">
+              <div className="pl-5 pr-2 text-gray-400 group-focus-within:text-[#00b050] transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </div>
+              <input
+                ref={inputRef}
+                type="search"
+                defaultValue={term}
+                name="q"
+                placeholder="Search for cooking equipment, brands, etc..."
+                className="flex-1 py-3.5 px-2 outline-none border-none ring-0 shadow-none text-gray-800 bg-transparent w-full placeholder-gray-400 text-base"
+                autoComplete="off"
+                onChange={(e) => {
+                  submit(e.currentTarget.form, {replace: true});
+                }}
+              />
+              <button type="submit" className="px-8 py-3.5 bg-[#00b050] text-white font-semibold hover:bg-[#009040] active:bg-[#007a33] transition-colors">
+                Search
+              </button>
+            </div>
+          )}
+        </SearchForm>
+
+        <div className="mt-4 flex items-center flex-wrap gap-x-2">
+          {term ? (
+            <>
+              <span className="sf-search-page__label">Search results for</span>
+              <span className="sf-search-page__term">&ldquo;{term}&rdquo;</span>
+              {total > 0 && (
+                <span className="sf-search-page__count ml-auto">
+                  {total} product{total !== 1 ? 's' : ''}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="sf-search-page__label">Type a keyword to start searching</span>
+          )}
+        </div>
       </div>
 
       {error && <div className="sf-search-page__error">{error}</div>}

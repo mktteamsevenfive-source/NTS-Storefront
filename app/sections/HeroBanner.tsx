@@ -83,6 +83,8 @@ export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; l
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   const goTo = useCallback(
     (index: number) => {
@@ -105,11 +107,34 @@ export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; l
 
   const slide = slides[current];
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > 50) {
+      next();
+    }
+    if (distance < -50) {
+      prev();
+    }
+  };
+
   return (
     <section
       className="sf-hero-slider"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEndHandler}
       aria-label="Hero banner slideshow"
     >
       {/* Slides */}

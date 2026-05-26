@@ -68,9 +68,10 @@ export function CategoryGrid({
     }
   };
 
-  // Auto-slide effect with 3s delay
+  // Auto-slide effect with 3s delay (disabled on mobile)
   useEffect(() => {
     if (isHovered) return;
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) return;
 
     const timer = setInterval(() => {
       if (scrollRef.current) {

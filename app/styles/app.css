@@ -323,6 +323,17 @@ button.reset:hover:not(:has(> *)) {
   height: 40px; /* Set to exactly 40px height */
 }
 
+@media (max-width: 768px) {
+  .sf-header__search-form {
+    width: 40px;
+    background: transparent;
+    border: none;
+  }
+  .sf-search {
+    flex: none;
+  }
+}
+
 .sf-header__search-form:focus-within {
   background: #ffffff;
   border-color: #00b050; /* Brand green focus state */
@@ -342,6 +353,12 @@ button.reset:hover:not(:has(> *)) {
   height: 100%;
 }
 
+@media (max-width: 768px) {
+  .sf-header__search-input {
+    display: none;
+  }
+}
+
 .sf-header__search-input::placeholder {
   color: var(--sf-gray-400);
 }
@@ -357,6 +374,14 @@ button.reset:hover:not(:has(> *)) {
   padding: 0 0.5rem 0 1.25rem; /* Comfortably aligned button padding */
   transition: color 150ms;
   height: 100%;
+}
+
+@media (max-width: 768px) {
+  .sf-header__search-btn {
+    padding: 0;
+    width: 40px;
+    color: var(--sf-black);
+  }
 }
 
 .sf-header__search-btn:hover {
