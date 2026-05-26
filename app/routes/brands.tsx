@@ -15,7 +15,7 @@ const ALLOWED_VENDORS = [
 ] as const;
 
 const VENDOR_DISPLAY_NAMES: Record<string, string> = {
-  VEETSAN: 'Veeetsan',
+  VEETSAN: 'Veetsan',
 };
 
 const VENDOR_FIRST_PRODUCT_QUERY = `#graphql

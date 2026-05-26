@@ -116,6 +116,6 @@ export const BRAND_COLLECTIONS_QUERY = `#graphql
     absolute: collection(handle: "absolute") { ...BrandFragment }
     justa: collection(handle: "justa") { ...BrandFragment }
     kitchin: collection(handle: "kitchin") { ...BrandFragment }
-    veetsan: collection(handle: "veeetsan") { ...BrandFragment }
+    veetsan: collection(handle: "veetsan") { ...BrandFragment }
   }
 ` as const;
