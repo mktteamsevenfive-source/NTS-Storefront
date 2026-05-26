@@ -43,11 +43,17 @@ const STATIC_CATEGORIES: StaticCategory[] = [
   {title: 'Hotel Supplies', handle: 'hotel-supplies', image: hotelSupplies},
 ];
 
+import {getT} from '~/lib/locale';
+import type {LangCode} from '~/lib/locale';
+
 export function CategoryGrid({
   collections: _,
+  lang = 'EN',
 }: {
   collections?: any;
+  lang?: LangCode;
 }) {
+  const t = getT(lang);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -92,7 +98,7 @@ export function CategoryGrid({
   return (
     <section className="max-w-[1440px] mx-auto px-8 py-16">
       <div className="text-center mb-10">
-        <h2 className="text-2xl font-bold text-[#1a1a1a]">Shop by Category</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-[#1a1a1a]">{t.shop_by_category}</h2>
       </div>
       <div 
         className="relative group/carousel"
@@ -125,27 +131,30 @@ export function CategoryGrid({
             }
           `}} />
 
-          {STATIC_CATEGORIES.map((cat) => (
-            <Link
-              key={cat.handle}
-              to={`/collections/${cat.handle}`}
-              className="group block bg-[#f5f5f5] rounded-md overflow-hidden relative snap-start shadow-sm hover:shadow-md transition-shadow duration-300"
-              prefetch="intent"
-            >
-              <div className="aspect-[4/3] p-4 flex items-center justify-center bg-white">
-                <img
-                  src={cat.image}
-                  className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
-                  alt={cat.title}
-                  draggable={false}
-                />
-              </div>
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-md py-3 text-center shadow-sm border border-gray-100 group-hover:border-[#00a87a]/20 transition-colors">
-                <h3 className="text-sm font-bold text-[#1a1a1a] truncate px-2 group-hover:text-[#00a87a] transition-colors">{cat.title}</h3>
-                <span className="text-[0.65rem] text-[#00a87a] font-bold block uppercase tracking-wider mt-0.5 group-hover:scale-105 transition-transform">Shop Now</span>
-              </div>
-            </Link>
-          ))}
+          {STATIC_CATEGORIES.map((cat) => {
+            const translatedTitle = t.categories[cat.title as keyof typeof t.categories] || cat.title;
+            return (
+              <Link
+                key={cat.handle}
+                to={`/collections/${cat.handle}`}
+                className="group block bg-[#f5f5f5] rounded-md overflow-hidden relative snap-start shadow-sm hover:shadow-md transition-shadow duration-300"
+                prefetch="intent"
+              >
+                <div className="aspect-[4/3] p-4 flex items-center justify-center bg-white">
+                  <img
+                    src={cat.image}
+                    className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                    alt={translatedTitle}
+                    draggable={false}
+                  />
+                </div>
+                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-md py-3 text-center shadow-sm border border-gray-100 group-hover:border-[#00a87a]/20 transition-colors">
+                  <h3 className="text-sm font-bold text-[#1a1a1a] truncate px-2 group-hover:text-[#00a87a] transition-colors">{translatedTitle}</h3>
+                  <span className="text-[0.65rem] text-[#00a87a] font-bold block uppercase tracking-wider mt-0.5 group-hover:scale-105 transition-transform">Shop Now</span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Right Arrow */}

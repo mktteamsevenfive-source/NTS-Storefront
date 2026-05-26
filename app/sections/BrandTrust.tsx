@@ -1,31 +1,63 @@
-export function BrandTrust() {
-  const features = [
-    {
-      iconUrl: 'https://api.iconify.design/lucide/badge-percent.svg?color=%231a1a1a',
-      title: 'Best Price Guarantee',
-      subtitle: 'Best value assured with exclusive special offers'
-    },
-    {
-      iconUrl: 'https://api.iconify.design/lucide/package.svg?color=%231a1a1a',
-      title: 'Large Stock',
-      subtitle: 'Over 35,000 items ready to meet all your needs'
-    },
-    {
-      iconUrl: 'https://api.iconify.design/lucide/truck.svg?color=%231a1a1a',
-      title: 'Free Shipping',
-      subtitle: 'On orders over ฿5,000 to Bangkok, Phuket & Samui'
-    },
-    {
-      iconUrl: 'https://api.iconify.design/lucide/headset.svg?color=%231a1a1a',
-      title: 'After-Sales Service',
-      subtitle: 'Expert support & consultation 24 hours, 365 days'
-    },
-    {
-      iconUrl: 'https://api.iconify.design/lucide/wrench.svg?color=%231a1a1a',
-      title: 'Repair & Maintenance',
-      subtitle: 'Inspection and repairs by certified technicians'
-    }
-  ];
+import type {LangCode} from '~/lib/locale';
+
+const FEATURES_EN = [
+  {
+    iconUrl: 'https://api.iconify.design/lucide/badge-percent.svg?color=%231a1a1a',
+    title: 'Best Price Guarantee',
+    subtitle: 'Best value assured with exclusive special offers'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/package.svg?color=%231a1a1a',
+    title: 'Large Stock',
+    subtitle: 'Over 35,000 items ready to meet all your needs'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/truck.svg?color=%231a1a1a',
+    title: 'Free Shipping',
+    subtitle: 'On orders over ฿5,000 to Bangkok, Phuket & Samui'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/headset.svg?color=%231a1a1a',
+    title: 'After-Sales Service',
+    subtitle: 'Expert support & consultation 24 hours, 365 days'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/wrench.svg?color=%231a1a1a',
+    title: 'Repair & Maintenance',
+    subtitle: 'Inspection and repairs by certified technicians'
+  }
+];
+
+const FEATURES_TH = [
+  {
+    iconUrl: 'https://api.iconify.design/lucide/badge-percent.svg?color=%231a1a1a',
+    title: 'รับประกันราคาดีที่สุด',
+    subtitle: 'คุ้มค่าที่สุดด้วยข้อเสนอสุดพิเศษ'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/package.svg?color=%231a1a1a',
+    title: 'สินค้าพร้อมส่ง',
+    subtitle: 'สินค้ากว่า 35,000 รายการพร้อมตอบสนองทุกความต้องการ'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/truck.svg?color=%231a1a1a',
+    title: 'จัดส่งฟรี',
+    subtitle: 'เมื่อสั่งซื้อครบ 5,000 บาท ในเขตกรุงเทพฯ ภูเก็ต และสมุย'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/headset.svg?color=%231a1a1a',
+    title: 'บริการหลังการขาย',
+    subtitle: 'ทีมผู้เชี่ยวชาญพร้อมให้คำปรึกษาตลอด 24 ชั่วโมง 365 วัน'
+  },
+  {
+    iconUrl: 'https://api.iconify.design/lucide/wrench.svg?color=%231a1a1a',
+    title: 'บริการซ่อมบำรุง',
+    subtitle: 'ตรวจสอบและซ่อมแซมโดยช่างผู้ชำนาญการ'
+  }
+];
+
+export function BrandTrust({lang = 'EN'}: {lang?: LangCode}) {
+  const features = lang === 'TH' ? FEATURES_TH : FEATURES_EN;
 
   return (
     <section className="max-w-[1440px] mx-auto px-8 py-10 border-t border-b border-gray-100 my-8">

@@ -67,6 +67,7 @@ export function Header({
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
           availableHandles={availableHandles}
+          lang={lang}
         />
       </div>
     </header>

@@ -14,7 +14,7 @@ interface Slide {
   theme: 'dark' | 'light'; // text colour on overlay
 }
 
-const SLIDES: Slide[] = [
+const SLIDES_EN: Slide[] = [
   {
     src: bannerCooking,
     alt: 'Commercial Cooking Equipment',
@@ -44,9 +44,42 @@ const SLIDES: Slide[] = [
   },
 ];
 
+const SLIDES_TH: Slide[] = [
+  {
+    src: bannerCooking,
+    alt: 'อุปกรณ์ทำอาหารเชิงพาณิชย์',
+    eyebrow: 'คุณภาพระดับมืออาชีพ',
+    title: 'อุปกรณ์ทำอาหาร\nเชิงพาณิชย์',
+    subtitle: 'เตาอบ เตาทำอาหาร และเตาทอดประสิทธิภาพสูง ที่ออกแบบมาสำหรับห้องครัวระดับมืออาชีพ',
+    cta: {label: 'เลือกซื้ออุปกรณ์ทำอาหาร', href: '/collections/cooking-equipment'},
+    theme: 'dark',
+  },
+  {
+    src: bannerRefrigeration,
+    alt: 'ตู้แช่เย็นระดับมืออาชีพ',
+    eyebrow: 'ระบบทำความเย็นครบวงจร',
+    title: 'ตู้แช่เย็น\nระดับมืออาชีพ',
+    subtitle: 'ห้องเย็น ตู้แช่เชิงพาณิชย์ และเครื่องแช่แข็งแบบฉับพลัน ที่ออกแบบมาเพื่อความทนทานและประสิทธิภาพสูง',
+    cta: {label: 'เลือกซื้อตู้แช่เย็น', href: '/collections/refrigeration'},
+    theme: 'dark',
+  },
+  {
+    src: bannerHotel,
+    alt: 'ของใช้ในโรงแรมและร้านอาหาร',
+    eyebrow: 'ของใช้ในโรงแรม',
+    title: 'โซลูชันสำหรับโรงแรม\nและร้านอาหารแบบครบวงจร',
+    subtitle: 'อุปกรณ์บนโต๊ะอาหาร อุปกรณ์เสิร์ฟ และของใช้ในโรงแรมระดับพรีเมียมที่ได้รับการไว้วางใจจากสถานประกอบการระดับ 5 ดาว',
+    cta: {label: 'เลือกซื้อของใช้ในโรงแรม', href: '/collections/hotel-supplies'},
+    theme: 'dark',
+  },
+];
+
 const AUTO_PLAY_INTERVAL = 6000;
 
-export function HeroBanner({collection: _}: {collection: unknown}) {
+import type {LangCode} from '~/lib/locale';
+
+export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; lang?: LangCode}) {
+  const slides = lang === 'TH' ? SLIDES_TH : SLIDES_EN;
   const [current, setCurrent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -55,10 +88,10 @@ export function HeroBanner({collection: _}: {collection: unknown}) {
     (index: number) => {
       if (animating) return;
       setAnimating(true);
-      setCurrent((index + SLIDES.length) % SLIDES.length);
+      setCurrent((index + slides.length) % slides.length);
       setTimeout(() => setAnimating(false), 700);
     },
-    [animating],
+    [animating, slides.length],
   );
 
   const prev = useCallback(() => goTo(current - 1), [current, goTo]);
@@ -70,7 +103,7 @@ export function HeroBanner({collection: _}: {collection: unknown}) {
     return () => clearInterval(timer);
   }, [current, isHovered, goTo]);
 
-  const slide = SLIDES[current];
+  const slide = slides[current];
 
   return (
     <section
@@ -81,7 +114,7 @@ export function HeroBanner({collection: _}: {collection: unknown}) {
     >
       {/* Slides */}
       <div className="sf-hero-slider__track">
-        {SLIDES.map((s, i) => (
+        {slides.map((s, i) => (
           <div
             key={i}
             className={`sf-hero-slider__slide${i === current ? ' sf-hero-slider__slide--active' : ''}`}
@@ -144,7 +177,7 @@ export function HeroBanner({collection: _}: {collection: unknown}) {
 
       {/* Dot indicators */}
       <div className="sf-hero-slider__dots" role="tablist" aria-label="Slide indicators">
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             className={`sf-hero-slider__dot${i === current ? ' sf-hero-slider__dot--active' : ''}`}

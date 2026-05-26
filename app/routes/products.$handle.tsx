@@ -14,6 +14,9 @@ import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 import {PRODUCT_QUERY} from '~/graphql/queries/product';
+import {getLangFromRequest} from '~/lib/i18n';
+import type {LangCode} from '~/lib/locale';
+import {getT} from '~/lib/locale';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -63,6 +66,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   return {
     product,
+    lang: getLangFromRequest(request),
   };
 }
 
@@ -79,7 +83,8 @@ function loadDeferredData({context, params}: Route.LoaderArgs) {
 }
 
 export default function Product() {
-  const {product} = useLoaderData<typeof loader>();
+  const {product, lang} = useLoaderData<typeof loader>();
+  const t = getT(lang);
 
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
@@ -155,7 +160,7 @@ export default function Product() {
           {vendor && <div className="sf-product-vendor">{vendor}</div>}
           <h1 className="sf-product-title">{title}</h1>
           <div className="sf-product-meta">
-            <span className="sf-product-meta__item">Product ID : {productId}</span>
+            <span className="sf-product-meta__item">{t.product_id} : {productId}</span>
             {selectedVariant?.sku && (
               <span className="sf-product-meta__item">{selectedVariant.sku}</span>
             )}
@@ -176,19 +181,20 @@ export default function Product() {
                   : ' sf-product-stock__dot--out'
               }`}
             />
-            {'Stock: '}
+            {t.stock}:&nbsp;
             <strong>
               {selectedVariant?.quantityAvailable != null
                 ? selectedVariant.quantityAvailable
                 : selectedVariant?.availableForSale
-                ? 'In Stock'
-                : 'Out of Stock'}
+                ? (lang === 'TH' ? 'มีสินค้า' : 'In Stock')
+                : (lang === 'TH' ? 'สินค้าหมด' : 'Out of Stock')}
             </strong>
           </div>
 
           <ProductForm
             productOptions={productOptions}
             selectedVariant={selectedVariant}
+            lang={lang}
           />
 
           {descriptionHtml && (
@@ -199,7 +205,7 @@ export default function Product() {
                 onClick={() => setDescOpen((o) => !o)}
                 aria-expanded={descOpen}
               >
-                <span>Description</span>
+                <span>{t.description}</span>
                 <svg
                   width="16"
                   height="16"
@@ -231,7 +237,7 @@ export default function Product() {
                 onClick={() => setSpecOpen((o) => !o)}
                 aria-expanded={specOpen}
               >
-                <span>Specification</span>
+                <span>{lang === 'TH' ? 'ข้อมูลจำเพาะทางเทคนิค' : 'Specification'}</span>
                 <svg
                   width="16"
                   height="16"

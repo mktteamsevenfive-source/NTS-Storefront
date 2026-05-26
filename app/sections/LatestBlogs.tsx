@@ -1,14 +1,17 @@
 import {Suspense} from 'react';
 import {Await, Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
+import {getT} from '~/lib/locale';
+import type {LangCode} from '~/lib/locale';
 
-export function LatestBlogs({blogs}: {blogs: Promise<any>}) {
+export function LatestBlogs({blogs, lang = 'EN'}: {blogs: Promise<any>; lang?: LangCode}) {
+  const t = getT(lang);
   return (
     <section className="max-w-[1440px] mx-auto px-8 py-16 bg-[#fafafa]">
       <div className="relative flex items-center justify-center mb-8">
-        <h2 className="text-2xl font-bold text-[#1a1a1a]">Blogs</h2>
+        <h2 className="text-2xl font-bold text-[#1a1a1a]">{t.blogs}</h2>
         <Link to="/blogs/news" className="absolute right-0 text-sm font-semibold text-[#1a1a1a] hover:text-[#00a87a] transition-colors">
-          ดูทั้งหมด &gt;
+          {t.view_all_blogs}
         </Link>
       </div>
 

@@ -3,11 +3,17 @@ import {Await, Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
 import type {RecommendedProductsQuery} from 'storefrontapi.generated';
 
+import {getT} from '~/lib/locale';
+import type {LangCode} from '~/lib/locale';
+
 export function RecommendedProducts({
   products,
+  lang = 'EN',
 }: {
   products: Promise<RecommendedProductsQuery | null>;
+  lang?: LangCode;
 }) {
+  const t = getT(lang);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -155,7 +161,7 @@ export function RecommendedProducts({
 
                 <div className="text-center mt-8">
                   <Link to={viewAllLink} className="inline-block text-sm font-bold text-[#1a1a1a] border-b border-[#1a1a1a] pb-0.5 hover:text-[#00a87a] hover:border-[#00a87a] transition-colors">
-                    View All Product
+                    {t.view_all}
                   </Link>
                 </div>
               </div>

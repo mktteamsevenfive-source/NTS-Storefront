@@ -8,6 +8,8 @@ import {CategoryGrid} from '~/sections/CategoryGrid';
 import {RecommendedProducts} from '~/sections/RecommendedProducts';
 import {LatestBlogs} from '~/sections/LatestBlogs';
 import {BrandLogos} from '~/sections/BrandLogos';
+import {getLangFromRequest} from '~/lib/i18n';
+import type {LangCode} from '~/lib/locale';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'NTS Mart | Premium Commercial Kitchen Equipment'}];
@@ -20,7 +22,8 @@ export async function loader(args: Route.LoaderArgs) {
   return {...deferredData, ...criticalData};
 }
 
-async function loadCriticalData({context}: Route.LoaderArgs) {
+async function loadCriticalData({context, request}: Route.LoaderArgs) {
+  const lang: LangCode = getLangFromRequest(request);
   const [{collections}] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
   ]);
@@ -73,6 +76,7 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
     featuredCollection: sortedCollections[0] ?? null,
     categories: sortedCollections,
+    lang,
   };
 }
 
@@ -108,14 +112,16 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  const lang = data.lang;
+
   return (
     <div>
       {data.isShopLinked ? null : <MockShopNotice />}
-      <HeroBanner collection={data.featuredCollection} />
-      <CategoryGrid collections={data.categories} />
-      <RecommendedProducts products={data.recommendedProducts} />
-      <LatestBlogs blogs={data.latestBlogs} />
-      <BrandLogos brandCollections={data.brandCollections} />
+      <HeroBanner collection={data.featuredCollection} lang={lang} />
+      <CategoryGrid collections={data.categories} lang={lang} />
+      <RecommendedProducts products={data.recommendedProducts} lang={lang} />
+      <LatestBlogs blogs={data.latestBlogs} lang={lang} />
+      <BrandLogos brandCollections={data.brandCollections} lang={lang} />
     </div>
   );
 }

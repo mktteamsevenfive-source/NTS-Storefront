@@ -8,14 +8,19 @@ import type {
 import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import type {ProductFragment} from 'storefrontapi.generated';
+import {getT} from '~/lib/locale';
+import type {LangCode} from '~/lib/locale';
 
 export function ProductForm({
   productOptions,
   selectedVariant,
+  lang = 'EN',
 }: {
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
+  lang?: LangCode;
 }) {
+  const t = getT(lang);
   const navigate = useNavigate();
   const {open} = useAside();
   const [qty, setQty] = useState(1);
@@ -125,7 +130,7 @@ export function ProductForm({
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 01-8 0" />
               </svg>
-              {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
+              {selectedVariant?.availableForSale ? t.add_to_cart : t.sold_out}
             </AddToCartButton>
           </div>
         </div>

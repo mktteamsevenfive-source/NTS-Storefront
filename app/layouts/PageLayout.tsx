@@ -40,7 +40,7 @@ export function PageLayout({
     <Aside.Provider>
       <CartAside cart={cart} />
       <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} lang={lang} />
       {header && (
         <Header
           header={header}
@@ -51,7 +51,7 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
-      <BrandTrust />
+      <BrandTrust lang={lang} />
       <Footer
         footer={footer}
         header={header}
@@ -160,9 +160,11 @@ function SearchAside() {
 function MobileMenuAside({
   header,
   publicStoreDomain,
+  lang = 'EN',
 }: {
   header: PageLayoutProps['header'];
   publicStoreDomain: PageLayoutProps['publicStoreDomain'];
+  lang?: LangCode;
 }) {
   const availableHandles = new Set(
     (header.collections?.nodes ?? [])
@@ -180,6 +182,7 @@ function MobileMenuAside({
           primaryDomainUrl={header.shop.primaryDomain.url}
           publicStoreDomain={publicStoreDomain}
           availableHandles={availableHandles}
+          lang={lang}
         />
       </Aside>
     )
