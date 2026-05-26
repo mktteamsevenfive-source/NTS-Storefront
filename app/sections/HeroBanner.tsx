@@ -155,7 +155,7 @@ export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; l
 
       {/* Prev arrow */}
       <button
-        className="sf-hero-slider__arrow sf-hero-slider__arrow--prev"
+        className="sf-hero-slider__arrow sf-hero-slider__arrow--prev hidden md:flex"
         onClick={prev}
         aria-label="Previous slide"
       >
@@ -166,7 +166,7 @@ export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; l
 
       {/* Next arrow */}
       <button
-        className="sf-hero-slider__arrow sf-hero-slider__arrow--next"
+        className="sf-hero-slider__arrow sf-hero-slider__arrow--next hidden md:flex"
         onClick={next}
         aria-label="Next slide"
       >

@@ -108,7 +108,7 @@ export function CategoryGrid({
         {/* Left Arrow */}
         <button 
           onClick={() => scroll('left')}
-          className="absolute left-[-15px] sm:left-[-25px] md:left-[-35px] lg:left-[-50px] xl:left-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white flex items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
+          className="hidden md:flex absolute left-[-15px] sm:left-[-25px] md:left-[-35px] lg:left-[-50px] xl:left-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
           aria-label="Scroll left"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -160,7 +160,7 @@ export function CategoryGrid({
         {/* Right Arrow */}
         <button 
           onClick={() => scroll('right')}
-          className="absolute right-[-15px] sm:right-[-25px] md:right-[-35px] lg:right-[-50px] xl:right-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white flex items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
+          className="hidden md:flex absolute right-[-15px] sm:right-[-25px] md:right-[-35px] lg:right-[-50px] xl:right-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
           aria-label="Scroll right"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>

@@ -2,21 +2,7 @@ import {useState} from 'react';
 import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/brands';
 
-const ALLOWED_VENDORS = [
-  'NTS',
-  'PRIMO',
-  'ABSOLUTE',
-  'Cutlery Pro',
-  'Top Rinse',
-  'Iwatani',
-  'Justa',
-  'Kitchin',
-  'VEETSAN',
-] as const;
-
-const VENDOR_DISPLAY_NAMES: Record<string, string> = {
-  VEETSAN: 'Veetsan',
-};
+import {ALLOWED_VENDORS, getVendorDisplayName} from '~/lib/brands';
 
 const VENDOR_FIRST_PRODUCT_QUERY = `#graphql
   query VendorCollection($query: String!) {
@@ -69,10 +55,6 @@ export async function loader({context}: Route.LoaderArgs) {
 }
 
 type VendorItem = {vendor: string; image: string | null; imageAlt: string};
-
-function getVendorDisplayName(vendor: string) {
-  return VENDOR_DISPLAY_NAMES[vendor] ?? vendor;
-}
 
 export default function BrandsPage() {
   const {vendorData} = useLoaderData<typeof loader>();

@@ -1,14 +1,6 @@
-export const ALLOWED_VENDORS = [
-  'NTS',
-  'PRIMO',
-  'ABSOLUTE',
-  'Cutlery Pro',
-  'Top Rinse',
-  'Iwatani',
-  'Justa',
-  'Kitchin',
-  'VEESAN',
-];
+import {ALLOWED_VENDORS} from '~/lib/brands';
+
+export {ALLOWED_VENDORS};
 
 export const VENDOR_FILTER = `(${ALLOWED_VENDORS.map((v) => `vendor:"${v}"`).join(' OR ')})`;
 

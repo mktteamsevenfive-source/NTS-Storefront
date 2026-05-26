@@ -200,19 +200,46 @@ export default function Collection() {
             {hasActiveFilters && <span className="sf-filter-toggle-btn__dot" />}
           </button>
 
+          <div 
+            className={`sf-filter-backdrop${filterOpen ? ' sf-filter-backdrop--open' : ''}`}
+            onClick={() => setFilterOpen(false)}
+            aria-hidden="true"
+          />
+
           <aside className={`sf-filter-sidebar${filterOpen ? ' sf-filter-sidebar--open' : ''}`}>
             <div className="sf-filter-sidebar__head">
               <span className="sf-filter-sidebar__title">{t.filters}</span>
-              {hasActiveFilters && (
-                <button className="sf-filter-clear-btn" onClick={clearAllFilters}>{t.clear_all}</button>
-              )}
+              <div className="flex items-center gap-2">
+                {hasActiveFilters && (
+                  <button className="sf-filter-clear-btn" onClick={clearAllFilters}>{t.clear_all}</button>
+                )}
+                <button 
+                  className="sf-filter-close-btn flex items-center justify-center p-1 text-gray-500 hover:text-gray-700" 
+                  onClick={() => setFilterOpen(false)}
+                  aria-label="Close filters"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
+            
+            <div className="sf-filter-sidebar__content">
 
             {nonPriceFilters.map((group) => {
+              const isBrandGroup = group.id === 'filter.p.vendor' || group.label.toLowerCase() === 'brand' || group.label.toLowerCase() === 'แบรนด์';
+              let groupValues = group.values;
+              if (isBrandGroup) {
+                groupValues = groupValues.filter(val => ALLOWED_VENDORS.includes(val.label as any));
+              }
+              if (groupValues.length === 0) return null;
+
               const isOpen = openGroups[group.id] !== false;
-              const isLarge = group.values.length > 8;
+              const isLarge = groupValues.length > 8;
               const query = (filterSearch[group.id] ?? '').toLowerCase();
-              const filteredValues = group.values.filter((val) =>
+              const filteredValues = groupValues.filter((val) =>
                 val.label.toLowerCase().includes(query),
               );
 
@@ -305,6 +332,16 @@ export default function Collection() {
                 )}
               </div>
             )}
+            </div>
+
+            <div className="sf-filter-sidebar__footer">
+              <button 
+                className="sf-filter-view-results-btn"
+                onClick={() => setFilterOpen(false)}
+              >
+                View Results
+              </button>
+            </div>
           </aside>
         </div>
 
