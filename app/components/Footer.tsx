@@ -1,7 +1,9 @@
 import {Suspense} from 'react';
 import {Await, NavLink, Link} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
-
+import iconFacebook from '~/assets/social/facebook.png';
+import iconIg from '~/assets/social/ig.png';
+import iconLine from '~/assets/social/line.png';
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
   header: HeaderQuery;
@@ -79,31 +81,31 @@ export function Footer({
                   </a>
                   <div className="sf-footer__social">
                     <a
-                      href="https://instagram.com"
+                      href="https://www.instagram.com/nts.mart?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw%3D%3D"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="sf-footer__social-link"
+                      className="hover:opacity-80 transition-opacity"
                       aria-label="Instagram"
                     >
-                      IG
+                      <img src={iconIg} alt="Instagram" width="32" height="32" className="object-contain" />
                     </a>
                     <a
-                      href="https://facebook.com"
+                      href="https://www.facebook.com/ntsmart.co.th"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="sf-footer__social-link"
+                      className="hover:opacity-80 transition-opacity"
                       aria-label="Facebook"
                     >
-                      FB
+                      <img src={iconFacebook} alt="Facebook" width="32" height="32" className="object-contain" />
                     </a>
                     <a
-                      href="https://line.me"
+                      href="https://page.line.me/lws7670q?oat_content=url&openQrModal=true"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="sf-footer__social-link"
+                      className="hover:opacity-80 transition-opacity"
                       aria-label="Line"
                     >
-                      LINE
+                      <img src={iconLine} alt="Line" width="32" height="32" className="object-contain" />
                     </a>
                   </div>
                 </address>
@@ -117,7 +119,7 @@ export function Footer({
               </p>
               <nav className="sf-footer__legal">
                 <NavLink to="/policies/privacy-policy" className="sf-footer__legal-link">Privacy Policy</NavLink>
-                <NavLink to="/policies/terms-of-service" className="sf-footer__legal-link">Terms of Service</NavLink>
+                <span className="sf-footer__legal-link" style={{cursor: 'default', textDecoration: 'none'}}>Terms of Service</span>
               </nav>
             </div>
           </footer>

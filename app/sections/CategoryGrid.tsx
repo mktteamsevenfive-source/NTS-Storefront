@@ -111,7 +111,7 @@ export function CategoryGrid({
         {/* Scroll Container (2 Rows) */}
         <div 
           ref={scrollRef}
-          className="grid grid-rows-2 grid-flow-col auto-cols-[80%] sm:auto-cols-[45%] md:auto-cols-[30%] lg:auto-cols-[calc(25%-12px)] gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 select-none"
+          className="grid grid-rows-1 sm:grid-rows-2 grid-flow-col auto-cols-[80%] sm:auto-cols-[45%] md:auto-cols-[30%] lg:auto-cols-[calc(25%-12px)] gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 select-none"
           style={{ 
             scrollbarWidth: 'none', 
             msOverflowStyle: 'none',

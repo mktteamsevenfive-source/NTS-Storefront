@@ -5,9 +5,9 @@ import {Image} from '@shopify/hydrogen';
 export function LatestBlogs({blogs}: {blogs: Promise<any>}) {
   return (
     <section className="max-w-[1440px] mx-auto px-8 py-16 bg-[#fafafa]">
-      <div className="flex justify-between items-end mb-8">
-        <h2 className="text-2xl font-bold text-[#1a1a1a] flex-1 text-center pl-16">Blogs</h2>
-        <Link to="/blogs/news" className="text-sm font-semibold text-[#1a1a1a] hover:text-[#00a87a] transition-colors">
+      <div className="relative flex items-center justify-center mb-8">
+        <h2 className="text-2xl font-bold text-[#1a1a1a]">Blogs</h2>
+        <Link to="/blogs/news" className="absolute right-0 text-sm font-semibold text-[#1a1a1a] hover:text-[#00a87a] transition-colors">
           ดูทั้งหมด &gt;
         </Link>
       </div>

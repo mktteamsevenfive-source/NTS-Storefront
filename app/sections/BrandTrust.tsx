@@ -29,7 +29,7 @@ export function BrandTrust() {
 
   return (
     <section className="max-w-[1440px] mx-auto px-8 py-10 border-t border-b border-gray-100 my-8">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {features.map((item, index) => (
           <div key={index} className="flex items-center gap-4 md:border-r md:border-gray-200 md:pr-4 last:border-r-0">
             <div className="flex-shrink-0">

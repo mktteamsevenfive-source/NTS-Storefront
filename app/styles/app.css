@@ -186,7 +186,7 @@ aside li {
   transition: opacity 400ms ease-in-out;
   transition: opacity 400ms;
   visibility: hidden;
-  z-index: 10;
+  z-index: 500;
 }
 
 .overlay .close-outside {
@@ -468,20 +468,37 @@ button.reset:hover:not(:has(> *)) {
 
 .sf-search__layout {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 1fr;
   gap: 0;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 2rem 2rem 2.5rem;
+  padding: 1.25rem 1rem 1.5rem;
+  @media (min-width: 45em) {
+    grid-template-columns: 220px 1fr;
+    padding: 2rem 2rem 2.5rem;
+  }
 }
 
 .sf-search__left {
-  border-right: 1px solid var(--sf-gray-200);
-  padding-right: 2rem;
+  border-right: none;
+  border-bottom: 1px solid var(--sf-gray-200);
+  padding-right: 0;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  @media (min-width: 45em) {
+    border-right: 1px solid var(--sf-gray-200);
+    border-bottom: none;
+    padding-right: 2rem;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
 }
 
 .sf-search__right {
-  padding-left: 2rem;
+  padding-left: 0;
+  @media (min-width: 45em) {
+    padding-left: 2rem;
+  }
 }
 
 .sf-search__col-title {
@@ -597,8 +614,12 @@ button.reset:hover:not(:has(> *)) {
 /* Products grid (results state) */
 .sf-search__products-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  @media (min-width: 45em) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
 }
 
 .sf-search__prod-card {

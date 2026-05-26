@@ -55,7 +55,7 @@ export function BrandLogos({brandCollections}: {brandCollections?: Promise<any>}
               );
 
               const content = (
-                <div className="flex items-center justify-center min-w-[140px] h-[60px] transition-all duration-300 hover:scale-105">
+                <div className="flex items-center justify-center min-w-[90px] md:min-w-[140px] h-[60px] transition-all duration-300 hover:scale-105">
                   {collection?.image ? (
                     <Image
                       data={collection.image}
@@ -85,10 +85,10 @@ export function BrandLogos({brandCollections}: {brandCollections?: Promise<any>}
 
             return (
               <div className="flex flex-col gap-y-6 md:gap-y-8 opacity-95 hover:opacity-100 transition-opacity duration-300">
-                <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-6">
+                <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-16 gap-y-6">
                   {firstRow.map(renderBrand)}
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-x-16 gap-y-6">
+                <div className="flex flex-wrap items-center justify-center gap-x-6 md:gap-x-16 gap-y-6">
                   {secondRow.map(renderBrand)}
                 </div>
               </div>
