@@ -121,8 +121,14 @@ function SearchResultsProducts({
             });
 
             const price = product?.selectedOrFirstAvailableVariant?.price;
+            const compareAtPrice = product?.selectedOrFirstAvailableVariant?.compareAtPrice;
             const image = product?.selectedOrFirstAvailableVariant?.image;
             const variantSku = product?.selectedOrFirstAvailableVariant?.sku;
+            
+            const discountPercent =
+              compareAtPrice && price && parseFloat(compareAtPrice.amount) > parseFloat(price.amount)
+                ? Math.round((1 - parseFloat(price.amount) / parseFloat(compareAtPrice.amount)) * 100)
+                : null;
 
             return (
               <Link
@@ -145,6 +151,9 @@ function SearchResultsProducts({
                       No image
                     </div>
                   )}
+                  {discountPercent && (
+                    <span className="product-item__badge">-{discountPercent}%</span>
+                  )}
                 </div>
                 <div className="sf-search-product-card__body">
                   {product.vendor && (
@@ -160,11 +169,18 @@ function SearchResultsProducts({
                   <p className="sf-search-product-card__title">
                     {product.title}
                   </p>
-                  {price && (
-                    <span className="sf-search-product-card__price">
-                      <Money data={price} />
-                    </span>
-                  )}
+                  <div className="product-item__price-row">
+                    {price && (
+                      <span className="sf-search-product-card__price">
+                        <Money data={price} />
+                      </span>
+                    )}
+                    {compareAtPrice && discountPercent && (
+                      <span className="product-item__compare-price">
+                        <Money data={compareAtPrice} />
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Link>
             );

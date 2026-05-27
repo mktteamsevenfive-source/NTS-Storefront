@@ -12,6 +12,10 @@ export const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       caseInsensitiveMatch: true
     ) {
       sku
+      price {
+        amount
+        currencyCode
+      }
       compareAtPrice {
         amount
         currencyCode

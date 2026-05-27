@@ -59,6 +59,10 @@ export const PRODUCT_ITEM_FRAGMENT = `#graphql
       caseInsensitiveMatch: true
     ) {
       sku
+      price {
+        amount
+        currencyCode
+      }
       compareAtPrice {
         amount
         currencyCode

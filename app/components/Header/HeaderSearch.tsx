@@ -145,18 +145,37 @@ export function HeaderSearch({t}: {t: T}) {
                         term: '',
                       });
                       const price = product?.selectedOrFirstAvailableVariant?.price;
+                      const compareAtPrice = product?.selectedOrFirstAvailableVariant?.compareAtPrice;
                       const image = product?.selectedOrFirstAvailableVariant?.image;
                       const sku = product?.selectedOrFirstAvailableVariant?.sku;
+                      
+                      const discountPercent =
+                        compareAtPrice && price && parseFloat(compareAtPrice.amount) > parseFloat(price.amount)
+                          ? Math.round((1 - parseFloat(price.amount) / parseFloat(compareAtPrice.amount)) * 100)
+                          : null;
+
                       return (
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
-                          <div className="sf-search__prod-img-wrap">
+                          <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
                               <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}
+                            {discountPercent && (
+                              <span className="product-item__badge" style={{fontSize: '0.65rem', padding: '0.1rem 0.3rem', top: '0.4rem', left: '0.4rem'}}>
+                                -{discountPercent}%
+                              </span>
+                            )}
                           </div>
-                          {price && <p className="sf-search__prod-price"><Money data={price} /></p>}
+                          <div className="product-item__price-row" style={{marginTop: '0.2rem'}}>
+                            {price && <p className="sf-search__prod-price" style={{margin: 0}}><Money data={price} /></p>}
+                            {compareAtPrice && discountPercent && (
+                              <span className="product-item__compare-price" style={{fontSize: '0.75rem'}}>
+                                <Money data={compareAtPrice} />
+                              </span>
+                            )}
+                          </div>
                           {sku && <p className="sf-search__prod-sku">SKU: {sku}</p>}
                           <p className="sf-search__prod-title">{product.title}</p>
                         </Link>
@@ -222,18 +241,37 @@ export function HeaderSearch({t}: {t: T}) {
                         term: term.current,
                       });
                       const price = product?.selectedOrFirstAvailableVariant?.price;
+                      const compareAtPrice = product?.selectedOrFirstAvailableVariant?.compareAtPrice;
                       const image = product?.selectedOrFirstAvailableVariant?.image;
                       const sku = product?.selectedOrFirstAvailableVariant?.sku;
+                      
+                      const discountPercent =
+                        compareAtPrice && price && parseFloat(compareAtPrice.amount) > parseFloat(price.amount)
+                          ? Math.round((1 - parseFloat(price.amount) / parseFloat(compareAtPrice.amount)) * 100)
+                          : null;
+
                       return (
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
-                          <div className="sf-search__prod-img-wrap">
+                          <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
                               <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}
+                            {discountPercent && (
+                              <span className="product-item__badge" style={{fontSize: '0.65rem', padding: '0.1rem 0.3rem', top: '0.4rem', left: '0.4rem'}}>
+                                -{discountPercent}%
+                              </span>
+                            )}
                           </div>
-                          {price && <p className="sf-search__prod-price"><Money data={price} /></p>}
+                          <div className="product-item__price-row" style={{marginTop: '0.2rem'}}>
+                            {price && <p className="sf-search__prod-price" style={{margin: 0}}><Money data={price} /></p>}
+                            {compareAtPrice && discountPercent && (
+                              <span className="product-item__compare-price" style={{fontSize: '0.75rem'}}>
+                                <Money data={compareAtPrice} />
+                              </span>
+                            )}
+                          </div>
                           {sku && <p className="sf-search__prod-sku">SKU: {sku}</p>}
                           <p className="sf-search__prod-title">{product.title}</p>
                         </Link>

@@ -18,7 +18,11 @@ export type RecommendedProduct = {
   title: string;
   vendor?: string;
   featuredImage?: {url: string; altText: string | null; width: number; height: number} | null;
-  selectedOrFirstAvailableVariant?: {sku: string | null} | null;
+  selectedOrFirstAvailableVariant?: {
+    sku: string | null;
+    price?: {amount: string; currencyCode: string} | null;
+    compareAtPrice?: {amount: string; currencyCode: string} | null;
+  } | null;
   priceRange: {minVariantPrice: {amount: string; currencyCode: string}};
 };
 
