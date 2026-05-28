@@ -1,20 +1,20 @@
-import {Link} from 'react-router';
-import {Image, Money} from '@shopify/hydrogen';
+import { Link } from 'react-router';
+import { Image, Money } from '@shopify/hydrogen';
 import type {
   ColProductItemFragment,
   RecommendedProductFragment,
   SearchProductFragment,
 } from 'storefrontapi.generated';
-import {useVariantUrl} from '~/lib/variants';
+import { useVariantUrl } from '~/lib/variants';
 
 export function ProductItem({
   product,
   loading,
 }: {
   product:
-    | ColProductItemFragment
-    | RecommendedProductFragment
-    | SearchProductFragment;
+  | ColProductItemFragment
+  | RecommendedProductFragment
+  | SearchProductFragment;
   loading?: 'eager' | 'lazy';
 }) {
   const variantUrl = useVariantUrl(product.handle);
@@ -24,15 +24,15 @@ export function ProductItem({
 
   // Price & discount logic
   const variant = (product as any).selectedOrFirstAvailableVariant;
-  const compareAtPrice = variant?.compareAtPrice as {amount: string; currencyCode: string} | null | undefined;
-  const variantPrice = variant?.price as {amount: string; currencyCode: string} | null | undefined;
+  const compareAtPrice = variant?.compareAtPrice as { amount: string; currencyCode: string } | null | undefined;
+  const variantPrice = variant?.price as { amount: string; currencyCode: string } | null | undefined;
   const currentPrice = variantPrice ?? ('priceRange' in product ? product.priceRange.minVariantPrice : null);
 
   const discountPercent =
     compareAtPrice && currentPrice && parseFloat(compareAtPrice.amount) > parseFloat(currentPrice.amount)
       ? Math.round(
-          (1 - parseFloat(currentPrice.amount) / parseFloat(compareAtPrice.amount)) * 100,
-        )
+        (1 - parseFloat(currentPrice.amount) / parseFloat(compareAtPrice.amount)) * 100,
+      )
       : null;
 
   return (
@@ -46,7 +46,7 @@ export function ProductItem({
         {image ? (
           <Image
             alt={image.altText || product.title}
-            aspectRatio="1/1"
+            width={1600}
             data={image}
             loading={loading}
             sizes="(min-width: 45em) 400px, 100vw"

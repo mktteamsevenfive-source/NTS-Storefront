@@ -1,6 +1,6 @@
-import {Link, useSearchParams} from 'react-router';
-import {Image, Money, Pagination} from '@shopify/hydrogen';
-import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
+import { Link, useSearchParams } from 'react-router';
+import { Image, Money, Pagination } from '@shopify/hydrogen';
+import { urlWithTrackingParams, type RegularSearchReturn } from '~/lib/search';
 
 type SearchItems = RegularSearchReturn['result']['items'];
 type PartialSearchResult<ItemType extends keyof SearchItems> = Pick<
@@ -10,7 +10,7 @@ type PartialSearchResult<ItemType extends keyof SearchItems> = Pick<
   Pick<RegularSearchReturn, 'term'>;
 
 type SearchResultsProps = RegularSearchReturn & {
-  children: (args: SearchItems & {term: string}) => React.ReactNode;
+  children: (args: SearchItems & { term: string }) => React.ReactNode;
 };
 
 export function SearchResults({
@@ -22,7 +22,7 @@ export function SearchResults({
     return null;
   }
 
-  return children({...result.items, term});
+  return children({ ...result.items, term });
 }
 
 SearchResults.Articles = SearchResultsArticles;
@@ -65,7 +65,7 @@ function SearchResultsArticles({
   );
 }
 
-function SearchResultsPages({term, pages}: PartialSearchResult<'pages'>) {
+function SearchResultsPages({ term, pages }: PartialSearchResult<'pages'>) {
   if (!pages?.nodes.length) {
     return null;
   }
@@ -101,7 +101,7 @@ function SearchResultsProducts({
   term,
   products,
   total = 0,
-}: PartialSearchResult<'products'> & {total?: number}) {
+}: PartialSearchResult<'products'> & { total?: number }) {
   if (!products?.nodes.length) {
     return null;
   }
@@ -112,7 +112,7 @@ function SearchResultsProducts({
   return (
     <div className="sf-search-section">
       <Pagination connection={products}>
-        {({nodes, hasPreviousPage, hasNextPage, nextPageUrl, previousPageUrl}) => {
+        {({ nodes, hasPreviousPage, hasNextPage, nextPageUrl, previousPageUrl }) => {
           const ItemsMarkup = nodes.map((product) => {
             const productUrl = urlWithTrackingParams({
               baseUrl: `/products/${product.handle}`,
@@ -124,7 +124,7 @@ function SearchResultsProducts({
             const compareAtPrice = product?.selectedOrFirstAvailableVariant?.compareAtPrice;
             const image = product?.selectedOrFirstAvailableVariant?.image;
             const variantSku = product?.selectedOrFirstAvailableVariant?.sku;
-            
+
             const discountPercent =
               compareAtPrice && price && parseFloat(compareAtPrice.amount) > parseFloat(price.amount)
                 ? Math.round((1 - parseFloat(price.amount) / parseFloat(compareAtPrice.amount)) * 100)

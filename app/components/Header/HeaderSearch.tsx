@@ -158,7 +158,7 @@ export function HeaderSearch({t}: {t: T}) {
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
                           <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
-                              <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
+                              <Image alt={image.altText ?? product.title} src={image.url} width={1600} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}
@@ -254,7 +254,7 @@ export function HeaderSearch({t}: {t: T}) {
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
                           <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
-                              <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
+                              <Image alt={image.altText ?? product.title} src={image.url} width={1600} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}

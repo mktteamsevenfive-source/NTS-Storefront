@@ -1,6 +1,6 @@
-import {Suspense} from 'react';
-import {Await, NavLink, Link} from 'react-router';
-import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+import { Suspense } from 'react';
+import { Await, NavLink, Link } from 'react-router';
+import type { FooterQuery, HeaderQuery } from 'storefrontapi.generated';
 import iconFacebook from '~/assets/social/facebook.png';
 import iconIg from '~/assets/social/ig.png';
 import iconLine from '~/assets/social/line.png';
@@ -119,7 +119,7 @@ export function Footer({
               </p>
               <nav className="sf-footer__legal">
                 <NavLink to="/policies/privacy-policy" className="sf-footer__legal-link">Privacy Policy</NavLink>
-                <span className="sf-footer__legal-link" style={{cursor: 'default', textDecoration: 'none'}}>Terms of Service</span>
+                <span className="sf-footer__legal-link" style={{ cursor: 'default', textDecoration: 'none' }}>Terms of Service</span>
               </nav>
             </div>
           </footer>
