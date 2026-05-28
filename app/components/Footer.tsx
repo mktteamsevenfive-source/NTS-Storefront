@@ -4,6 +4,8 @@ import type { FooterQuery, HeaderQuery } from 'storefrontapi.generated';
 import iconFacebook from '~/assets/social/facebook.png';
 import iconIg from '~/assets/social/ig.png';
 import iconLine from '~/assets/social/line.png';
+import iconDbd from '~/assets/dbd/dbd.png';
+
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
   header: HeaderQuery;
@@ -106,6 +108,16 @@ export function Footer({
                       aria-label="Line"
                     >
                       <img src={iconLine} alt="Line" width="32" height="32" className="object-contain" />
+                    </a>
+                  </div>
+                  <div className="sf-footer__dbd">
+                    <a
+                      href="https://datawarehouse.dbd.go.th/company/profile/50105557179002"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block hover:opacity-80 transition-opacity"
+                    >
+                      <img src={iconDbd} alt="DBD Registered" width="120" className="object-contain" style={{ maxWidth: '100%', height: 'auto' }} />
                     </a>
                   </div>
                 </address>
