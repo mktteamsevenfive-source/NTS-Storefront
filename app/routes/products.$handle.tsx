@@ -17,6 +17,9 @@ import {PRODUCT_QUERY} from '~/graphql/queries/product';
 import {getLangFromRequest} from '~/lib/i18n';
 import type {LangCode} from '~/lib/locale';
 import {getT} from '~/lib/locale';
+import {RECOMMENDED_PRODUCTS_QUERY} from '~/graphql/queries/homepage';
+import {RECOMMENDED_VENDOR_FILTER} from '~/utils/vendors';
+import {RecommendedProducts} from '~/sections/RecommendedProducts';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
@@ -29,11 +32,11 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
+
+  // Start fetching non-critical data
+  const deferredData = loadDeferredData(args, criticalData.product);
 
   return {...deferredData, ...criticalData};
 }
@@ -75,15 +78,33 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
  * fetched after the initial page load. If it's unavailable, the page should still 200.
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
-function loadDeferredData({context, params}: Route.LoaderArgs) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
+function loadDeferredData({context, params}: Route.LoaderArgs, product: any) {
+  const sku = product?.selectedOrFirstAvailableVariant?.sku || '';
+  const prefixMatch = sku.match(/^([A-Za-z0-9]+)-/);
+  const prefix = prefixMatch ? prefixMatch[1] : '';
 
-  return {};
+  let filterQuery = RECOMMENDED_VENDOR_FILTER;
+  if (prefix) {
+    filterQuery = `${prefix}*`;
+  }
+
+  const recommendedProducts = context.storefront
+    .query(RECOMMENDED_PRODUCTS_QUERY, {
+      variables: {
+        filterQuery,
+        collectionHandle: 'non-existent-fallback-collection',
+      },
+    })
+    .catch((error: Error) => {
+      console.error(error);
+      return null;
+    });
+
+  return {recommendedProducts};
 }
 
 export default function Product() {
-  const {product, lang} = useLoaderData<typeof loader>();
+  const {product, lang, recommendedProducts} = useLoaderData<typeof loader>();
   const t = getT(lang);
 
   const selectedVariant = useOptimisticVariant(
@@ -300,6 +321,8 @@ export default function Product() {
           )}
         </div>
       </div>
+
+      <RecommendedProducts products={recommendedProducts} lang={lang} />
 
       <Analytics.ProductView
         data={{
