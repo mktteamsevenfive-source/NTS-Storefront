@@ -103,18 +103,61 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
                 View all brands <span className="ml-1 text-[10px]">›</span>
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {FLOATING_BRANDS.map((brand) => (
-                <Link
-                  key={brand.name}
-                  to={brand.url}
-                  className="flex items-center justify-center bg-white border border-gray-100 rounded-xl p-2.5 h-16 shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200"
-                  prefetch="intent"
-                >
-                  {brand.logo}
-                </Link>
-              ))}
-            </div>
+            <Suspense fallback={<div className="h-[60px] opacity-60 flex items-center justify-center text-sm text-gray-400">Loading brands...</div>}>
+              <Await resolve={brandCollections}>
+                {(response) => {
+                  const renderBrand = (key: string) => {
+                    const collection = response?.[key];
+                    const displayName = brandDisplayNames[key];
+
+                    const renderPlaceholder = () => (
+                      <span className="font-black text-[#1a1a1a] tracking-tighter uppercase whitespace-nowrap select-none" style={{fontSize: '12px'}}>
+                        {displayName === 'nts' ? (
+                          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[10px]">
+                            ✤ nts ✤
+                          </span>
+                        ) : displayName === 'Iwatani' ? (
+                          <span className="text-[#e02b27] text-[11px]">{displayName}</span>
+                        ) : (
+                          displayName
+                        )}
+                      </span>
+                    );
+
+                    const cardClassName = "flex items-center justify-center bg-white border border-gray-100 rounded-xl p-2.5 h-16 shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200 shrink-0";
+                    const content = (
+                      <div className="flex items-center justify-center w-full h-full">
+                        {collection?.image ? (
+                          <Image
+                            data={collection.image}
+                            sizes="120px"
+                            className="object-contain w-full h-full max-h-[30px]"
+                            alt={collection.image.altText || displayName}
+                          />
+                        ) : (
+                          renderPlaceholder()
+                        )}
+                      </div>
+                    );
+
+                    if (collection?.handle) {
+                      return (
+                        <Link key={key} to={`/collections/${collection.handle}`} className={cardClassName} prefetch="intent">
+                          {content}
+                        </Link>
+                      );
+                    }
+                    return <div key={key} className={cardClassName}>{content}</div>;
+                  };
+
+                  return (
+                    <div className="grid grid-cols-3 gap-3 opacity-95 hover:opacity-100 transition-opacity duration-300">
+                      {brandNames.map(renderBrand)}
+                    </div>
+                  );
+                }}
+              </Await>
+            </Suspense>
           </div>
         </div>
 
@@ -122,90 +165,3 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
     </section>
   );
 }
-
-const FLOATING_BRANDS = [
-  {
-    name: 'RATIONAL',
-    url: '/collections/rational',
-    logo: (
-      <svg viewBox="0 0 100 32" width="85" height="26" style={{display:'block'}} className="mx-auto">
-        <rect x="1" y="1" width="98" height="30" fill="none" stroke="#c8102e" strokeWidth="2.5" rx="3"/>
-        <text x="50" y="21.5" textAnchor="middle" fontFamily="'Inter', 'Arial Black', sans-serif" fontWeight="900" fontSize="13.5" fill="#c8102e" letterSpacing="0.2">RATIONAL</text>
-      </svg>
-    )
-  },
-  {
-    name: 'HOSHIZAKI',
-    url: '/collections/hoshizaki',
-    logo: (
-      <svg viewBox="0 0 120 32" width="100" height="26" style={{display:'block'}} className="mx-auto">
-        <circle cx="14" cy="16" r="9" fill="#005bac"/>
-        <text x="14" y="20.5" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="bold" fontSize="12" fill="#ffffff">H</text>
-        <text x="28" y="20.5" fontFamily="'Inter', sans-serif" fontWeight="900" fontSize="10.5" fill="#1a1a1a" letterSpacing="0.5">HOSHIZAKI</text>
-      </svg>
-    )
-  },
-  {
-    name: 'robot coupe',
-    url: '/collections/robot-coupe',
-    logo: (
-      <svg viewBox="0 0 110 32" width="95" height="26" style={{display:'block'}} className="mx-auto">
-        <text x="2" y="21" fontFamily="'Inter', sans-serif" fontStyle="italic" fontWeight="900" fontSize="15" fill="#c8102e" letterSpacing="-0.2">robot coupe</text>
-        <circle cx="68" cy="9" r="2.5" fill="#00A859"/>
-      </svg>
-    )
-  },
-  {
-    name: 'SIRMAN',
-    url: '/collections/sirman',
-    logo: (
-      <svg viewBox="0 0 90 32" width="80" height="26" style={{display:'block'}} className="mx-auto">
-        <text x="2" y="22" fontFamily="'Inter', 'Arial Black', sans-serif" fontStyle="italic" fontWeight="900" fontSize="19" fill="#c8102e" letterSpacing="0.2">SIRMAN</text>
-      </svg>
-    )
-  },
-  {
-    name: 'UNOX',
-    url: '/collections/unox',
-    logo: (
-      <svg viewBox="0 0 85 32" width="75" height="26" style={{display:'block'}} className="mx-auto">
-        <rect x="2" y="3" width="81" height="26" rx="13" fill="#1a1a1a"/>
-        <text x="42.5" y="20.5" textAnchor="middle" fontFamily="'Inter', 'Arial Black', sans-serif" fontWeight="900" fontSize="13" fill="#ffffff" letterSpacing="1">UNOX</text>
-      </svg>
-    )
-  },
-  {
-    name: 'CAMBRO',
-    url: '/collections/cambro',
-    logo: (
-      <svg viewBox="0 0 95 32" width="85" height="26" style={{display:'block'}} className="mx-auto">
-        <text x="5" y="21" fontFamily="'Inter', 'Arial Black', sans-serif" fontWeight="900" fontSize="15.5" fill="#c8102e" letterSpacing="0.4">CAMBRO</text>
-      </svg>
-    )
-  },
-  {
-    name: 'HAMILTON BEACH COMMERCIAL',
-    url: '/collections/hamilton-beach',
-    logo: (
-      <svg viewBox="0 0 130 32" width="110" height="26" style={{display:'block'}} className="mx-auto">
-        <rect x="0" y="1" width="130" height="30" fill="none" stroke="#1a1a1a" strokeWidth="1.5" rx="2"/>
-        <text x="65" y="14" textAnchor="middle" fontFamily="'Inter', 'Arial Black', sans-serif" fontWeight="900" fontSize="8.5" fill="#1a1a1a" letterSpacing="0.2">HAMILTON BEACH</text>
-        <text x="65" y="24" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="700" fontSize="7" fill="#666666" letterSpacing="1">COMMERCIAL</text>
-      </svg>
-    )
-  },
-  {
-    name: 'Electrolux PROFESSIONAL',
-    url: '/collections/electrolux',
-    logo: (
-      <svg viewBox="0 0 135 32" width="110" height="26" style={{display:'block'}} className="mx-auto">
-        <g fill="#1a1a1a">
-          <path d="M12 8a8 8 0 1 0 8 8 8 8 0 0 0-8-8zm0 13.5a5.5 5.5 0 1 1 5.5-5.5 5.5 5.5 0 0 1-5.5 5.5z"/>
-          <path d="M10 12h4v1.5h-4zM10 15h4v1.5h-4zM10 18h4v1.5h-4z"/>
-        </g>
-        <text x="28" y="16" fontFamily="'Inter', sans-serif" fontWeight="800" fontSize="11" fill="#1a1a1a" letterSpacing="0.2">Electrolux</text>
-        <text x="28" y="25" fontFamily="'Inter', sans-serif" fontWeight="700" fontSize="7" fill="#666666" letterSpacing="1.2">PROFESSIONAL</text>
-      </svg>
-    )
-  }
-];
