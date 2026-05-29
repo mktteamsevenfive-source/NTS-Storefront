@@ -86,8 +86,8 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
 
         {/* Right Image Area */}
         <div className="w-full lg:w-[65%] lg:absolute lg:right-0 lg:top-0 lg:bottom-0 h-[400px] lg:h-[600px]">
-          {/* Smooth gradient blend overlaying the image */}
-          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-72 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
+          {/* Diagonal cut effect for the white section overlaying the image */}
+          <div className="hidden lg:block absolute left-[-1px] top-0 bottom-0 w-32 bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%, 0 100%)', zIndex: 1 }} />
           
           <img 
             src="/images/hero_kitchen.png" 
@@ -96,9 +96,9 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
           />
 
           {/* Floating Top Brands Box */}
-          <div className="absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-sm p-6 lg:p-7 rounded-2xl shadow-2xl w-[440px] max-w-[90%] hidden md:block border border-gray-100 z-10">
+          <div className="absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-sm p-7 lg:p-8 rounded-2xl shadow-2xl w-[490px] max-w-[90%] hidden md:block border border-gray-100 z-10">
             <div className="flex justify-between items-center mb-5">
-              <h3 className="font-extrabold text-gray-900 text-base">Top Brands You Trust</h3>
+              <h3 className="font-extrabold text-gray-900 text-lg">Top Brands You Trust</h3>
               <Link to="/brands" className="text-[#00A859] text-xs font-bold flex items-center hover:underline hover:text-[#008f4c] transition-colors">
                 View all brands <span className="ml-1 text-[10px]">›</span>
               </Link>
@@ -111,27 +111,27 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
                     const displayName = brandDisplayNames[key];
 
                     const renderPlaceholder = () => (
-                      <span className="font-black text-[#1a1a1a] tracking-tighter uppercase whitespace-nowrap select-none" style={{fontSize: '12px'}}>
+                      <span className="font-black text-[#1a1a1a] tracking-tighter uppercase whitespace-nowrap select-none" style={{fontSize: '16px'}}>
                         {displayName === 'nts' ? (
-                          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[10px]">
+                          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[14px]">
                             ✤ nts ✤
                           </span>
                         ) : displayName === 'Iwatani' ? (
-                          <span className="text-[#e02b27] text-[11px]">{displayName}</span>
+                          <span className="text-[#e02b27] text-[15px]">{displayName}</span>
                         ) : (
                           displayName
                         )}
                       </span>
                     );
 
-                    const cardClassName = "flex items-center justify-center bg-white border border-gray-100 rounded-xl p-2.5 h-16 shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200 shrink-0";
+                    const cardClassName = "flex items-center justify-center bg-white border border-gray-100 rounded-xl p-3 h-20 shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200 shrink-0";
                     const content = (
                       <div className="flex items-center justify-center w-full h-full">
                         {collection?.image ? (
                           <Image
                             data={collection.image}
                             sizes="120px"
-                            className="object-contain w-full h-full max-h-[30px]"
+                            className="object-contain w-full h-full max-h-[44px]"
                             alt={collection.image.altText || displayName}
                           />
                         ) : (
@@ -151,7 +151,7 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
                   };
 
                   return (
-                    <div className="grid grid-cols-3 gap-3 opacity-95 hover:opacity-100 transition-opacity duration-300">
+                    <div className="grid grid-cols-3 gap-3.5 opacity-95 hover:opacity-100 transition-opacity duration-300">
                       {brandNames.map(renderBrand)}
                     </div>
                   );
