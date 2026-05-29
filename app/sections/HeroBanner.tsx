@@ -30,10 +30,10 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
   };
   return (
     <section className="bg-white w-full overflow-hidden relative">
-      <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row relative">
+      <div className="w-full flex flex-col lg:flex-row relative">
         
         {/* Left Content Area */}
-        <div className="w-full lg:w-[45%] py-12 px-8 lg:py-24 lg:pr-12 lg:pl-8 flex flex-col justify-center z-10 bg-white">
+        <div className="w-full lg:w-[45%] py-12 px-8 lg:py-24 lg:pr-12 lg:pl-12 xl:pl-20 2xl:pl-32 flex flex-col justify-center z-10 bg-white">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] leading-[1.1] tracking-tight mb-4">
             Professional<br/>
             Kitchen Solutions<br/>
