@@ -7,12 +7,18 @@ import bannerHotel from '~/assets/banner/banner-hotel.png';
 interface Slide {
   src: string;
   alt: string;
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  cta: {label: string; href: string};
-  theme: 'dark' | 'light'; // text colour on overlay
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  cta?: {label: string; href: string};
+  theme?: 'dark' | 'light'; // text colour on overlay
 }
+
+import heroDuck from '~/assets/banner/hero_duck.png';
+import heroFoodpan from '~/assets/banner/hero_foodpan.png';
+import heroBuffet from '~/assets/banner/hero_buffet.png';
+import heroIcemaker from '~/assets/banner/hero_icemaker.png';
+import heroFaucet from '~/assets/banner/hero_faucet.png';
 
 const SLIDES_EN: Slide[] = [
   {
@@ -40,6 +46,51 @@ const SLIDES_EN: Slide[] = [
     title: 'Complete Hotel &\nRestaurant Solutions',
     subtitle: 'Premium tableware, serving equipment and hospitality supplies trusted by 5-star establishments.',
     cta: {label: 'Shop Hotel Supplies', href: '/collections/hotel-supplies'},
+    theme: 'dark',
+  },
+  {
+    src: heroDuck,
+    alt: 'Duck Humid and Dry Blow Refrigerator',
+    eyebrow: 'COMMERCIAL REFRIGERATION',
+    title: 'Duck Humid &\nDry Blow Refrigerator',
+    subtitle: 'Professional storage solutions for roasted duck and pork.',
+    cta: {label: 'Shop Refrigeration', href: '/collections/refrigeration-equipment'},
+    theme: 'dark',
+  },
+  {
+    src: heroFoodpan,
+    alt: 'Gastronorm Food Pan',
+    eyebrow: 'KITCHEN ESSENTIALS',
+    title: 'Gastronorm\nFood Pans',
+    subtitle: 'High-quality stainless steel food pans for prep and storage.',
+    cta: {label: 'Shop Smallwares', href: '/collections/smallwares'},
+    theme: 'dark',
+  },
+  {
+    src: heroBuffet,
+    alt: 'Buffetware',
+    eyebrow: 'CATERING & EVENTS',
+    title: 'Premium\nBuffetware',
+    subtitle: 'Elegant chafing dishes and serving equipment for events.',
+    cta: {label: 'Shop Buffetware', href: '/collections/tableware-buffetware'},
+    theme: 'dark',
+  },
+  {
+    src: heroIcemaker,
+    alt: 'Ice Maker',
+    eyebrow: 'BEVERAGE EQUIPMENT',
+    title: 'Commercial\nIce Makers',
+    subtitle: 'Reliable high-capacity ice machines for bars and restaurants.',
+    cta: {label: 'Shop Ice Makers', href: '/collections/ice-machines'},
+    theme: 'dark',
+  },
+  {
+    src: heroFaucet,
+    alt: 'Faucet and Pre Rinse',
+    eyebrow: 'WASHING SOLUTIONS',
+    title: 'Faucets &\nPre-Rinse Units',
+    subtitle: 'Heavy-duty commercial kitchen faucets for optimal hygiene.',
+    cta: {label: 'Shop Faucets', href: '/collections/warewashing-sanitisation'},
     theme: 'dark',
   },
 ];
@@ -70,6 +121,51 @@ const SLIDES_TH: Slide[] = [
     title: 'โซลูชันสำหรับโรงแรม\nและร้านอาหารแบบครบวงจร',
     subtitle: 'อุปกรณ์บนโต๊ะอาหาร อุปกรณ์เสิร์ฟ และของใช้ในโรงแรมระดับพรีเมียมที่ได้รับการไว้วางใจจากสถานประกอบการระดับ 5 ดาว',
     cta: {label: 'เลือกซื้อของใช้ในโรงแรม', href: '/collections/hotel-supplies'},
+    theme: 'dark',
+  },
+  {
+    src: heroDuck,
+    alt: 'ตู้แช่เป่าลม เป็ด หมูแดง หมูหัน',
+    eyebrow: 'ตู้แช่เย็นเชิงพาณิชย์',
+    title: 'ตู้แช่เป่าลม เป็ด\nหมูแดง หมูหัน',
+    subtitle: 'โซลูชันการจัดเก็บระดับมืออาชีพสำหรับเป็ดย่างและหมูแดง',
+    cta: {label: 'เลือกซื้อตู้แช่เย็น', href: '/collections/refrigeration-equipment'},
+    theme: 'dark',
+  },
+  {
+    src: heroFoodpan,
+    alt: 'ถาดใส่อาหารสแตนเลส',
+    eyebrow: 'อุปกรณ์ครัวพื้นฐาน',
+    title: 'ถาดใส่อาหาร\nสแตนเลส (Gastronorm)',
+    subtitle: 'ถาดอาหารสแตนเลสคุณภาพสูงสำหรับการเตรียมและจัดเก็บ',
+    cta: {label: 'เลือกซื้ออุปกรณ์เครื่องครัว', href: '/collections/smallwares'},
+    theme: 'dark',
+  },
+  {
+    src: heroBuffet,
+    alt: 'อุปกรณ์บุฟเฟ่ต์ งานจัดเลี้ยง',
+    eyebrow: 'อุปกรณ์จัดเลี้ยง',
+    title: 'อุปกรณ์บุฟเฟ่ต์\nระดับพรีเมียม',
+    subtitle: 'อ่างอุ่นอาหารและอุปกรณ์เสิร์ฟที่หรูหราสำหรับงานจัดเลี้ยง',
+    cta: {label: 'เลือกซื้ออุปกรณ์บุฟเฟ่ต์', href: '/collections/tableware-buffetware'},
+    theme: 'dark',
+  },
+  {
+    src: heroIcemaker,
+    alt: 'เครื่องผลิตน้ำแข็ง',
+    eyebrow: 'อุปกรณ์เครื่องดื่ม',
+    title: 'เครื่องผลิตน้ำแข็ง\nเชิงพาณิชย์',
+    subtitle: 'เครื่องทำน้ำแข็งความจุสูงที่วางใจได้สำหรับบาร์และร้านอาหาร',
+    cta: {label: 'เลือกซื้อเครื่องทำน้ำแข็ง', href: '/collections/ice-machines'},
+    theme: 'dark',
+  },
+  {
+    src: heroFaucet,
+    alt: 'ก๊อกน้ำและหัวฉีดชำระ',
+    eyebrow: 'โซลูชันการล้างทำความสะอาด',
+    title: 'ก๊อกน้ำและ\nหัวฉีดชำระ',
+    subtitle: 'ก๊อกน้ำห้องครัวเชิงพาณิชย์แบบ Heavy-duty เพื่อสุขอนามัยที่ดีเยี่ยม',
+    cta: {label: 'เลือกซื้ออุปกรณ์ทำความสะอาด', href: '/collections/warewashing-sanitisation'},
     theme: 'dark',
   },
 ];
@@ -156,27 +252,39 @@ export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; l
       </div>
 
       {/* Dark gradient overlay */}
-      <div className="sf-hero-slider__overlay" />
+      {slide.title && <div className="sf-hero-slider__overlay" />}
 
       {/* Text content */}
-      <div className={`sf-hero-slider__content${slide.theme === 'light' ? ' sf-hero-slider__content--light' : ''}`}>
-        <p className="sf-hero-slider__eyebrow">{slide.eyebrow}</p>
-        <h1 className="sf-hero-slider__title">
-          {slide.title.split('\n').map((line, i) => (
-            <span key={i}>
-              {line}
-              {i < slide.title.split('\n').length - 1 && <br />}
-            </span>
-          ))}
-        </h1>
-        <p className="sf-hero-slider__subtitle">{slide.subtitle}</p>
-        <Link to={slide.cta.href} className="sf-hero-slider__cta" prefetch="intent">
-          {slide.cta.label}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginLeft: '0.5rem'}}>
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </Link>
-      </div>
+      {slide.title && (
+        <div className={`sf-hero-slider__content${slide.theme === 'light' ? ' sf-hero-slider__content--light' : ''}`}>
+          {slide.eyebrow && <p className="sf-hero-slider__eyebrow">{slide.eyebrow}</p>}
+          <h1 className="sf-hero-slider__title">
+            {slide.title.split('\n').map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < slide.title!.split('\n').length - 1 && <br />}
+              </span>
+            ))}
+          </h1>
+          {slide.subtitle && <p className="sf-hero-slider__subtitle">{slide.subtitle}</p>}
+          {slide.cta && (
+            <Link to={slide.cta.href} className="sf-hero-slider__cta" prefetch="intent">
+              {slide.cta.label}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginLeft: '0.5rem'}}>
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </Link>
+          )}
+        </div>
+      )}
+      {!slide.title && slide.cta && (
+        <Link 
+          to={slide.cta.href} 
+          className="absolute inset-0 z-10 block" 
+          aria-label={slide.cta.label}
+          prefetch="intent" 
+        />
+      )}
 
       {/* Prev arrow */}
       <button
