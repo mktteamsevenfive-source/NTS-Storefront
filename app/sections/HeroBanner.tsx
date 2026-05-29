@@ -86,8 +86,8 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
 
         {/* Right Image Area */}
         <div className="w-full lg:w-[65%] lg:absolute lg:right-0 lg:top-0 lg:bottom-0 h-[400px] lg:h-[600px]">
-          {/* Diagonal cut effect for the white section overlaying the image */}
-          <div className="hidden lg:block absolute left-[-1px] top-0 bottom-0 w-32 bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%, 0 100%)', zIndex: 1 }} />
+          {/* Smooth gradient blend overlaying the image */}
+          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-72 bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
           
           <img 
             src="/images/hero_kitchen.png" 
