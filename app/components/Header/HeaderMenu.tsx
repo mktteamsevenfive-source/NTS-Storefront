@@ -178,6 +178,19 @@ const CUSTOM_CAT_TRANS: Record<string, { EN: string; TH: string }> = {
   'Ventilation & Hood': { EN: 'Ventilation & Hood', TH: 'เครื่องดูดควันและระบบระบายอากาศ' },
 };
 
+const SPARE_PARTS_CAT_TRANS: Record<string, { EN: string; TH: string }> = {
+  'Consumables & Service Parts': { EN: 'Consumables & Service Parts', TH: 'ชิ้นส่วนสิ้นเปลืองและอะไหล่บริการ' },
+  'Control Boards & Sensors': { EN: 'Control Boards & Sensors', TH: 'บอร์ดควบคุมและเซ็นเซอร์' },
+  'Electrical & Electronic Components': { EN: 'Electrical & Electronic Components', TH: 'ชิ้นส่วนไฟฟ้าและอิเล็กทรอนิกส์' },
+  'Mechanical & Mounting Hardware': { EN: 'Mechanical & Mounting Hardware', TH: 'ชิ้นส่วนกลไกและตัวยึดติดตั้ง' },
+  'Safety & Protection Devices': { EN: 'Safety & Protection Devices', TH: 'อุปกรณ์ป้องกันและความปลอดภัย' },
+  'Structural & Access Components': { EN: 'Structural & Access Components', TH: 'ชิ้นส่วนโครงสร้างและตัวเปิดปิด' },
+  'Heating, Ignition & Gas Parts': { EN: 'Heating, Ignition & Gas Parts', TH: 'อะไหล่ระบบความร้อน จุดระเบิด และแก๊ส' },
+  'Motors, Fans & Actuators': { EN: 'Motors, Fans & Actuators', TH: 'มอเตอร์ พัดลม และตัวกระตุ้น' },
+  'Pumps, Compressors & Fluid Systems': { EN: 'Pumps, Compressors & Fluid Systems', TH: 'ปั๊ม คอมเพรสเซอร์ และระบบของเหลว' },
+  'Storage, Handling & Mobility': { EN: 'Storage, Handling & Mobility', TH: 'อุปกรณ์จัดเก็บ การขนย้าย และการเคลื่อนที่' }
+};
+
 const POPULAR_CAT_TRANS: Record<string, { EN: string; TH: string }> = {
   'Combi Oven': { EN: 'Combi Oven', TH: 'เตาอบคอมบิ' },
   'Ice Machine': { EN: 'Ice Machine', TH: 'เครื่องทำน้ำแข็ง' },
@@ -282,6 +295,104 @@ const SIDEBAR_CATEGORIES = [
   }
 ];
 
+const SPARE_PARTS_SIDEBAR_CATEGORIES = [
+  {
+    title: 'Consumables & Service Parts',
+    url: '/collections/consumables-service-parts',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Control Boards & Sensors',
+    url: '/collections/control-boards-sensors',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2"/>
+        <path d="M9 9h6v6H9zM9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 15h3M1 9h3M1 15h3"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Electrical & Electronic Components',
+    url: '/collections/electrical-electronic-components',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Mechanical & Mounting Hardware',
+    url: '/collections/mechanical-mounting-hardware',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Safety & Protection Devices',
+    url: '/collections/safety-protection-devices',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Structural & Access Components',
+    url: '/collections/structural-access-components',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M9 3v18M3 9h6M3 15h6"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Heating, Ignition & Gas Parts',
+    url: '/collections/heating-ignition-gas-parts',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Motors, Fans & Actuators',
+    url: '/collections/motors-fans-actuators',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2v20M2 12h20M12 12l5.5-5.5M12 12l-5.5 5.5M12 12l5.5 5.5M12 12L6.5 6.5"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Pumps, Compressors & Fluid Systems',
+    url: '/collections/pumps-compressors-fluid-systems',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    )
+  },
+  {
+    title: 'Storage, Handling & Mobility',
+    url: '/collections/storage-handling-mobility',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+      </svg>
+    )
+  }
+];
+
 const POPULAR_CATEGORIES = [
   { title: 'Combi Oven',   url: '/collections/commercial-ovens',       img: '/images/hero_buffet.png' },
   { title: 'Ice Machine',  url: '/collections/beverage-equipment',      img: '/images/hero_icemaker.png' },
@@ -360,9 +471,12 @@ const QUICK_LINKS = [
 
 function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode; close: () => void; t: T; lang?: LangCode; collections?: any}) {
   const isProductMenu = item.title === 'Product';
+  const isSparePartsMenu = item.title === 'Spare Parts';
 
   const [activeCatTitle, setActiveCatTitle] = useState<string>(
-    isProductMenu ? 'Food Preparation' : (item.children[0]?.title ?? '')
+    isProductMenu ? 'Food Preparation' :
+    isSparePartsMenu ? 'Consumables & Service Parts' :
+    (item.children[0]?.title ?? '')
   );
 
   const activeCategoryNode = item.children.find(
@@ -461,6 +575,29 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`shrink-0 transition-transform ${activeCatTitle === cat.title ? 'text-[#00A859] translate-x-0.5' : 'text-gray-300'}`}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
           ))
+        ) : isSparePartsMenu ? (
+          SPARE_PARTS_SIDEBAR_CATEGORIES.map((cat) => (
+            <Link
+              key={cat.title}
+              to={cat.url}
+              className={`sf-mega-menu__sidebar-item-link flex items-center gap-3 py-2.5 px-4 text-[13px] font-semibold transition-colors border-l-2 ${
+                activeCatTitle === cat.title
+                  ? 'bg-green-50/50 text-[#00A859] border-[#00A859]'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-[#00A859] border-transparent hover:border-[#00A859]'
+              }`}
+              onMouseEnter={() => setActiveCatTitle(cat.title)}
+              onClick={close}
+              prefetch="intent"
+            >
+              <span className={`flex items-center shrink-0 ${activeCatTitle === cat.title ? 'text-[#00A859]' : 'text-gray-400'}`}>
+                {cat.icon}
+              </span>
+              <span className="flex-1 text-left">
+                {lang === 'TH' ? SPARE_PARTS_CAT_TRANS[cat.title].TH : SPARE_PARTS_CAT_TRANS[cat.title].EN}
+              </span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`shrink-0 transition-transform ${activeCatTitle === cat.title ? 'text-[#00A859] translate-x-0.5' : 'text-gray-300'}`}><polyline points="9 18 15 12 9 6"/></svg>
+            </Link>
+          ))
         ) : (
           item.children.map((group) => (
             <Link
@@ -496,7 +633,7 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
             <div className="flex justify-between items-center mb-3">
               <p className="sf-mega-menu__section-label !m-0 !text-[#00A859]">
                 {lang === 'TH'
-                  ? `${CUSTOM_CAT_TRANS[activeCategoryNode.title]?.TH || getTrans(activeCategoryNode.title, t)} (หมวดหมู่ย่อย)`
+                  ? `${isSparePartsMenu ? (SPARE_PARTS_CAT_TRANS[activeCategoryNode.title]?.TH || activeCategoryNode.title) : (CUSTOM_CAT_TRANS[activeCategoryNode.title]?.TH || getTrans(activeCategoryNode.title, t))} (หมวดหมู่ย่อย)`
                   : `${activeCategoryNode.title} SUBCATEGORIES`}
               </p>
               <Link
