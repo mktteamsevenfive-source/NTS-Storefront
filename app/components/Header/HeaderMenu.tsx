@@ -390,13 +390,13 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
     const displayName = brandDisplayNames[handle] || handle;
 
     const renderFallback = () => (
-      <span className="text-[13px] font-black text-[#1a1a1a] tracking-tighter uppercase select-none">
+      <span className="text-[14px] font-black text-[#1a1a1a] tracking-tighter uppercase select-none">
         {displayName === 'nts' ? (
-          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[11px]">
+          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[12px]">
             ✤ nts ✤
           </span>
         ) : displayName === 'Iwatani' ? (
-          <span className="text-[#e02b27]">{displayName}</span>
+          <span className="text-[#e02b27] text-[13px]">{displayName}</span>
         ) : (
           displayName
         )}
@@ -407,14 +407,14 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
       <Link
         key={handle}
         to={`/collections/${handle}`}
-        className="flex items-center justify-center min-w-[70px] max-w-[100px] h-[36px] bg-white border border-gray-100 rounded-md p-1 shadow-sm hover:scale-105 hover:border-[#00A859] transition-all duration-200 shrink-0"
+        className="flex items-center justify-center bg-white border border-gray-100 rounded-xl p-2 h-[52px] shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200"
         onClick={close}
       >
         {col?.image?.url ? (
           <img
             src={col.image.url}
             alt={col.image.altText || displayName}
-            className="object-contain w-full h-full max-h-[28px]"
+            className="object-contain w-full h-full max-h-[38px]"
           />
         ) : (
           renderFallback()
@@ -489,7 +489,7 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
         <p className="sf-mega-menu__section-label" style={{marginTop:'1.25rem'}}>
           {lang === 'TH' ? 'แบรนด์ยอดนิยม' : 'FEATURED BRANDS'}
         </p>
-        <div className="sf-mega-menu__brands-row flex items-center gap-3.5 flex-wrap">
+        <div className="sf-mega-menu__brands-row grid grid-cols-5 gap-3">
           {brandHandles.map(renderBrandLogo)}
         </div>
       </div>

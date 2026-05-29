@@ -1110,10 +1110,9 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .sf-mega-menu__brands-row {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
 }
 
 .sf-mega-menu__brand-item {
