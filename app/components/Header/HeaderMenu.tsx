@@ -361,6 +361,16 @@ const QUICK_LINKS = [
 function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode; close: () => void; t: T; lang?: LangCode; collections?: any}) {
   const isProductMenu = item.title === 'Product';
 
+  const [activeCatTitle, setActiveCatTitle] = useState<string>(
+    isProductMenu ? 'Food Preparation' : (item.children[0]?.title ?? '')
+  );
+
+  const activeCategoryNode = item.children.find(
+    (child) => child.title.toLowerCase().trim() === activeCatTitle.toLowerCase().trim()
+  ) || item.children.find(
+    (child) => child.title.toLowerCase().includes(activeCatTitle.toLowerCase())
+  ) || item.children[0] || null;
+
   const brandHandles = [
     'cutlery-pro',
     'top-rinse',
@@ -433,17 +443,22 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
             <Link
               key={cat.title}
               to={cat.url}
-              className="sf-mega-menu__sidebar-item-link flex items-center gap-3 py-2.5 px-4 text-[13px] font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#00A859] transition-colors border-l-2 border-transparent hover:border-[#00A859]"
+              className={`sf-mega-menu__sidebar-item-link flex items-center gap-3 py-2.5 px-4 text-[13px] font-semibold transition-colors border-l-2 ${
+                activeCatTitle === cat.title
+                  ? 'bg-green-50/50 text-[#00A859] border-[#00A859]'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-[#00A859] border-transparent hover:border-[#00A859]'
+              }`}
+              onMouseEnter={() => setActiveCatTitle(cat.title)}
               onClick={close}
               prefetch="intent"
             >
-              <span className="text-gray-400 hover:text-[#00A859] flex items-center shrink-0">
+              <span className={`flex items-center shrink-0 ${activeCatTitle === cat.title ? 'text-[#00A859]' : 'text-gray-400'}`}>
                 {cat.icon}
               </span>
               <span className="flex-1 text-left">
                 {lang === 'TH' ? CUSTOM_CAT_TRANS[cat.title].TH : CUSTOM_CAT_TRANS[cat.title].EN}
               </span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-gray-300 shrink-0"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`shrink-0 transition-transform ${activeCatTitle === cat.title ? 'text-[#00A859] translate-x-0.5' : 'text-gray-300'}`}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
           ))
         ) : (
@@ -451,15 +466,20 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
             <Link
               key={group.id}
               to={group.url}
-              className="sf-mega-menu__sidebar-item-link"
+              className={`sf-mega-menu__sidebar-item-link flex items-center gap-3 py-2.5 px-4 text-[13px] font-semibold transition-colors border-l-2 ${
+                activeCatTitle === group.title
+                  ? 'bg-green-50/50 text-[#00A859] border-[#00A859]'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-[#00A859] border-transparent hover:border-[#00A859]'
+              }`}
+              onMouseEnter={() => setActiveCatTitle(group.title)}
               onClick={close}
               prefetch="intent"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{flexShrink:0, color:'#6b7280'}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{flexShrink:0}} className={activeCatTitle === group.title ? 'text-[#00A859]' : 'text-gray-500'}>
                 <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
               </svg>
-              <span style={{flex:1}}>{getTrans(group.title, t)}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{flexShrink:0, color:'#9ca3af'}}><polyline points="9 18 15 12 9 6"/></svg>
+              <span style={{flex:1}} className="text-left">{getTrans(group.title, t)}</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`shrink-0 transition-transform ${activeCatTitle === group.title ? 'text-[#00A859] translate-x-0.5' : 'text-gray-300'}`}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
           ))
         )}
@@ -468,30 +488,68 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
         </Link>
       </div>
 
-      {/* CENTER: Popular categories + Featured brands */}
+      {/* CENTER: Dynamic Subcategories + Popular categories + Featured brands */}
       <div className="sf-mega-menu__center">
-        <p className="sf-mega-menu__section-label">
-          {lang === 'TH' ? 'หมวดหมู่ยอดนิยม' : 'POPULAR CATEGORIES'}
-        </p>
-        <div className="sf-mega-menu__popular-grid">
-          {POPULAR_CATEGORIES.map((cat) => (
-            <Link key={cat.title} to={cat.url} className="sf-mega-menu__popular-item group" onClick={close} prefetch="intent">
-              <div className="sf-mega-menu__popular-img-wrap border border-gray-100 rounded-xl overflow-hidden aspect-square bg-white shadow-sm flex items-center justify-center p-2 group-hover:border-[#00A859] transition-all duration-200">
-                <img src={cat.img} alt={cat.title} className="sf-mega-menu__popular-img w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
-              </div>
-              <span className="sf-mega-menu__popular-name text-[11px] font-bold text-gray-700 text-center mt-1 group-hover:text-[#00A859] transition-colors leading-snug">
-                {lang === 'TH' ? POPULAR_CAT_TRANS[cat.title].TH : POPULAR_CAT_TRANS[cat.title].EN}
-              </span>
-            </Link>
-          ))}
-        </div>
+        {/* 1. Dynamic Subcategories list (restored sub menu) */}
+        {activeCategoryNode && activeCategoryNode.children.length > 0 && (
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-3">
+              <p className="sf-mega-menu__section-label !m-0 !text-[#00A859]">
+                {lang === 'TH'
+                  ? `${CUSTOM_CAT_TRANS[activeCategoryNode.title]?.TH || getTrans(activeCategoryNode.title, t)} (หมวดหมู่ย่อย)`
+                  : `${activeCategoryNode.title} SUBCATEGORIES`}
+              </p>
+              <Link
+                to={activeCategoryNode.url}
+                className="text-[#00A859] text-[11px] font-bold hover:underline transition-colors flex items-center gap-0.5"
+                onClick={close}
+              >
+                {lang === 'TH' ? 'ดูทั้งหมด →' : 'View all →'}
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 bg-[#f6faf7] p-4.5 rounded-xl border border-[#e2ece7]">
+              {activeCategoryNode.children.map((sub) => (
+                <Link
+                  key={sub.id}
+                  to={sub.url}
+                  className="text-gray-700 hover:text-[#00A859] text-[12.5px] font-semibold flex items-center gap-2 transition-colors truncate"
+                  onClick={close}
+                >
+                  <span className="text-[#00A859]/70 text-[6px] shrink-0">●</span>
+                  <span className="truncate">{getTrans(sub.title, t)}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <p className="sf-mega-menu__section-label" style={{marginTop:'1.25rem'}}>
-          {lang === 'TH' ? 'แบรนด์ยอดนิยม' : 'FEATURED BRANDS'}
-        </p>
-        <div className="sf-mega-menu__brands-row grid grid-cols-5 gap-3">
-          {brandHandles.map(renderBrandLogo)}
-        </div>
+        {/* 2. Popular Categories + Featured Brands (Only for Product Menu) */}
+        {isProductMenu && (
+          <>
+            <p className="sf-mega-menu__section-label">
+              {lang === 'TH' ? 'หมวดหมู่ยอดนิยม' : 'POPULAR CATEGORIES'}
+            </p>
+            <div className="sf-mega-menu__popular-grid mb-6">
+              {POPULAR_CATEGORIES.map((cat) => (
+                <Link key={cat.title} to={cat.url} className="sf-mega-menu__popular-item group" onClick={close} prefetch="intent">
+                  <div className="sf-mega-menu__popular-img-wrap border border-gray-100 rounded-xl overflow-hidden aspect-square bg-white shadow-sm flex items-center justify-center p-2 group-hover:border-[#00A859] transition-all duration-200">
+                    <img src={cat.img} alt={cat.title} className="sf-mega-menu__popular-img w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                  </div>
+                  <span className="sf-mega-menu__popular-name text-[11px] font-bold text-gray-700 text-center mt-1 group-hover:text-[#00A859] transition-colors leading-snug">
+                    {lang === 'TH' ? POPULAR_CAT_TRANS[cat.title].TH : POPULAR_CAT_TRANS[cat.title].EN}
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            <p className="sf-mega-menu__section-label">
+              {lang === 'TH' ? 'แบรนด์ยอดนิยม' : 'FEATURED BRANDS'}
+            </p>
+            <div className="sf-mega-menu__brands-row grid grid-cols-5 gap-3">
+              {brandHandles.map(renderBrandLogo)}
+            </div>
+          </>
+        )}
       </div>
 
       {/* RIGHT: Quick links + Expert advice */}
