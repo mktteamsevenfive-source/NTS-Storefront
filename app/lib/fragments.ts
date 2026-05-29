@@ -233,6 +233,12 @@ export const HEADER_QUERY = `#graphql
         id
         title
         handle
+        image {
+          url
+          altText
+          width
+          height
+        }
         products(first: 1, filters: [
           {productVendor: "NTS"}
           {productVendor: "PRIMO"}
@@ -269,6 +275,12 @@ export const COLLECTIONS_QUERY = `#graphql
         id
         title
         handle
+        image {
+          url
+          altText
+          width
+          height
+        }
         products(first: 1, filters: [
           {productVendor: "NTS"}
           {productVendor: "PRIMO"}

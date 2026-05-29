@@ -1,325 +1,173 @@
-import {useState, useEffect, useCallback} from 'react';
-import {Link} from 'react-router';
-import bannerCooking from '~/assets/banner/banner-cooking.png';
-import bannerRefrigeration from '~/assets/banner/banner-refrigeration.png';
-import bannerHotel from '~/assets/banner/banner-hotel.png';
+import {Suspense} from 'react';
+import {Await, Link} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 
-interface Slide {
-  src: string;
-  alt: string;
-  eyebrow?: string;
-  title?: string;
-  subtitle?: string;
-  cta?: {label: string; href: string};
-  theme?: 'dark' | 'light'; // text colour on overlay
-}
+// Try to use existing trust badge icons if they exist, or just use Lucide SVGs inline
 
-import heroDuck from '~/assets/banner/hero_duck.png';
-import heroFoodpan from '~/assets/banner/hero_foodpan.png';
-import heroBuffet from '~/assets/banner/hero_buffet.png';
-import heroIcemaker from '~/assets/banner/hero_icemaker.png';
-import heroFaucet from '~/assets/banner/hero_faucet.png';
+export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}) {
+  const brandNames = [
+    'cutleryPro',
+    'topRinse',
+    'primo',
+    'nts',
+    'iwatani',
+    'absolute',
+    'justa',
+    'kitchin',
+    'veetsan'
+  ];
 
-const SLIDES_EN: Slide[] = [
-  {
-    src: bannerCooking,
-    alt: 'Commercial Cooking Equipment',
-    eyebrow: 'PROFESSIONAL GRADE',
-    title: 'Commercial Cooking\nEquipment',
-    subtitle: 'High-performance ovens, ranges and fryers built for the most demanding professional kitchens.',
-    cta: {label: 'Shop Cooking Equipment', href: '/collections/cooking-equipment'},
-    theme: 'dark',
-  },
-  {
-    src: bannerRefrigeration,
-    alt: 'Commercial Refrigeration',
-    eyebrow: 'COLD CHAIN SOLUTIONS',
-    title: 'Professional\nRefrigeration',
-    subtitle: 'Walk-in coolers, commercial refrigerators and blast chillers engineered for reliability and efficiency.',
-    cta: {label: 'Shop Refrigeration', href: '/collections/refrigeration'},
-    theme: 'dark',
-  },
-  {
-    src: bannerHotel,
-    alt: 'Hotel & Restaurant Supplies',
-    eyebrow: 'HOTEL SUPPLIES',
-    title: 'Complete Hotel &\nRestaurant Solutions',
-    subtitle: 'Premium tableware, serving equipment and hospitality supplies trusted by 5-star establishments.',
-    cta: {label: 'Shop Hotel Supplies', href: '/collections/hotel-supplies'},
-    theme: 'dark',
-  },
-  {
-    src: heroDuck,
-    alt: 'Duck Humid and Dry Blow Refrigerator',
-    eyebrow: 'COMMERCIAL REFRIGERATION',
-    title: 'Duck Humid &\nDry Blow Refrigerator',
-    subtitle: 'Professional storage solutions for roasted duck and pork.',
-    cta: {label: 'Shop Refrigeration', href: '/collections/refrigeration-equipment'},
-    theme: 'dark',
-  },
-  {
-    src: heroFoodpan,
-    alt: 'Gastronorm Food Pan',
-    eyebrow: 'KITCHEN ESSENTIALS',
-    title: 'Gastronorm\nFood Pans',
-    subtitle: 'High-quality stainless steel food pans for prep and storage.',
-    cta: {label: 'Shop Smallwares', href: '/collections/smallwares'},
-    theme: 'dark',
-  },
-  {
-    src: heroBuffet,
-    alt: 'Buffetware',
-    eyebrow: 'CATERING & EVENTS',
-    title: 'Premium\nBuffetware',
-    subtitle: 'Elegant chafing dishes and serving equipment for events.',
-    cta: {label: 'Shop Buffetware', href: '/collections/tableware-buffetware'},
-    theme: 'dark',
-  },
-  {
-    src: heroIcemaker,
-    alt: 'Ice Maker',
-    eyebrow: 'BEVERAGE EQUIPMENT',
-    title: 'Commercial\nIce Makers',
-    subtitle: 'Reliable high-capacity ice machines for bars and restaurants.',
-    cta: {label: 'Shop Ice Makers', href: '/collections/ice-machines'},
-    theme: 'dark',
-  },
-  {
-    src: heroFaucet,
-    alt: 'Faucet and Pre Rinse',
-    eyebrow: 'WASHING SOLUTIONS',
-    title: 'Faucets &\nPre-Rinse Units',
-    subtitle: 'Heavy-duty commercial kitchen faucets for optimal hygiene.',
-    cta: {label: 'Shop Faucets', href: '/collections/warewashing-sanitisation'},
-    theme: 'dark',
-  },
-];
-
-const SLIDES_TH: Slide[] = [
-  {
-    src: bannerCooking,
-    alt: 'อุปกรณ์ทำอาหารเชิงพาณิชย์',
-    eyebrow: 'คุณภาพระดับมืออาชีพ',
-    title: 'อุปกรณ์ทำอาหาร\nเชิงพาณิชย์',
-    subtitle: 'เตาอบ เตาทำอาหาร และเตาทอดประสิทธิภาพสูง ที่ออกแบบมาสำหรับห้องครัวระดับมืออาชีพ',
-    cta: {label: 'เลือกซื้ออุปกรณ์ทำอาหาร', href: '/collections/cooking-equipment'},
-    theme: 'dark',
-  },
-  {
-    src: bannerRefrigeration,
-    alt: 'ตู้แช่เย็นระดับมืออาชีพ',
-    eyebrow: 'ระบบทำความเย็นครบวงจร',
-    title: 'ตู้แช่เย็น\nระดับมืออาชีพ',
-    subtitle: 'ห้องเย็น ตู้แช่เชิงพาณิชย์ และเครื่องแช่แข็งแบบฉับพลัน ที่ออกแบบมาเพื่อความทนทานและประสิทธิภาพสูง',
-    cta: {label: 'เลือกซื้อตู้แช่เย็น', href: '/collections/refrigeration'},
-    theme: 'dark',
-  },
-  {
-    src: bannerHotel,
-    alt: 'ของใช้ในโรงแรมและร้านอาหาร',
-    eyebrow: 'ของใช้ในโรงแรม',
-    title: 'โซลูชันสำหรับโรงแรม\nและร้านอาหารแบบครบวงจร',
-    subtitle: 'อุปกรณ์บนโต๊ะอาหาร อุปกรณ์เสิร์ฟ และของใช้ในโรงแรมระดับพรีเมียมที่ได้รับการไว้วางใจจากสถานประกอบการระดับ 5 ดาว',
-    cta: {label: 'เลือกซื้อของใช้ในโรงแรม', href: '/collections/hotel-supplies'},
-    theme: 'dark',
-  },
-  {
-    src: heroDuck,
-    alt: 'ตู้แช่เป่าลม เป็ด หมูแดง หมูหัน',
-    eyebrow: 'ตู้แช่เย็นเชิงพาณิชย์',
-    title: 'ตู้แช่เป่าลม เป็ด\nหมูแดง หมูหัน',
-    subtitle: 'โซลูชันการจัดเก็บระดับมืออาชีพสำหรับเป็ดย่างและหมูแดง',
-    cta: {label: 'เลือกซื้อตู้แช่เย็น', href: '/collections/refrigeration-equipment'},
-    theme: 'dark',
-  },
-  {
-    src: heroFoodpan,
-    alt: 'ถาดใส่อาหารสแตนเลส',
-    eyebrow: 'อุปกรณ์ครัวพื้นฐาน',
-    title: 'ถาดใส่อาหาร\nสแตนเลส (Gastronorm)',
-    subtitle: 'ถาดอาหารสแตนเลสคุณภาพสูงสำหรับการเตรียมและจัดเก็บ',
-    cta: {label: 'เลือกซื้ออุปกรณ์เครื่องครัว', href: '/collections/smallwares'},
-    theme: 'dark',
-  },
-  {
-    src: heroBuffet,
-    alt: 'อุปกรณ์บุฟเฟ่ต์ งานจัดเลี้ยง',
-    eyebrow: 'อุปกรณ์จัดเลี้ยง',
-    title: 'อุปกรณ์บุฟเฟ่ต์\nระดับพรีเมียม',
-    subtitle: 'อ่างอุ่นอาหารและอุปกรณ์เสิร์ฟที่หรูหราสำหรับงานจัดเลี้ยง',
-    cta: {label: 'เลือกซื้ออุปกรณ์บุฟเฟ่ต์', href: '/collections/tableware-buffetware'},
-    theme: 'dark',
-  },
-  {
-    src: heroIcemaker,
-    alt: 'เครื่องผลิตน้ำแข็ง',
-    eyebrow: 'อุปกรณ์เครื่องดื่ม',
-    title: 'เครื่องผลิตน้ำแข็ง\nเชิงพาณิชย์',
-    subtitle: 'เครื่องทำน้ำแข็งความจุสูงที่วางใจได้สำหรับบาร์และร้านอาหาร',
-    cta: {label: 'เลือกซื้อเครื่องทำน้ำแข็ง', href: '/collections/ice-machines'},
-    theme: 'dark',
-  },
-  {
-    src: heroFaucet,
-    alt: 'ก๊อกน้ำและหัวฉีดชำระ',
-    eyebrow: 'โซลูชันการล้างทำความสะอาด',
-    title: 'ก๊อกน้ำและ\nหัวฉีดชำระ',
-    subtitle: 'ก๊อกน้ำห้องครัวเชิงพาณิชย์แบบ Heavy-duty เพื่อสุขอนามัยที่ดีเยี่ยม',
-    cta: {label: 'เลือกซื้ออุปกรณ์ทำความสะอาด', href: '/collections/warewashing-sanitisation'},
-    theme: 'dark',
-  },
-];
-
-const AUTO_PLAY_INTERVAL = 6000;
-
-import type {LangCode} from '~/lib/locale';
-
-export function HeroBanner({collection: _, lang = 'EN'}: {collection: unknown; lang?: LangCode}) {
-  const slides = lang === 'TH' ? SLIDES_TH : SLIDES_EN;
-  const [current, setCurrent] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [animating, setAnimating] = useState(false);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-  const goTo = useCallback(
-    (index: number) => {
-      if (animating) return;
-      setAnimating(true);
-      setCurrent((index + slides.length) % slides.length);
-      setTimeout(() => setAnimating(false), 700);
-    },
-    [animating, slides.length],
-  );
-
-  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
-  const next = useCallback(() => goTo(current + 1), [current, goTo]);
-
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => goTo(current + 1), AUTO_PLAY_INTERVAL);
-    return () => clearInterval(timer);
-  }, [current, isHovered, goTo]);
-
-  const slide = slides[current];
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
+  const brandDisplayNames: Record<string, string> = {
+    cutleryPro: 'Cutlery-Pro',
+    topRinse: 'Top-Rinse',
+    primo: 'PRIMO',
+    nts: 'nts',
+    iwatani: 'Iwatani',
+    absolute: 'Absolute',
+    justa: 'JUSTA',
+    kitchin: 'kitchin',
+    veetsan: 'VEETSAN'
   };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEndHandler = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    if (distance > 50) {
-      next();
-    }
-    if (distance < -50) {
-      prev();
-    }
-  };
-
   return (
-    <section
-      className="sf-hero-slider"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEndHandler}
-      aria-label="Hero banner slideshow"
-    >
-      {/* Slides */}
-      <div className="sf-hero-slider__track">
-        {slides.map((s, i) => (
-          <div
-            key={i}
-            className={`sf-hero-slider__slide${i === current ? ' sf-hero-slider__slide--active' : ''}`}
-            aria-hidden={i !== current}
-          >
-            <img
-              src={s.src}
-              alt={s.alt}
-              className="sf-hero-slider__img"
-              draggable={false}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Dark gradient overlay */}
-      {slide.title && <div className="sf-hero-slider__overlay" />}
-
-      {/* Text content */}
-      {slide.title && (
-        <div className={`sf-hero-slider__content${slide.theme === 'light' ? ' sf-hero-slider__content--light' : ''}`}>
-          {slide.eyebrow && <p className="sf-hero-slider__eyebrow">{slide.eyebrow}</p>}
-          <h1 className="sf-hero-slider__title">
-            {slide.title.split('\n').map((line, i) => (
-              <span key={i}>
-                {line}
-                {i < slide.title!.split('\n').length - 1 && <br />}
-              </span>
-            ))}
+    <section className="bg-white w-full overflow-hidden relative">
+      <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row relative">
+        
+        {/* Left Content Area */}
+        <div className="w-full lg:w-[45%] py-12 px-8 lg:py-24 lg:pr-12 lg:pl-8 flex flex-col justify-center z-10 bg-white">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1a1a1a] leading-[1.1] tracking-tight mb-4">
+            Professional<br/>
+            Kitchen Solutions<br/>
+            <span className="text-[#00A859]">for Your Business</span>
           </h1>
-          {slide.subtitle && <p className="sf-hero-slider__subtitle">{slide.subtitle}</p>}
-          {slide.cta && (
-            <Link to={slide.cta.href} className="sf-hero-slider__cta" prefetch="intent">
-              {slide.cta.label}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginLeft: '0.5rem'}}>
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+          <p className="text-gray-600 text-base lg:text-lg mb-8 max-w-md">
+            One-stop solution for commercial kitchen equipment and services.
+          </p>
+
+          {/* Trust Badges Grid */}
+          <div className="grid grid-cols-4 gap-4 mb-10">
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-[#00A859]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <span className="text-[10px] font-semibold text-gray-700 leading-tight">Authorized<br/>Distributor</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-[#00A859]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              </div>
+              <span className="text-[10px] font-semibold text-gray-700 leading-tight">Genuine Products<br/>& Spare Parts</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-[#00A859]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </div>
+              <span className="text-[10px] font-semibold text-gray-700 leading-tight">Professional<br/>Installation</span>
+            </div>
+            <div className="flex flex-col items-center text-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-[#00A859]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </div>
+              <span className="text-[10px] font-semibold text-gray-700 leading-tight">Service Center<br/>& Support</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-4">
+            <Link to="/collections" className="bg-[#00A859] text-white px-8 py-3.5 rounded-md font-bold hover:bg-[#008a49] transition-colors flex items-center gap-2">
+              SHOP NOW
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
-          )}
+            <Link to="/pages/catalogue" className="bg-white border-2 border-[#00A859] text-[#00A859] px-8 py-3 rounded-md font-bold hover:bg-green-50 transition-colors flex items-center gap-2">
+              VIEW CATALOGUE
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </Link>
+          </div>
         </div>
-      )}
-      {!slide.title && slide.cta && (
-        <Link 
-          to={slide.cta.href} 
-          className="absolute inset-0 z-10 block" 
-          aria-label={slide.cta.label}
-          prefetch="intent" 
-        />
-      )}
 
-      {/* Prev arrow */}
-      <button
-        className="sf-hero-slider__arrow sf-hero-slider__arrow--prev hidden md:flex"
-        onClick={prev}
-        aria-label="Previous slide"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-      </button>
-
-      {/* Next arrow */}
-      <button
-        className="sf-hero-slider__arrow sf-hero-slider__arrow--next hidden md:flex"
-        onClick={next}
-        aria-label="Next slide"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
-
-      {/* Dot indicators */}
-      <div className="sf-hero-slider__dots" role="tablist" aria-label="Slide indicators">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            className={`sf-hero-slider__dot${i === current ? ' sf-hero-slider__dot--active' : ''}`}
-            onClick={() => goTo(i)}
-            role="tab"
-            aria-selected={i === current}
-            aria-label={`Go to slide ${i + 1}`}
+        {/* Right Image Area */}
+        <div className="w-full lg:w-[65%] lg:absolute lg:right-0 lg:top-0 lg:bottom-0 h-[400px] lg:h-[600px]">
+          {/* Diagonal cut effect for the white section overlaying the image */}
+          <div className="hidden lg:block absolute left-[-1px] top-0 bottom-0 w-32 bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%, 0 100%)', zIndex: 1 }} />
+          
+          <img 
+            src="/images/hero_kitchen.png" 
+            alt="Professional Commercial Kitchen" 
+            className="w-full h-full object-cover object-center"
           />
-        ))}
+
+          {/* Floating Top Brands Box */}
+          <div className="absolute bottom-8 right-8 bg-white/95 backdrop-blur-sm p-6 rounded-lg shadow-xl max-w-[600px] hidden md:block border border-gray-100 z-10">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-gray-900">Top Brands You Trust</h3>
+              <Link to="/brands" className="text-[#00A859] text-sm font-semibold flex items-center hover:underline">
+                View all brands <span className="ml-1">›</span>
+              </Link>
+            </div>
+            <Suspense fallback={<div className="h-[60px] opacity-60 flex items-center justify-center text-sm text-gray-400">Loading brands...</div>}>
+              <Await resolve={brandCollections}>
+                {(response) => {
+                  const renderBrand = (key: string) => {
+                    const collection = response?.[key];
+                    const displayName = brandDisplayNames[key];
+
+                    const renderPlaceholder = () => (
+                      <span className="font-black text-[#1a1a1a] tracking-tighter uppercase whitespace-nowrap" style={{fontSize: '14px'}}>
+                        {displayName === 'nts' ? (
+                          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1">
+                            <span className="text-[8px]">✤</span> nts <span className="text-[8px]">✤</span>
+                          </span>
+                        ) : displayName === 'Iwatani' ? (
+                          <span className="text-[#e02b27]">{displayName}</span>
+                        ) : (
+                          displayName
+                        )}
+                      </span>
+                    );
+
+                    const content = (
+                      <div className="flex items-center justify-center min-w-[50px] md:min-w-[80px] h-[30px] transition-all duration-300 hover:scale-105">
+                        {collection?.image ? (
+                          <Image
+                            data={collection.image}
+                            sizes="120px"
+                            className="object-contain max-h-[30px] w-auto"
+                            alt={collection.image.altText || displayName}
+                          />
+                        ) : (
+                          renderPlaceholder()
+                        )}
+                      </div>
+                    );
+
+                    if (collection?.handle) {
+                      return (
+                        <Link key={key} to={`/collections/${collection.handle}`} className="block" prefetch="intent">
+                          {content}
+                        </Link>
+                      );
+                    }
+                    return <div key={key}>{content}</div>;
+                  };
+
+                  const firstRow = brandNames.slice(0, 5);
+                  const secondRow = brandNames.slice(5);
+
+                  return (
+                    <div className="flex flex-col gap-y-4 opacity-95 hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-6 gap-y-4">
+                        {firstRow.map(renderBrand)}
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center gap-x-4 md:gap-x-6 gap-y-4">
+                        {secondRow.map(renderBrand)}
+                      </div>
+                    </div>
+                  );
+                }}
+              </Await>
+            </Suspense>
+          </div>
+        </div>
+
       </div>
     </section>
   );

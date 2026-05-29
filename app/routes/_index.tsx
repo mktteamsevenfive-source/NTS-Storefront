@@ -4,10 +4,10 @@ import {MockShopNotice} from '~/components/MockShopNotice';
 import {RECOMMENDED_VENDOR_FILTER} from '~/utils/vendors';
 import {FEATURED_COLLECTION_QUERY, RECOMMENDED_PRODUCTS_QUERY, LATEST_BLOGS_QUERY, BRAND_COLLECTIONS_QUERY} from '~/graphql/queries/homepage';
 import {HeroBanner} from '~/sections/HeroBanner';
+import {ShopByBusiness} from '~/sections/ShopByBusiness';
 import {CategoryGrid} from '~/sections/CategoryGrid';
 import {RecommendedProducts} from '~/sections/RecommendedProducts';
 import {LatestBlogs} from '~/sections/LatestBlogs';
-import {BrandLogos} from '~/sections/BrandLogos';
 import {getLangFromRequest} from '~/lib/i18n';
 import type {LangCode} from '~/lib/locale';
 
@@ -117,11 +117,12 @@ export default function Homepage() {
   return (
     <div>
       {data.isShopLinked ? null : <MockShopNotice />}
-      <HeroBanner collection={data.featuredCollection} lang={lang} />
-      <CategoryGrid collections={data.categories} lang={lang} />
+      <HeroBanner brandCollections={data.brandCollections} />
+      <ShopByBusiness />
+      <CategoryGrid />
       <RecommendedProducts products={data.recommendedProducts} lang={lang} />
       <LatestBlogs blogs={data.latestBlogs} lang={lang} />
-      <BrandLogos brandCollections={data.brandCollections} lang={lang} />
+
     </div>
   );
 }

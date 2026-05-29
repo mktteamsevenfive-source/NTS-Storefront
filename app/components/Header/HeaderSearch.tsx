@@ -76,29 +76,63 @@ export function HeaderSearch({t}: {t: T}) {
   }, [isOpen]);
 
   return (
-    <div ref={wrapperRef} className={`sf-search ${isOpen ? 'is-open' : ''}`}>
-      <form className="sf-header__search-form" onSubmit={handleSubmit} role="search">
-        <button type="submit" className="sf-header__search-btn" aria-label="Submit search" onClick={handleIconClick}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+    <div ref={wrapperRef} style={{width:'100%', position:'relative', display:'flex'}} className={isOpen ? 'is-open' : ''}>
+      <form
+        onSubmit={handleSubmit}
+        role="search"
+        style={{display:'flex', width:'100%', height:'44px', alignItems:'stretch', boxSizing:'border-box'}}
+      >
+        {/* ALL CATEGORIES button */}
+        <button
+          type="button"
+          style={{display:'none', alignItems:'center', gap:'8px', backgroundColor:'#00A859', color:'white', padding:'0 16px', border:'1px solid #00A859', borderRadius:'6px 0 0 6px', cursor:'pointer', fontSize:'13px', fontWeight:700, whiteSpace:'nowrap', flexShrink:0, height:'44px', boxSizing:'border-box', lineHeight:'1'}}
+          className="md:!flex"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          ALL CATEGORIES
         </button>
+
+        {/* Search input */}
         <input
           ref={inputRef}
-          type="search"
+          type="text"
           name="q"
-          placeholder={t.search_placeholder}
-          className="sf-header__search-input"
+          placeholder="Search for products, brands..."
           aria-label="Search"
           autoComplete="off"
           onFocus={() => setIsOpen(true)}
           onChange={fetchResults}
+          style={{flex:'1 1 auto', minWidth:0, height:'44px', boxSizing:'border-box', border:'1px solid #d1d5db', borderLeft:'none', borderRight:'none', padding:'0 14px', fontSize:'14px', color:'#1a1a1a', outline:'none', background:'white', fontFamily:'inherit', borderRadius:0, appearance:'none', WebkitAppearance:'none', margin:0}}
         />
+
+        {/* All Categories dropdown */}
+        <div
+          style={{display:'none', alignItems:'center', gap:'4px', height:'44px', boxSizing:'border-box', border:'1px solid #d1d5db', borderLeft:'none', borderRight:'none', padding:'0 12px', background:'white', color:'#6b7280', fontSize:'13px', cursor:'pointer', whiteSpace:'nowrap', flexShrink:0}}
+          className="md:!flex"
+        >
+          All Categories
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        {/* Search button */}
+        <button
+          type="submit"
+          aria-label="Submit search"
+          onClick={handleIconClick}
+          style={{height:'44px', boxSizing:'border-box', display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'#00A859', border:'1px solid #00A859', borderRadius:'0 6px 6px 0', padding:'0 18px', cursor:'pointer', color:'white', flexShrink:0}}
+        >
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+
         {isOpen && (
-          <button type="button" className="sf-header__search-close" onClick={closeDropdown} aria-label="Close search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          <button type="button" onClick={closeDropdown} aria-label="Close search"
+            style={{position:'absolute', right:'56px', top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#9ca3af', zIndex:10, padding:'4px', display:'flex', alignItems:'center', justifyContent:'center'}}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
         )}
