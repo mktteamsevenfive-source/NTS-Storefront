@@ -60,7 +60,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   ]);
 
   if (!collection) {
-    throw new Response(`Collection ${handle} not found`, {status: 404});
+    return redirect('/collections');
   }
 
   redirectIfHandleIsLocalized(request, {handle, data: collection});

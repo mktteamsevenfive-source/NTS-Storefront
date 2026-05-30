@@ -1,9 +1,11 @@
 import {useState} from 'react';
-import {useLoaderData, useSearchParams, useNavigate, useSubmit} from 'react-router';
+import {useLoaderData, useSearchParams, useNavigate, useSubmit, useRouteLoaderData} from 'react-router';
 import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
 import {SearchResults} from '~/components/SearchResults';
+import {getT} from '~/lib/locale';
+import type {RootLoader} from '~/root';
 import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
@@ -100,6 +102,8 @@ export default function SearchPage() {
   const {term, result, error, productFilters = []} = data as ExtendedRegularSearch;
   const total = result?.total ?? 0;
 
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const submit = useSubmit();
@@ -170,7 +174,7 @@ export default function SearchPage() {
                 type="search"
                 defaultValue={term}
                 name="q"
-                placeholder="Search products..."
+                placeholder={t.search_placeholder}
                 className="flex-1 h-full px-2 outline-none border-none ring-0 shadow-none appearance-none text-gray-800 bg-transparent w-full placeholder-gray-400 text-sm m-0 p-0"
                 style={{ border: 'none', boxShadow: 'none', outline: 'none', WebkitAppearance: 'none' }}
                 autoComplete="off"
@@ -179,7 +183,7 @@ export default function SearchPage() {
                 }}
               />
               <button type="submit" className="px-6 h-full bg-[#00b050] text-white font-semibold hover:bg-[#009040] active:bg-[#007a33] transition-colors flex items-center justify-center text-sm">
-                Search
+                {t.search}
               </button>
             </div>
           )}
@@ -188,16 +192,16 @@ export default function SearchPage() {
         <div className="mt-4 flex items-center flex-wrap gap-x-2">
           {term ? (
             <>
-              <span className="sf-search-page__label">Search results for</span>
+              <span className="sf-search-page__label">{t.search_results_for}</span>
               <span className="sf-search-page__term">&ldquo;{term}&rdquo;</span>
               {total > 0 && (
                 <span className="sf-search-page__count ml-auto">
-                  {total} product{total !== 1 ? 's' : ''}
+                  {total} {t.products}
                 </span>
               )}
             </>
           ) : (
-            <span className="sf-search-page__label">Type a keyword to start searching</span>
+            <span className="sf-search-page__label">{t.type_keyword_to_start_searching}</span>
           )}
         </div>
       </div>
@@ -217,7 +221,7 @@ export default function SearchPage() {
                 <line x1="4" y1="12" x2="20" y2="12" />
                 <line x1="4" y1="18" x2="20" y2="18" />
               </svg>
-              Filters
+              {t.filters}
               {hasActiveFilters && <span className="sf-filter-toggle-btn__dot" />}
             </button>
 
@@ -229,17 +233,17 @@ export default function SearchPage() {
 
             <aside className={`sf-filter-sidebar${filterOpen ? ' sf-filter-sidebar--open' : ''}`}>
               <div className="sf-filter-sidebar__head">
-                <span className="sf-filter-sidebar__title">Filters</span>
+                <span className="sf-filter-sidebar__title">{t.filters}</span>
                 <div className="flex items-center gap-2">
                   {hasActiveFilters && (
                     <button className="sf-filter-clear-btn" onClick={clearAllFilters}>
-                      Clear all
+                      {t.clear_all}
                     </button>
                   )}
                   <button 
                     className="sf-filter-close-btn flex items-center justify-center p-1 text-gray-500 hover:text-gray-700" 
                     onClick={() => setFilterOpen(false)}
-                    aria-label="Close filters"
+                    aria-label={t.close_filters}
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -288,7 +292,7 @@ export default function SearchPage() {
                           <div className="px-4 pt-2">
                             <input
                               type="text"
-                              placeholder="Search..."
+                              placeholder={t.search_placeholder}
                               value={filterSearch[group.id] ?? ''}
                               onChange={(e) =>
                                 setFilterSearch((prev) => ({
@@ -321,7 +325,7 @@ export default function SearchPage() {
                             );
                           })}
                           {filteredValues.length === 0 && (
-                            <span className="text-xs text-gray-400 py-2">No results</span>
+                            <span className="text-xs text-gray-400 py-2">{t.no_results}</span>
                           )}
                         </div>
                       </div>
@@ -337,7 +341,7 @@ export default function SearchPage() {
                     className="sf-filter-group__head"
                     onClick={() => toggleGroup('price')}
                   >
-                    <span>Price</span>
+                    <span>{t.price}</span>
                     <svg
                       className={`sf-filter-group__chevron${openGroups['price'] !== false ? ' sf-filter-group__chevron--open' : ''}`}
                       width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -361,20 +365,20 @@ export default function SearchPage() {
                               className="sf-filter-price-input"
                             />
                           </div>
-                          <span className="sf-filter-price-sep">to</span>
+                          <span className="sf-filter-price-sep">{t.to}</span>
                           <div className="sf-filter-price-input-wrap">
                             <span className="sf-filter-price-input-wrap__prefix">฿</span>
                             <input
                               name="maxPrice"
                               type="number"
                               min="0"
-                              placeholder="Any"
+                              placeholder={t.any}
                               defaultValue={maxPrice}
                               className="sf-filter-price-input"
                             />
                           </div>
                         </div>
-                        <button type="submit" className="sf-filter-price-apply">Apply</button>
+                        <button type="submit" className="sf-filter-price-apply">{t.apply}</button>
                       </form>
                   </div>
                 )}
@@ -387,7 +391,7 @@ export default function SearchPage() {
                   className="sf-filter-view-results-btn"
                   onClick={() => setFilterOpen(false)}
                 >
-                  View Results
+                  {t.view_results}
                 </button>
               </div>
             </aside>

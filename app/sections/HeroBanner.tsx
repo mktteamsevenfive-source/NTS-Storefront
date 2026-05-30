@@ -72,15 +72,80 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-4">
-            <Link to="/collections" className="bg-[#00A859] text-white px-8 py-3.5 rounded-md font-bold hover:bg-[#008a49] transition-colors flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Link to="/collections" className="bg-[#00A859] text-white h-12 px-7 rounded-full font-bold hover:bg-[#008a49] transition-colors flex items-center justify-center gap-2 min-w-[172px] whitespace-nowrap">
               SHOP NOW
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
-            <Link to="/pages/catalogue" className="bg-white border-2 border-[#00A859] text-[#00A859] px-8 py-3 rounded-md font-bold hover:bg-green-50 transition-colors flex items-center gap-2">
+            <Link to="/pages/catalogue" className="bg-white border-2 border-[#00A859] text-[#00A859] h-12 px-7 rounded-full font-bold hover:bg-green-50 transition-colors flex items-center justify-center gap-2 min-w-[172px] whitespace-nowrap">
               VIEW CATALOGUE
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v9"/><polyline points="8 10 12 14 16 10"/><line x1="6" y1="19" x2="18" y2="19"/></svg>
             </Link>
+          </div>
+
+          {/* Mobile Top Brands Section */}
+          <div className="mt-10 block md:hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <h3 className="font-extrabold text-gray-900 text-xl">Top Brands You Trust</h3>
+              <Link to="/brands" className="text-[#00A859] text-sm font-bold hover:underline hover:text-[#008f4c] transition-colors">
+                View all brands <span className="ml-1 text-xs">›</span>
+              </Link>
+            </div>
+            <Suspense fallback={<div className="h-[80px] opacity-60 flex items-center justify-center text-sm text-gray-400">Loading brands...</div>}>
+              <Await resolve={brandCollections}>
+                {(response) => {
+                  const renderBrand = (key: string) => {
+                    const collection = response?.[key];
+                    const displayName = brandDisplayNames[key];
+
+                    const renderPlaceholder = () => (
+                      <span className="font-black text-[#1a1a1a] tracking-tighter uppercase whitespace-nowrap select-none" style={{fontSize: '18px'}}>
+                        {displayName === 'nts' ? (
+                          <span className="lowercase tracking-widest text-[#00a87a] flex items-center gap-1 text-[16px]">
+                            ✤ nts ✤
+                          </span>
+                        ) : displayName === 'Iwatani' ? (
+                          <span className="text-[#e02b27] text-[17px]">{displayName}</span>
+                        ) : (
+                          displayName
+                        )}
+                      </span>
+                    );
+
+                    const cardClassName = "flex items-center justify-center bg-white border border-gray-100 rounded-xl p-4.5 h-24 shadow-sm hover:scale-[1.03] hover:border-[#00A859] hover:shadow-md transition-all duration-200 shrink-0";
+                    const content = (
+                      <div className="flex items-center justify-center w-full h-full">
+                        {collection?.image ? (
+                          <Image
+                            data={collection.image}
+                            sizes="150px"
+                            className="object-contain w-full h-full max-h-[54px]"
+                            alt={collection.image.altText || displayName}
+                          />
+                        ) : (
+                          renderPlaceholder()
+                        )}
+                      </div>
+                    );
+
+                    if (collection?.handle) {
+                      return (
+                        <Link key={key} to={`/collections/${collection.handle}`} className={cardClassName} prefetch="intent">
+                          {content}
+                        </Link>
+                      );
+                    }
+                    return <div key={key} className={cardClassName}>{content}</div>;
+                  };
+
+                  return (
+                    <div className="grid grid-cols-2 gap-4 opacity-95 hover:opacity-100 transition-opacity duration-300">
+                      {brandNames.map(renderBrand)}
+                    </div>
+                  );
+                }}
+              </Await>
+            </Suspense>
           </div>
         </div>
 
@@ -96,10 +161,10 @@ export function HeroBanner({brandCollections}: {brandCollections?: Promise<any>}
           />
 
           {/* Floating Top Brands Box */}
-          <div className="absolute right-8 lg:right-12 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-sm p-8 lg:p-9 rounded-2xl shadow-2xl w-[560px] max-w-[95%] hidden md:block border border-gray-100 z-10">
-            <div className="flex justify-between items-center mb-6">
+          <div className="hidden md:block relative md:absolute right-0 md:right-8 lg:right-12 top-auto md:top-1/2 -translate-y-0 md:-translate-y-1/2 bg-white/95 backdrop-blur-sm p-6 md:p-8 lg:p-9 rounded-2xl shadow-2xl w-full md:w-[560px] max-w-[95%] mx-auto md:mx-0 border border-gray-100 z-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <h3 className="font-extrabold text-gray-900 text-xl">Top Brands You Trust</h3>
-              <Link to="/brands" className="text-[#00A859] text-sm font-bold flex items-center hover:underline hover:text-[#008f4c] transition-colors">
+              <Link to="/brands" className="text-[#00A859] text-sm font-bold flex items-center justify-start sm:justify-end hover:underline hover:text-[#008f4c] transition-colors">
                 View all brands <span className="ml-1 text-xs">›</span>
               </Link>
             </div>

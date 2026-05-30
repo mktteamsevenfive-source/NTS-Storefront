@@ -2,7 +2,9 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
+import {useFetcher, useRouteLoaderData} from 'react-router';
+import {getT} from '~/lib/locale';
+import type {RootLoader} from '~/root';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -10,6 +12,8 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
   const className =
     layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
   const summaryId = useId();
@@ -20,9 +24,9 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   return (
     <div aria-labelledby={summaryId} className={className}>
-      <h4 id={summaryId}>Totals</h4>
+      <h4 id={summaryId}>{t.totals}</h4>
       <dl role="group" className="cart-subtotal">
-        <dt>Subtotal</dt>
+        <dt>{t.subtotal}</dt>
         <dd>
           {cart?.cost?.subtotalAmount?.amount ? (
             <Money data={cart?.cost?.subtotalAmount} />
@@ -47,12 +51,15 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 }
 
 function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
+
   if (!checkoutUrl) return null;
 
   return (
     <div>
       <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
+        <p>{t.continue_to_checkout}</p>
       </a>
       <br />
     </div>
@@ -68,17 +75,19 @@ function CartDiscounts({
   discountsHeadingId: string;
   discountCodeInputId: string;
 }) {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
   const codes: string[] =
     discountCodes
       ?.filter((discount) => discount.applicable)
       ?.map(({code}) => code) || [];
 
   return (
-    <section aria-label="Discounts">
+    <section aria-label={t.discounts}>
       {/* Have existing discount, display it with a remove option */}
       <dl hidden={!codes.length}>
         <div>
-          <dt id={discountsHeadingId}>Discounts</dt>
+          <dt id={discountsHeadingId}>{t.discounts}</dt>
           <UpdateDiscountForm>
             <div
               className="cart-discount"
@@ -87,8 +96,8 @@ function CartDiscounts({
             >
               <code>{codes?.join(', ')}</code>
               &nbsp;
-              <button type="submit" aria-label="Remove discount">
-                Remove
+              <button type="submit" aria-label={t.remove}>
+                {t.remove}
               </button>
             </div>
           </UpdateDiscountForm>
@@ -99,17 +108,17 @@ function CartDiscounts({
       <UpdateDiscountForm discountCodes={codes}>
         <div>
           <label htmlFor={discountCodeInputId} className="sr-only">
-            Discount code
+            {t.discount_code}
           </label>
           <input
             id={discountCodeInputId}
             type="text"
             name="discountCode"
-            placeholder="Discount code"
+            placeholder={t.discount_code}
           />
           &nbsp;
-          <button type="submit" aria-label="Apply discount code">
-            Apply
+          <button type="submit" aria-label={t.apply}>
+            {t.apply}
           </button>
         </div>
       </UpdateDiscountForm>
@@ -192,11 +201,14 @@ function CartGiftCard({
     }
   };
 
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
+
   return (
-    <section aria-label="Gift cards">
+    <section aria-label={t.gift_cards}>
       {giftCardCodes && giftCardCodes.length > 0 && (
         <dl>
-          <dt id={giftCardHeadingId}>Applied Gift Card(s)</dt>
+          <dt id={giftCardHeadingId}>{t.gift_cards}</dt>
           {giftCardCodes.map((giftCard) => (
             <dd key={giftCard.id} className="cart-discount">
               <RemoveGiftCardForm
@@ -223,22 +235,22 @@ function CartGiftCard({
       <AddGiftCardForm fetcherKey="gift-card-add">
         <div>
           <label htmlFor={giftCardInputId} className="sr-only">
-            Gift card code
+            {t.gift_card_code}
           </label>
           <input
             id={giftCardInputId}
             type="text"
             name="giftCardCode"
-            placeholder="Gift card code"
+            placeholder={t.gift_card_code}
             ref={giftCardCodeInput}
           />
           &nbsp;
           <button
             type="submit"
             disabled={giftCardAddFetcher.state !== 'idle'}
-            aria-label="Apply gift card code"
+            aria-label={t.apply}
           >
-            Apply
+            {t.apply}
           </button>
         </div>
       </AddGiftCardForm>
@@ -277,6 +289,9 @@ function RemoveGiftCardForm({
   onRemoveClick?: () => void;
   buttonRef?: (el: HTMLButtonElement | null) => void;
 }) {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
+
   return (
     <CartForm
       route="/cart"
@@ -289,11 +304,11 @@ function RemoveGiftCardForm({
       &nbsp;
       <button
         type="submit"
-        aria-label={`Remove gift card ending in ${lastCharacters}`}
+        aria-label={t.remove}
         onClick={onRemoveClick}
         ref={buttonRef}
       >
-        Remove
+        {t.remove}
       </button>
     </CartForm>
   );

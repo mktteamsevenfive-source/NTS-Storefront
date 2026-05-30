@@ -1,9 +1,11 @@
 import {useOptimisticCart} from '@shopify/hydrogen';
-import {Link} from 'react-router';
+import {Link, useRouteLoaderData} from 'react-router';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {getT} from '~/lib/locale';
+import type {RootLoader} from '~/root';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -37,6 +39,8 @@ function getLineItemChildrenMap(lines: CartLine[]): LineItemChildrenMap {
  * It is used by both the /cart route and the cart aside dialog.
  */
 export function CartMain({layout, cart: originalCart}: CartMainProps) {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
   // The useOptimisticCart hook applies pending actions to the cart
   // so the user immediately sees feedback when they modify the cart.
   const cart = useOptimisticCart(originalCart);
@@ -52,7 +56,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   return (
     <section
       className={className}
-      aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
+      aria-label={layout === 'page' ? t.cart_page : t.cart_drawer}
     >
       <CartEmpty hidden={linesCount} layout={layout} />
       <div className="cart-details">
@@ -93,16 +97,18 @@ function CartEmpty({
   layout?: CartMainProps['layout'];
 }) {
   const {close} = useAside();
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const t = getT(rootData?.lang ?? 'EN');
+
   return (
     <div hidden={hidden}>
       <br />
       <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+        {t.cart_empty_message}
       </p>
       <br />
       <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+        {t.continue_shopping}
       </Link>
     </div>
   );

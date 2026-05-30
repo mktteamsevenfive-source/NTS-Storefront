@@ -393,6 +393,92 @@ const SPARE_PARTS_SIDEBAR_CATEGORIES = [
   }
 ];
 
+const HOTEL_SUPPLIES_ICONS: Record<string, React.ReactNode> = {
+  'refrigeration': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="2"/>
+      <path d="M5 10h14"/>
+      <path d="M9 5v2"/>
+      <path d="M9 13v3"/>
+    </svg>
+  ),
+  'safe boxes': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 6V9M12 15v3M6 12h3M15 12h3"/>
+    </svg>
+  ),
+  'electric kettles': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 8h1a4 4 0 1 1 0 8h-1"/>
+      <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+      <line x1="6" y1="2" x2="6" y2="4"/>
+      <line x1="10" y1="2" x2="10" y2="4"/>
+      <line x1="14" y1="2" x2="14" y2="4"/>
+    </svg>
+  ),
+  'bath mats': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2"/>
+      <path d="M6 9h12M6 15h12M9 12h6"/>
+    </svg>
+  ),
+  'luggage racks': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="6" width="18" height="12" rx="2"/>
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      <path d="M8 18v2M16 18v2"/>
+    </svg>
+  ),
+  'torches': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="12" width="6" height="9" rx="1"/>
+      <path d="M6 3h12l-3 9H9L6 3z"/>
+      <path d="M12 12v3"/>
+    </svg>
+  ),
+  'bed & bath linens': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 4v16M2 8h20M2 12h20M22 4v16"/>
+      <rect x="5" y="5" width="6" height="3" rx="0.5"/>
+      <rect x="13" y="5" width="6" height="3" rx="0.5"/>
+    </svg>
+  ),
+  'lobby supplies': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 18h20M5 18a7 7 0 0 1 14 0"/>
+      <path d="M12 11V7M9 7h6"/>
+    </svg>
+  ),
+  'bathroom accessories': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 11h20v4a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4v-4z"/>
+      <path d="M5 19v2M19 19v2"/>
+      <path d="M18 11V5a2 2 0 0 0-2-2h-2"/>
+      <circle cx="13" cy="3" r="1"/>
+    </svg>
+  ),
+  'telephone': (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </svg>
+  )
+};
+
+function getDynamicCategoryIcon(title: string) {
+  const normalizedTitle = title.toLowerCase().trim();
+  const icon = HOTEL_SUPPLIES_ICONS[normalizedTitle];
+  if (icon) {
+    return icon;
+  }
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{flexShrink:0}}>
+      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+    </svg>
+  );
+}
+
 const POPULAR_CATEGORIES = [
   { title: 'Combi Oven',   url: '/collections/commercial-ovens',       img: '/images/hero_buffet.png' },
   { title: 'Ice Machine',  url: '/collections/beverage-equipment',      img: '/images/hero_icemaker.png' },
@@ -463,15 +549,23 @@ const BRAND_LOGOS = [
 ];
 
 const QUICK_LINKS = [
-  { title: 'Best Sellers',   url: '/collections/best-sellers', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
-  { title: 'New Arrivals',   url: '/collections/new-arrivals', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> },
-  { title: 'Promotions',     url: '/collections/promotions',   icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg> },
-  { title: 'Clearance Sale', url: '/collections/clearance',    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="18" y1="6" x2="6" y2="18"/><polyline points="8 6 18 6 18 16"/></svg> },
+  { title: 'Best Sellers',   url: '/collections', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
+  { title: 'New Arrivals',   url: '/collections', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> },
+  { title: 'Promotions',     url: '/collections',   icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg> },
+  { title: 'Clearance Sale', url: '/collections',    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="18" y1="6" x2="6" y2="18"/><polyline points="8 6 18 6 18 16"/></svg> },
+];
+
+const SPARE_PARTS_QUICK_LINKS = [
+  { title: 'Seal',     url: '/collections/seal',   icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="8"/></svg> },
+  { title: 'O-Ring',   url: '/collections/o-ring', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="6"/></svg> },
+  { title: 'Gasket',   url: '/collections/gasket', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="4" y="6" width="16" height="12" rx="3"/></svg> },
+  { title: 'Brush',    url: '/collections/brush',  icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 20h16"/><path d="M9 20V9h6v11"/><path d="M9 9l1-5h4l1 5"/></svg> },
 ];
 
 function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode; close: () => void; t: T; lang?: LangCode; collections?: any}) {
   const isProductMenu = item.title === 'Product';
   const isSparePartsMenu = item.title === 'Spare Parts';
+  const isHotelSuppliesMenu = item.title === 'Hotel Supplies';
 
   const [activeCatTitle, setActiveCatTitle] = useState<string>(
     isProductMenu ? 'Food Preparation' :
@@ -612,9 +706,9 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
               onClick={close}
               prefetch="intent"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{flexShrink:0}} className={activeCatTitle === group.title ? 'text-[#00A859]' : 'text-gray-500'}>
-                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-              </svg>
+              <span style={{flexShrink:0}} className={activeCatTitle === group.title ? 'text-[#00A859]' : 'text-gray-500'}>
+                {getDynamicCategoryIcon(group.title)}
+              </span>
               <span style={{flex:1}} className="text-left">{getTrans(group.title, t)}</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`shrink-0 transition-transform ${activeCatTitle === group.title ? 'text-[#00A859] translate-x-0.5' : 'text-gray-300'}`}><polyline points="9 18 15 12 9 6"/></svg>
             </Link>
@@ -660,6 +754,74 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
           </div>
         )}
 
+        {isHotelSuppliesMenu && (
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Promo Banner Card */}
+            <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[220px] bg-gray-900 shadow-md group/banner border border-gray-100 flex flex-col justify-end p-5">
+              <img
+                src="/images/biz_hotel.png"
+                alt="Hotel Supplies"
+                className="absolute inset-0 w-full h-full object-cover opacity-75 group-hover/banner:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="relative z-10 flex flex-col gap-1.5 text-left">
+                <span className="text-[10px] font-bold text-[#00A859] tracking-widest uppercase bg-[#00A859]/10 self-start px-2 py-0.5 rounded-full backdrop-blur-md border border-[#00A859]/20">
+                  {lang === 'TH' ? 'แนะนำสำหรับโรงแรม' : 'RECOMMENDED FOR HOTELS'}
+                </span>
+                <h4 className="text-white text-base font-extrabold tracking-tight">
+                  {lang === 'TH' ? 'อุปกรณ์ห้องพักและสิ่งอำนวยความสะดวก' : 'Guest Room & Lobby Essentials'}
+                </h4>
+                <p className="text-gray-300 text-[11px] font-medium leading-relaxed max-w-[260px]">
+                  {lang === 'TH'
+                    ? 'ยกระดับความพึงพอใจของผู้เข้าพักด้วยของใช้และอุปกรณ์ในโรงแรมมาตรฐานสากล'
+                    : 'Enhance guest satisfaction with international standard hotel equipment and amenities.'}
+                </p>
+                <Link
+                  to="/collections/hotel-supplies"
+                  className="mt-2 inline-flex items-center gap-1.5 text-white font-extrabold text-[11px] hover:text-[#00A859] transition-colors self-start"
+                  onClick={close}
+                >
+                  {lang === 'TH' ? 'ดูสินค้าโรงแรมทั้งหมด →' : 'Explore Collections →'}
+                </Link>
+              </div>
+            </div>
+
+            {/* Hot Hotel Essentials Grid */}
+            <div className="w-[240px] flex flex-col gap-3">
+              <p className="sf-mega-menu__section-label !m-0 !text-gray-900">
+                {lang === 'TH' ? 'หมวดหมู่ยอดนิยม' : 'HOT ESSENTIALS'}
+              </p>
+              <div className="flex flex-col gap-2">
+                {[
+                  { title: 'Safe Boxes', url: '/collections/safe-boxes', desc: 'Digital guest safes', key: 'safe boxes' },
+                  { title: 'Bed & Bath Linens', url: '/collections/bed-bath-linens', desc: 'Premium sheets & towels', key: 'bed & bath linens' },
+                  { title: 'Lobby Supplies', url: '/collections/lobby-supplies', desc: 'Service & reception equipment', key: 'lobby supplies' },
+                  { title: 'Bathroom Accessories', url: '/collections/bathroom-accessories', desc: 'Luxury guest room fittings', key: 'bathroom accessories' }
+                ].map((item) => (
+                  <Link
+                    key={item.title}
+                    to={item.url}
+                    className="flex items-center gap-3 p-2.5 rounded-xl border border-gray-100 bg-white hover:border-[#00A859]/30 hover:bg-[#f6faf7] transition-all duration-200 group/item text-left shadow-sm"
+                    onClick={close}
+                  >
+                    <span className="flex items-center justify-center p-2 rounded-lg bg-[#f0f9f4] text-[#00A859] group-hover/item:bg-[#00A859] group-hover/item:text-white transition-colors duration-200">
+                      {HOTEL_SUPPLIES_ICONS[item.key]}
+                    </span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[12px] font-bold text-gray-800 group-hover/item:text-[#00A859] transition-colors truncate">
+                        {getTrans(item.title, t)}
+                      </span>
+                      <span className="text-[10px] text-gray-400 truncate leading-none mt-0.5 font-medium">
+                        {item.desc}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 2. Popular Categories + Featured Brands (Only for Product Menu) */}
         {isProductMenu && (
           <>
@@ -695,13 +857,17 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
           {lang === 'TH' ? 'ลิงก์ด่วน' : 'QUICK LINKS'}
         </p>
         <div className="sf-mega-menu__quick-links">
-          {QUICK_LINKS.map((link) => (
+          {(isSparePartsMenu ? SPARE_PARTS_QUICK_LINKS : QUICK_LINKS).map((link) => (
             <Link key={link.title} to={link.url} className="sf-mega-menu__quick-link text-gray-700 hover:text-[#00A859] hover:bg-gray-50 text-[13px] font-semibold" onClick={close} prefetch="intent">
               <span style={{color:'#9ca3af', display:'flex', alignItems:'center'}} className="group-hover:text-[#00A859]">{link.icon}</span>
               {lang === 'TH' && link.title === 'Best Sellers' ? 'สินค้าขายดี' :
                lang === 'TH' && link.title === 'New Arrivals' ? 'สินค้าใหม่' :
                lang === 'TH' && link.title === 'Promotions' ? 'โปรโมชั่น' :
                lang === 'TH' && link.title === 'Clearance Sale' ? 'สินค้าล้างสต๊อก' :
+               lang === 'TH' && link.title === 'Seal' ? 'ซีล' :
+               lang === 'TH' && link.title === 'O-Ring' ? 'โอริง' :
+               lang === 'TH' && link.title === 'Gasket' ? 'ปะเก็น' :
+               lang === 'TH' && link.title === 'Brush' ? 'แปรง' :
                link.title}
             </Link>
           ))}
@@ -715,7 +881,7 @@ function MegaMenuContent({item, close, t, lang, collections}: {item: CsvMenuNode
             <p className="sf-mega-menu__expert-desc text-gray-500 text-[11px] font-medium leading-relaxed m-0 mb-2">
               {lang === 'TH' ? 'ผู้เชี่ยวชาญของเราพร้อมช่วยคุณเลือกอุปกรณ์ที่ถูกต้อง' : 'Our experts are ready to help you find the right equipment.'}
             </p>
-            <Link to="/pages/contact" className="sf-mega-menu__expert-btn self-start inline-flex items-center gap-2 bg-white text-[#00A859] border border-[#e2eae6] rounded-lg px-4 py-2 text-[11px] font-bold shadow-sm hover:bg-[#00A859] hover:text-white transition-all duration-200" onClick={close}>
+            <Link to="/pages/contact-us-nts" className="sf-mega-menu__expert-btn self-start inline-flex items-center gap-2 bg-white text-[#00A859] border border-[#e2eae6] rounded-lg px-4 py-2 text-[11px] font-bold shadow-sm hover:bg-[#00A859] hover:text-white transition-all duration-200" onClick={close}>
               {lang === 'TH' ? 'คุยกับผู้เชี่ยวชาญ' : 'TALK TO AN EXPERT'}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </Link>

@@ -1,5 +1,5 @@
 import type {Route} from './+types/collections.all';
-import {useLoaderData} from 'react-router';
+import {redirect, useLoaderData} from 'react-router';
 import {getPaginationVariables, Image, Money} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
@@ -15,6 +15,10 @@ export async function loader(args: Route.LoaderArgs) {
 
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
+
+  if (!criticalData.products) {
+    return redirect('/collections');
+  }
 
   return {...deferredData, ...criticalData};
 }

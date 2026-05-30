@@ -158,7 +158,7 @@ export function RecommendedProducts({
                       </Link>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      {hotPromotions.map((p, i) => <ProductCard key={p.id} product={p} tag={`SALE ${Math.floor(Math.random() * 20 + 10)}%`} />)}
+                      {hotPromotions.map((p, i) => <ProductCard key={p.id} product={p} tag="SALE" />)}
                     </div>
                   </div>
                 </div>

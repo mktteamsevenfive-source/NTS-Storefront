@@ -305,9 +305,6 @@ button.reset:hover:not(:has(> *)) {
   }
 
   .sf-search {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     width: 100%;
     max-width: 720px;
     /* Set to exactly 720px width */
@@ -974,7 +971,7 @@ button.reset:hover:not(:has(> *)) {
   pointer-events: none;
   position: fixed;
   right: 0;
-  top: 132px;
+  top: 196px;
   transform: translateY(6px);
   transition: opacity 180ms ease, transform 180ms ease;
   z-index: 55;
