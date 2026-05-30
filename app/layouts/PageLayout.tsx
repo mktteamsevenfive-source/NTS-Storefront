@@ -8,6 +8,7 @@ import type {
 import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
+import {LanguageSwitcher} from '~/components/Header/LanguageSwitcher';
 import {BrandTrust} from '~/sections/BrandTrust';
 import {CartMain} from '~/components/CartMain';
 import {
@@ -15,7 +16,8 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
-import type {LangCode} from '~/lib/locale';
+import {getT} from '~/lib/locale';
+import type {LangCode, T} from '~/lib/locale';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -36,11 +38,12 @@ export function PageLayout({
   publicStoreDomain,
   lang = 'EN',
 }: PageLayoutProps) {
+  const t = getT(lang);
   return (
     <Aside.Provider>
-      <CartAside cart={cart} />
-      <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} lang={lang} />
+      <CartAside cart={cart} t={t} />
+      <SearchAside t={t} />
+      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} lang={lang} t={t} />
       {header && (
         <Header
           header={header}
@@ -61,10 +64,10 @@ export function PageLayout({
   );
 }
 
-function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
+function CartAside({cart, t}: {cart: PageLayoutProps['cart']; t: T}) {
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+    <Aside type="cart" heading={t.cart}>
+      <Suspense fallback={<p>{t.loading}</p>}>
         <Await resolve={cart}>
           {(cart) => {
             return <CartMain cart={cart} layout="aside" />;
@@ -75,10 +78,10 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   );
 }
 
-function SearchAside() {
+function SearchAside({t}: {t: T}) {
   const queriesDatalistId = useId();
   return (
-    <Aside type="search" heading="SEARCH">
+    <Aside type="search" heading={t.search}>
       <div className="predictive-search">
         <br />
         <SearchFormPredictive>
@@ -88,18 +91,18 @@ function SearchAside() {
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder={t.search_placeholder}
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
               />
               &nbsp;
-              <button onClick={goToSearch}>Search</button>
+              <button onClick={goToSearch}>{t.search}</button>
             </>
           )}
         </SearchFormPredictive>
 
-        <SearchResultsPredictive>
+        <SearchResultsPredictive t={t}>
           {({items, total, term, state, closeSearch}) => {
             const {articles, collections, pages, products, queries} = items;
 
@@ -108,7 +111,7 @@ function SearchAside() {
             }
 
             if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
+              return <SearchResultsPredictive.Empty term={term} t={t} />;
             }
 
             return (
@@ -121,21 +124,25 @@ function SearchAside() {
                   products={products}
                   closeSearch={closeSearch}
                   term={term}
+                  t={t}
                 />
                 <SearchResultsPredictive.Collections
                   collections={collections}
                   closeSearch={closeSearch}
                   term={term}
+                  t={t}
                 />
                 <SearchResultsPredictive.Pages
                   pages={pages}
                   closeSearch={closeSearch}
                   term={term}
+                  t={t}
                 />
                 <SearchResultsPredictive.Articles
                   articles={articles}
                   closeSearch={closeSearch}
                   term={term}
+                  t={t}
                 />
                 {term.current && total ? (
                   <Link
@@ -143,8 +150,7 @@ function SearchAside() {
                     to={`${SEARCH_ENDPOINT}?q=${term.current}`}
                   >
                     <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
+                      {t.view_all_results} <q>{term.current}</q>
                     </p>
                   </Link>
                 ) : null}
@@ -161,10 +167,12 @@ function MobileMenuAside({
   header,
   publicStoreDomain,
   lang = 'EN',
+  t,
 }: {
   header: PageLayoutProps['header'];
   publicStoreDomain: PageLayoutProps['publicStoreDomain'];
   lang?: LangCode;
+  t: T;
 }) {
   const availableHandles = new Set(
     (header.collections?.nodes ?? [])
@@ -175,7 +183,7 @@ function MobileMenuAside({
   return (
     header.menu &&
     header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
+      <Aside type="mobile" heading={t.menu}>
         <HeaderMenu
           menu={header.menu}
           viewport="mobile"
@@ -184,6 +192,10 @@ function MobileMenuAside({
           availableHandles={availableHandles}
           lang={lang}
         />
+        <div style={{ padding: '24px 16px', borderTop: '1px solid #e5e7eb', marginTop: '16px' }}>
+          <p style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', marginBottom: '8px', letterSpacing: '0.05em' }}>LANGUAGE / ภาษา</p>
+          <LanguageSwitcher lang={lang} />
+        </div>
       </Aside>
     )
   );

@@ -110,7 +110,7 @@ export function HeaderSearch({t}: {t: T}) {
             /* ── Empty state ── */
             <div className="sf-search__layout">
               <div className="sf-search__left">
-                <p className="sf-search__col-title">POPULAR SEARCHES</p>
+                <p className="sf-search__col-title">{t.popular_searches}</p>
                 <div className="sf-search__pills">
                   {POPULAR_SEARCHES.map((kw) => (
                     <button
@@ -131,9 +131,9 @@ export function HeaderSearch({t}: {t: T}) {
               </div>
               <div className="sf-search__right">
                 <div className="sf-search__right-head">
-                  <p className="sf-search__col-title">RECOMMENDED PRODUCTS</p>
+                  <p className="sf-search__col-title">{t.recommended_products}</p>
                   <Link to="/search" className="sf-search__view-all" onClick={closeDropdown}>
-                    VIEW ALL PRODUCTS &rsaquo;
+                    {t.view_all_products}
                   </Link>
                 </div>
                 {items.products.length > 0 ? (
@@ -158,7 +158,7 @@ export function HeaderSearch({t}: {t: T}) {
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
                           <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
-                              <Image alt={image.altText ?? product.title} src={image.url} width={1600} className="sf-search__prod-img" />
+                              <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}
@@ -203,7 +203,7 @@ export function HeaderSearch({t}: {t: T}) {
               <div className="sf-search__left">
                 {items.collections.length > 0 && (
                   <>
-                    <p className="sf-search__col-title">SUGGESTED COLLECTIONS ({items.collections.length})</p>
+                    <p className="sf-search__col-title">{t.suggested_collections} ({items.collections.length})</p>
                     <div className="sf-search__pills">
                       {items.collections.map((col) => (
                         <Link
@@ -222,14 +222,14 @@ export function HeaderSearch({t}: {t: T}) {
               <div className="sf-search__right">
                 <div className="sf-search__right-head">
                   {items.products.length > 0 && (
-                    <p className="sf-search__col-title">SUGGESTED ITEMS ({items.products.length})</p>
+                    <p className="sf-search__col-title">{t.suggested_items} ({items.products.length})</p>
                   )}
                   <Link
                     to={`/search?q=${encodeURIComponent(term.current)}`}
                     className="sf-search__view-all"
                     onClick={closeDropdown}
                   >
-                    VIEW ALL RESULTS &rsaquo;
+                    {t.view_all_results}
                   </Link>
                 </div>
                 {items.products.length > 0 ? (
@@ -254,7 +254,7 @@ export function HeaderSearch({t}: {t: T}) {
                         <Link key={product.id} to={productUrl} className="sf-search__prod-card" onClick={closeDropdown}>
                           <div className="sf-search__prod-img-wrap" style={{position: 'relative'}}>
                             {image ? (
-                              <Image alt={image.altText ?? product.title} src={image.url} width={1600} className="sf-search__prod-img" />
+                              <Image alt={image.altText ?? product.title} src={image.url} width={200} height={200} className="sf-search__prod-img" />
                             ) : (
                               <div className="sf-search__prod-img-placeholder" />
                             )}
@@ -279,9 +279,9 @@ export function HeaderSearch({t}: {t: T}) {
                     })}
                   </div>
                 ) : fetcher.state === 'loading' ? (
-                  <p className="sf-search__loading">Searching…</p>
+                  <p className="sf-search__loading">{t.searching}</p>
                 ) : (
-                  <p className="sf-search__empty">No results for &ldquo;{term.current}&rdquo;</p>
+                  <p className="sf-search__empty">{t.no_results_for} &ldquo;{term.current}&rdquo;</p>
                 )}
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   type PredictiveSearchReturn,
 } from '~/lib/search';
 import { useAside } from './Aside';
+import type { T } from '~/lib/locale';
 
 type PredictiveSearchItems = PredictiveSearchReturn['result']['items'];
 
@@ -24,6 +25,7 @@ type SearchResultsPredictiveArgs = Pick<
 > & {
   state: Fetcher['state'];
   closeSearch: () => void;
+  t: T;
 };
 
 type PartialPredictiveSearchResult<
@@ -34,6 +36,7 @@ type PartialPredictiveSearchResult<
 
 type SearchResultsPredictiveProps = {
   children: (args: SearchResultsPredictiveArgs) => React.ReactNode;
+  t: T;
 };
 
 /**
@@ -41,6 +44,7 @@ type SearchResultsPredictiveProps = {
  */
 export function SearchResultsPredictive({
   children,
+  t,
 }: SearchResultsPredictiveProps) {
   const aside = useAside();
   const { term, inputRef, fetcher, total, items } = usePredictiveSearch();
@@ -70,6 +74,7 @@ export function SearchResultsPredictive({
     state: fetcher.state,
     term,
     total,
+    t,
   });
 }
 
@@ -84,12 +89,13 @@ function SearchResultsPredictiveArticles({
   term,
   articles,
   closeSearch,
-}: PartialPredictiveSearchResult<'articles'>) {
+  t,
+}: PartialPredictiveSearchResult<'articles'> & { t: T }) {
   if (!articles.length) return null;
 
   return (
     <div className="predictive-search-result" key="articles">
-      <h5>Articles</h5>
+      <h5>{t.articles}</h5>
       <ul>
         {articles.map((article) => {
           const articleUrl = urlWithTrackingParams({
@@ -125,12 +131,13 @@ function SearchResultsPredictiveCollections({
   term,
   collections,
   closeSearch,
-}: PartialPredictiveSearchResult<'collections'>) {
+  t,
+}: PartialPredictiveSearchResult<'collections'> & { t: T }) {
   if (!collections.length) return null;
 
   return (
     <div className="predictive-search-result" key="collections">
-      <h5>Collections</h5>
+      <h5>{t.collections_title}</h5>
       <ul>
         {collections.map((collection) => {
           const collectionUrl = urlWithTrackingParams({
@@ -166,12 +173,13 @@ function SearchResultsPredictivePages({
   term,
   pages,
   closeSearch,
-}: PartialPredictiveSearchResult<'pages'>) {
+  t,
+}: PartialPredictiveSearchResult<'pages'> & { t: T }) {
   if (!pages.length) return null;
 
   return (
     <div className="predictive-search-result" key="pages">
-      <h5>Pages</h5>
+      <h5>{t.pages_title}</h5>
       <ul>
         {pages.map((page) => {
           const pageUrl = urlWithTrackingParams({
@@ -199,12 +207,13 @@ function SearchResultsPredictiveProducts({
   term,
   products,
   closeSearch,
-}: PartialPredictiveSearchResult<'products'>) {
+  t,
+}: PartialPredictiveSearchResult<'products'> & { t: T }) {
   if (!products.length) return null;
 
   return (
     <div className="predictive-search-result" key="products">
-      <h5>Products</h5>
+      <h5>{t.products_title}</h5>
       <ul>
         {products.map((product) => {
           const productUrl = urlWithTrackingParams({
@@ -260,8 +269,10 @@ function SearchResultsPredictiveQueries({
 
 function SearchResultsPredictiveEmpty({
   term,
+  t,
 }: {
   term: React.MutableRefObject<string>;
+  t: T;
 }) {
   if (!term.current) {
     return null;
@@ -269,7 +280,7 @@ function SearchResultsPredictiveEmpty({
 
   return (
     <p>
-      No results found for <q>{term.current}</q>
+      {t.no_results_found_for} <q>{term.current}</q>
     </p>
   );
 }

@@ -1,171 +1,67 @@
-import {useRef, useState, useEffect} from 'react';
 import {Link} from 'react-router';
 
-import bakeryEquipment from '~/assets/category/bakery-equipment.jpg';
-import bakeryUtensils from '~/assets/category/bakery-utensils.jpg';
-import barSupplies from '~/assets/category/bar-supplies.jpg';
-import beverageEquipment from '~/assets/category/beverage-equipment.jpg';
-import commercialOvens from '~/assets/category/commercial-ovens.jpg';
-import cookingEquipment from '~/assets/category/cooking-equipment.jpg';
-import foodPreparation from '~/assets/category/food-preparation.jpg';
-import hotelSupplies from '~/assets/category/hotel-supplies.jpg';
-import janitorialSupplies from '~/assets/category/janitorial-supplies.jpg';
-import refrigeratorEquipment from '~/assets/category/refrigerator-equipment.jpg';
-import smallwares from '~/assets/category/smallwares.jpg';
-import stainlessSteelFabrication from '~/assets/category/stainless-steel-fabrication.jpg';
-import storageTransportation from '~/assets/category/storage-transportation.jpg';
-import tabletopBuffetware from '~/assets/category/tabletop-buffetware.jpg';
-import warewashingSanitation from '~/assets/category/warewashing-sanitation.jpg';
-import warmingEquipment from '~/assets/category/warming-equipment.jpg';
-
-interface StaticCategory {
-  title: string;
-  handle: string;
-  image: string;
-}
-
-const STATIC_CATEGORIES: StaticCategory[] = [
-  {title: 'Cooking Equipment', handle: 'cooking-equipment', image: cookingEquipment},
-  {title: 'Food Preparation', handle: 'food-preparation', image: foodPreparation},
-  {title: 'Refrigeration Equipment', handle: 'refrigeration-equipment', image: refrigeratorEquipment},
-  {title: 'Commercial Ovens', handle: 'commercial-ovens', image: commercialOvens},
-  {title: 'Bakery Equipment', handle: 'bakery-equipment', image: bakeryEquipment},
-  {title: 'Warming Equipment', handle: 'warming-equipment', image: warmingEquipment},
-  {title: 'Beverage Equipment', handle: 'beverage-equipment', image: beverageEquipment},
-  {title: 'Stainless Steel Fabrication', handle: 'stainless-steel-fabrication', image: stainlessSteelFabrication},
-  {title: 'Warewashing & Sanitation', handle: 'warewashing-sanitisation', image: warewashingSanitation},
-  {title: 'Storage & Transportation', handle: 'storage-transport', image: storageTransportation},
-  {title: 'Smallwares', handle: 'smallwares', image: smallwares},
-  {title: 'Bakery Utensils', handle: 'bakery-utensils', image: bakeryUtensils},
-  {title: 'Tabletop & Buffetware', handle: 'tableware-buffetware', image: tabletopBuffetware},
-  {title: 'Janitorial Supplies', handle: 'janitorial-supplies', image: janitorialSupplies},
-  {title: 'Bar Supplies', handle: 'bar-supplies', image: barSupplies},
-  {title: 'Hotel Supplies', handle: 'hotel-supplies', image: hotelSupplies},
+// Lucide icon placeholders
+const CATEGORIES = [
+  { title: 'Food Preparation', link: '/collections/food-preparation', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7.5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7.5Z"/><path d="M8 4.5h6"/><path d="M15 3l5 5-4 4-5-5 4-4Z"/><path d="M17 5.5v2"/></svg> },
+  { title: 'Cooking Equipment', link: '/collections/cooking-equipment', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M12 2v6"/><path d="M8 3v5"/><path d="M16 3v5"/><path d="M4 11h16"/></svg> },
+  { title: 'Refrigeration & Freezing', link: '/collections/refrigeration-equipment', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 22h14"/><path d="M12 2v20"/><path d="M5 9h14"/><path d="M5 2h14"/><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6v2"/><path d="M9 14v2"/></svg> },
+  { title: 'Bakery Equipment', link: '/collections/bakery-equipment', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a4 4 0 0 0-4 4v1H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4Z"/><path d="M12 12v6"/></svg> },
+  { title: 'Beverage Equipment', link: '/collections/beverage-equipment', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 8V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/><path d="M6 8h12v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M10 12v3"/><path d="M14 12v3"/></svg> },
+  { title: 'Dishwashing Equipment', link: '/collections/warewashing-sanitisation', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18"/><path d="M3 21h18"/><path d="M4 3v18"/><path d="M20 3v18"/><path d="M12 8v8"/><path d="M8 12h8"/></svg> },
+  { title: 'Stainless Steel & Sinks', link: '/collections/stainless-steel-fabrication', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 2v20"/><path d="M21 2v20"/><path d="M3 10h18"/><path d="M3 14h18"/><path d="M12 14v8"/></svg> },
+  { title: 'Cleaning & Hygiene', link: '/collections/janitorial-supplies', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v2h6V5a3 3 0 0 0-3-3Z"/><path d="M19 8H5a2 2 0 0 0-2 2v2h18v-2a2 2 0 0 0-2-2Z"/><path d="M18 12v7a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-7"/><path d="M10 16v-2"/><path d="M14 16v-2"/></svg> },
+  { title: 'Storage & Shelving', link: '/collections/storage-transport', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 16V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12"/><path d="M2 18h20v4H2z"/><path d="M6 10h12"/><path d="M6 6h12"/><path d="M6 14h12"/></svg> },
+  { title: 'Ventilation & Hood', link: '/collections/ventilation-hood', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18"/><path d="M3 16h18"/><path d="M6 8l6-6 6 6"/><path d="M12 2v10"/></svg> },
+  { title: 'Tableware & Buffetware', link: '/collections/tableware-buffetware', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2v0a5 5 0 0 0-5 5v8c0 1.1.9 2 2 2h3Z" /><path d="M18 17v5" /></svg> },
+  { title: 'Hotel Supplies', link: '/collections/hotel-supplies', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 18h20M5 18a7 7 0 0 1 14 0" /><path d="M12 11V7M9 7h6" /></svg> },
 ];
 
-import {getT} from '~/lib/locale';
-import type {LangCode} from '~/lib/locale';
-
-export function CategoryGrid({
-  collections: _,
-  lang = 'EN',
-}: {
-  collections?: any;
-  lang?: LangCode;
-}) {
-  const t = getT(lang);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      // Scroll by 2 columns (approx 600px)
-      const scrollAmount = direction === 'left' ? -600 : 600;
-      scrollRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  // Auto-slide effect with 3s delay (disabled on mobile)
-  useEffect(() => {
-    if (isHovered) return;
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) return;
-
-    const timer = setInterval(() => {
-      if (scrollRef.current) {
-        const {scrollLeft, clientWidth, scrollWidth} = scrollRef.current;
-        // Check if we are close to the end (within 15px)
-        if (scrollLeft + clientWidth >= scrollWidth - 15) {
-          // Loop back to the start
-          scrollRef.current.scrollTo({
-            left: 0,
-            behavior: 'smooth',
-          });
-        } else {
-          // Scroll forward by 2 columns (approx 600px)
-          scrollRef.current.scrollBy({
-            left: 600,
-            behavior: 'smooth',
-          });
-        }
-      }
-    }, 3000);
-
-    return () => clearInterval(timer);
-  }, [isHovered]);
-
+export function CategoryGrid() {
   return (
-    <section className="max-w-[1440px] mx-auto px-8 py-16">
-      <div className="text-center mb-10">
-        <h2 className="text-xl md:text-2xl font-bold text-[#1a1a1a]">{t.shop_by_category}</h2>
-      </div>
-      <div 
-        className="relative group/carousel"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Left Arrow */}
-        <button 
-          onClick={() => scroll('left')}
-          className="hidden md:flex absolute left-[-15px] sm:left-[-25px] md:left-[-35px] lg:left-[-50px] xl:left-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
-          aria-label="Scroll left"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        
-        {/* Scroll Container (2 Rows) */}
-        <div 
-          ref={scrollRef}
-          className="grid grid-rows-1 sm:grid-rows-2 grid-flow-col auto-cols-[80%] sm:auto-cols-[45%] md:auto-cols-[30%] lg:auto-cols-[calc(25%-12px)] gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 select-none"
-          style={{ 
-            scrollbarWidth: 'none', 
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch'
-          }}
-        >
-          {/* Hide webkit scrollbars inline */}
-          <style dangerouslySetInnerHTML={{__html: `
-            div::-webkit-scrollbar {
-              display: none !important;
-            }
-          `}} />
-
-          {STATIC_CATEGORIES.map((cat) => {
-            const translatedTitle = t.categories[cat.title as keyof typeof t.categories] || cat.title;
-            return (
-              <Link
-                key={cat.handle}
-                to={`/collections/${cat.handle}`}
-                className="group block bg-[#f5f5f5] rounded-md overflow-hidden relative snap-start shadow-sm hover:shadow-md transition-shadow duration-300"
-                prefetch="intent"
-              >
-                <div className="aspect-[4/3] p-4 flex items-center justify-center bg-white">
-                  <img
-                    src={cat.image}
-                    className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
-                    alt={translatedTitle}
-                    draggable={false}
-                  />
-                </div>
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm rounded-md py-3 text-center shadow-sm border border-gray-100 group-hover:border-[#00a87a]/20 transition-colors">
-                  <h3 className="text-sm font-bold text-[#1a1a1a] truncate px-2 group-hover:text-[#00a87a] transition-colors">{translatedTitle}</h3>
-                  <span className="text-[0.65rem] text-[#00a87a] font-bold block uppercase tracking-wider mt-0.5 group-hover:scale-105 transition-transform">Shop Now</span>
-                </div>
-              </Link>
-            );
-          })}
+    <section className="bg-white py-16">
+      <div className="max-w-[1440px] mx-auto px-8">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Shop by Category</h2>
+          <p className="text-gray-500">Explore our wide range of product categories</p>
         </div>
 
-        {/* Right Arrow */}
-        <button 
-          onClick={() => scroll('right')}
-          className="hidden md:flex absolute right-[-15px] sm:right-[-25px] md:right-[-35px] lg:right-[-50px] xl:right-[-60px] top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#00a87a] text-white items-center justify-center z-10 hover:bg-[#00c896] transition-colors shadow-md active:scale-95"
-          aria-label="Scroll right"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+        <div className="block md:hidden overflow-x-auto pb-4 -mx-4 px-4">
+          <div className="flex gap-4 snap-x snap-mandatory">
+            {CATEGORIES.map((cat, index) => (
+              <Link
+                key={index}
+                to={cat.link}
+                className="snap-start shrink-0 min-w-[180px] sm:min-w-[200px] flex flex-col items-center justify-center p-5 bg-white border border-gray-200 rounded-3xl hover:border-[#00A859] hover:shadow-md transition-all text-center"
+                prefetch="intent"
+              >
+                <div className="text-gray-400 group-hover:text-[#00A859] transition-colors mb-3">
+                  {cat.icon}
+                </div>
+                <span className="text-sm font-semibold text-gray-700 group-hover:text-[#00A859] transition-colors line-clamp-2">
+                  {cat.title}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {CATEGORIES.map((cat, index) => (
+            <Link
+              key={index}
+              to={cat.link}
+              className="group flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:border-[#00A859] hover:shadow-md transition-all text-center"
+              prefetch="intent"
+            >
+              <div className="text-gray-400 group-hover:text-[#00A859] transition-colors mb-3">
+                {cat.icon}
+              </div>
+              <span className="text-sm font-semibold text-gray-700 group-hover:text-[#00A859] transition-colors line-clamp-2">
+                {cat.title}
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
