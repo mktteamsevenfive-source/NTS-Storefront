@@ -142,8 +142,8 @@ function SearchResultsProducts({
                     <Image
                       data={image}
                       alt={product.title}
-                      width={240}
-                      height={240}
+                      width={1600}
+                      sizes="(min-width: 45em) 400px, 100vw"
                       className="sf-search-product-card__img"
                     />
                   ) : (
