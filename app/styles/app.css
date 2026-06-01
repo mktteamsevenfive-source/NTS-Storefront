@@ -534,32 +534,22 @@ button.reset:hover:not(:has(> *)) {
 
 .sf-search__dropdown {
   background: var(--sf-white);
-  border: 1px solid var(--sf-gray-200);
-  border-top: none;
+  border-top: 1px solid var(--sf-gray-200);
+  border-bottom: 1px solid var(--sf-gray-200);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
   left: 0;
+  right: 0;
   max-height: 80vh;
   overflow-y: auto;
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  z-index: 200;
-  /* extend to full viewport width */
-  left: -2rem;
-  right: calc(-100vw + 100% + 2rem);
+  position: fixed;
+  top: var(--header-height);
   width: 100vw;
+  z-index: 200;
 }
 
-/* align dropdown to full header width and center it */
 @media (min-width: 45em) {
   .sf-search__dropdown {
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100vw;
-    max-width: 1440px;
-    right: auto;
-    border-left: 1px solid var(--sf-gray-200);
-    border-right: 1px solid var(--sf-gray-200);
+    top: calc(var(--header-height) + 54px);
   }
 }
 
@@ -607,6 +597,37 @@ button.reset:hover:not(:has(> *)) {
   font-weight: 600;
   letter-spacing: 0.1em;
   margin: 0 0 1rem;
+}
+
+.sf-search__dropdown-close {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem;
+  background: var(--sf-white);
+  border-bottom: 1px solid var(--sf-gray-200);
+}
+
+.sf-search__dropdown-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid var(--sf-gray-200);
+  border-radius: 99px;
+  color: var(--sf-gray-600);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  transition: all 150ms;
+}
+
+.sf-search__dropdown-close-btn:hover {
+  background: var(--sf-gray-100);
+  color: var(--sf-black);
 }
 
 .sf-search__right-head {
@@ -2037,9 +2058,9 @@ button.reset:hover:not(:has(> *)) {
 
 .product-item__sku {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: var(--sf-gray-600);
+  color: var(--sf-gray-800);
 }
 
 .product-item__name {

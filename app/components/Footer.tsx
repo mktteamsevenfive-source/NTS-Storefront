@@ -112,7 +112,7 @@ export function Footer({
                   </div>
                   <div className="sf-footer__dbd">
                     <a
-                      href="https://www.trustmarkthai.com/callback/3d/share.jsp?id=0105557179002-27-5-001398242"
+                      href="https://datawarehouse.dbd.go.th/company/profile/50105557179002"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:opacity-80 transition-opacity"

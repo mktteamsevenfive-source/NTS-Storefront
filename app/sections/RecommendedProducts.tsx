@@ -48,6 +48,7 @@ export function RecommendedProducts({
               const ProductCard = ({product, tag, tagColor}: {product: any, tag?: string, tagColor?: string}) => {
                 const price = parseFloat(product.priceRange.minVariantPrice.amount);
                 const compareAtPriceNode = product.selectedOrFirstAvailableVariant?.compareAtPrice;
+                const sku = product.selectedOrFirstAvailableVariant?.sku as string | undefined;
                 let compareAtPrice = 0;
                 let discountPercent = 0;
                 
@@ -84,6 +85,15 @@ export function RecommendedProducts({
                         <span className="text-gray-900 text-[10px] font-black uppercase tracking-wider mb-1">
                           {product.vendor}
                         </span>
+                      )}
+                      {sku && (
+                        <p
+                          className="text-gray-500 font-normal mb-0.5 truncate"
+                          style={{ fontSize: '10px', lineHeight: '1.2' }}
+                          title={`SKU: ${sku}`}
+                        >
+                          {sku}
+                        </p>
                       )}
                       <h3 className="text-[13px] font-semibold text-gray-800 leading-snug line-clamp-2 mb-2 min-h-[38px]">
                         {product.title}
