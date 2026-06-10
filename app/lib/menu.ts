@@ -615,7 +615,7 @@ main-menu,Bathroom Accessories,COLLECTION,/collections/bathroom-accessories,2,Ho
 main-menu,Telephone,COLLECTION,/collections/telephone,2,Hotel Supplies
 main-menu,Services,COLLECTION,/collections/services,1,
 main-menu,Brand,PAGE,/pages/brand,1,
-main-menu,Catalogue,PAGE,/pages/catalog,1,
+main-menu,Catalogue,PAGE,/nts-catalogue,1,
 main-menu,Blog,BLOG,/blogs/news,1,`;
 
 export const NTS_MENU_TREE = buildMenuTree(MENU_CSV);
